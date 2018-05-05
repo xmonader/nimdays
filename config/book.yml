@@ -1,0 +1,11 @@
+---
+slug: nimdays
+filename: nimdays
+title: Nim Days 
+subtitle: My Nim diary 
+description: Mini practical projects exploring the nim language
+author: Ahmed T. Youssef
+copyright: 2018
+uuid: 7663a468-c43c-472a-8956-8d70ab5c57ef
+pdf_preview_page_range: 1..30
+epub_mobi_preview_chapter_range: 0..1

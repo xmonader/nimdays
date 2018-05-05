@@ -1,0 +1,12 @@
+cover
+frontmatter:
+maketitle
+tableofcontents
+preface.md
+mainmatter:
+day1_dmidecode.md
+day2_bencode.md
+day3_libmagic.md
+day4_asynclinkschecker.md
+day5_iniparser.md
+day6_nistow.md
