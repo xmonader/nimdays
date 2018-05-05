@@ -17,11 +17,11 @@
 </pre></div></div>
 </div><div id="cid9" data-tralics-id="cid9" class="section" data-number="3.2"><h2><a href="day3_libmagic_fragment.html#cid9" class="heading hyperref"><span class="number">3.2 </span>Implementation</a></h2>
 <p class="noindent"><a href="https://livebook.manning.com/#!/book/nim-in-action/chapter-8/1" target="_blank" rel="noopener">FFI Chapter</a> of <a href="https://www.manning.com/books/nim-in-action" target="_blank" rel="noopener">Nim in Action</a> is freely available.</p>
-<div id="uid28" data-tralics-id="uid28" class="subsection" data-number="3.2.1"><h3><a href="day3_libmagic_fragment.html#uid28" class="heading hyperref"><span class="number">3.2.1 </span>Step 1: Get the library info</a></h3>
+<div id="uid37" data-tralics-id="uid37" class="subsection" data-number="3.2.1"><h3><a href="day3_libmagic_fragment.html#uid37" class="heading hyperref"><span class="number">3.2.1 </span>Step 1: Get the library info</a></h3>
 <p class="noindent">Well, libmagic has <code>libmagic.so</code> in your library path <code>/usr/lib/libmagic.so</code> and a header file <code>magic.h</code> in <code>/usr/include/magic.h</code>.<span class="intersentencespace"></span> create a constant for the libmagic library name.<span class="intersentencespace"></span> </p><div class="code"><div class="highlight"><pre><span></span><span class="k">const</span> <span class="n">libName</span><span class="o">*</span> <span class="o">=</span> <span class="s">"libmagic.so"</span>
 </pre></div></div>
 </div>
-<div id="uid29" data-tralics-id="uid29" class="subsection" data-number="3.2.2"><h3><a href="day3_libmagic_fragment.html#uid29" class="heading hyperref"><span class="number">3.2.2 </span>Step 2: Extract constants</a></h3>
+<div id="uid38" data-tralics-id="uid38" class="subsection" data-number="3.2.2"><h3><a href="day3_libmagic_fragment.html#uid38" class="heading hyperref"><span class="number">3.2.2 </span>Step 2: Extract constants</a></h3>
 <p class="noindent">We should extract the constants from the header</p>
 <div class="code"><div class="highlight"><pre><span></span><span class="cp">#define MAGIC_NONE              0x0000000 </span><span class="cm">/* No flags */</span><span class="cp"></span>
 <span class="cp">#define MAGIC_DEBUG             0x0000001 </span><span class="cm">/* Turn on debugging */</span><span class="cp"></span>
@@ -55,14 +55,14 @@
 <span class="k">const</span>  <span class="n">MAGIC_NO_CHECK_TOKENS</span><span class="o">*</span> <span class="o">=</span> <span class="mh">0x100000</span>         <span class="c"># Don't check ascii/tokens </span>
 </pre></div></div>
 </div>
-<div id="uid30" data-tralics-id="uid30" class="subsection" data-number="3.2.3"><h3><a href="day3_libmagic_fragment.html#uid30" class="heading hyperref"><span class="number">3.2.3 </span>Step 3: Extract the types</a></h3>
+<div id="uid39" data-tralics-id="uid39" class="subsection" data-number="3.2.3"><h3><a href="day3_libmagic_fragment.html#uid39" class="heading hyperref"><span class="number">3.2.3 </span>Step 3: Extract the types</a></h3>
 <p class="noindent"><code>typedef struct magic_set *magic_t;</code>
 so the only type we have is a pointer to some struct (object)</p>
 <div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">Magic</span> <span class="o">=</span> <span class="k">object</span>
 <span class="k">type</span> <span class="n">MagicPtr</span><span class="o">*</span> <span class="o">=</span> <span class="k">ptr</span> <span class="n">Magic</span> 
 </pre></div></div>
 </div>
-<div id="uid31" data-tralics-id="uid31" class="subsection" data-number="3.2.4"><h3><a href="day3_libmagic_fragment.html#uid31" class="heading hyperref"><span class="number">3.2.4 </span>Step 4: Extract procedures</a></h3>
+<div id="uid40" data-tralics-id="uid40" class="subsection" data-number="3.2.4"><h3><a href="day3_libmagic_fragment.html#uid40" class="heading hyperref"><span class="number">3.2.4 </span>Step 4: Extract procedures</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="n">magic_t</span> <span class="nf">magic_open</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
 <span class="kt">void</span> <span class="nf">magic_close</span><span class="p">(</span><span class="n">magic_t</span><span class="p">);</span>
 
@@ -117,7 +117,7 @@ file before any magic queries can performed.</p>
 <p>From manpage:
 &gt; The magic_file() function returns a textual description of the contents of the filename argument, or NULL if an error occurred.<span class="intersentencespace"></span> If the filename is NULL, then stdin is used.</p>
 </div>
-<div id="uid32" data-tralics-id="uid32" class="subsection" data-number="3.2.5"><h3><a href="day3_libmagic_fragment.html#uid32" class="heading hyperref"><span class="number">3.2.5 </span>Step 5: Friendly API</a></h3>
+<div id="uid41" data-tralics-id="uid41" class="subsection" data-number="3.2.5"><h3><a href="day3_libmagic_fragment.html#uid41" class="heading hyperref"><span class="number">3.2.5 </span>Step 5: Friendly API</a></h3>
 <p class="noindent">It’d be annoying for people to write C code and take care of pointers and such in a higher level language like nim</p>
 <p>So let’s expose a proc <code>guessFile</code> takes a filepath and flags and internally use the functions we exposed through the FFI in the previous step.</p>
 <div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">guessFile</span><span class="o">*</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="kt">string</span><span class="p">,</span> <span class="n">flags</span><span class="p">:</span> <span class="n">cint</span> <span class="o">=</span> <span class="n">MAGIC_NONE</span><span class="p">):</span> <span class="kt">string</span> <span class="o">=</span>

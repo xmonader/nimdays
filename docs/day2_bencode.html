@@ -80,12 +80,12 @@
 - ints those are encoded between <code>i</code>, <code>e</code> letters, e.g 59 will be encoded into <code>i59e</code>
 - lists can contain any of the bencode types and it’s encoded with <code>l</code>, <code>e</code>, e.g list of 1, 2 numbers is encoded into <code>li1ei2e</code> or with spaces for verbosity <code>l i1e i2e e</code>
 - dicts are mapping from strings to any type and encoded between letters <code>d</code>, <code>e</code>, e.g name =&gt; hi and num =&gt; 3 is encoded into <code>d4:name2:hi3:numi3ee</code> or with spaces for verbosity <code>d 4:name 2:hi 3:num i3e e</code></p>
-<div id="uid12" data-tralics-id="uid12" class="subsection" data-number="2.2.1"><h3><a href="day2_bencode.html#uid12" class="heading hyperref"><span class="number">2.2.1 </span>Imports</a></h3>
+<div id="uid21" data-tralics-id="uid21" class="subsection" data-number="2.2.1"><h3><a href="day2_bencode.html#uid21" class="heading hyperref"><span class="number">2.2.1 </span>Imports</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="n">strformat</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">strutils</span><span class="p">,</span> <span class="n">hashes</span>
 </pre></div></div>
 <p>As we will be dealing a lot with strings, tables</p>
 </div>
-<div id="uid13" data-tralics-id="uid13" class="subsection" data-number="2.2.2"><h3><a href="day2_bencode.html#uid13" class="heading hyperref"><span class="number">2.2.2 </span>Types</a></h3>
+<div id="uid22" data-tralics-id="uid22" class="subsection" data-number="2.2.2"><h3><a href="day2_bencode.html#uid22" class="heading hyperref"><span class="number">2.2.2 </span>Types</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> 
     <span class="n">BencodeKind</span><span class="o">*</span> <span class="o">=</span> <span class="k">enum</span>
         <span class="n">btString</span><span class="p">,</span> <span class="n">btInt</span><span class="p">,</span> <span class="n">btList</span><span class="p">,</span> <span class="n">btDict</span>
@@ -173,7 +173,7 @@
 </pre></div></div>
 <p>Define a simple <code>toString</code> proc using the <code>$</code> operator.</p>
 </div>
-<div id="uid20" data-tralics-id="uid20" class="subsection" data-number="2.2.3"><h3><a href="day2_bencode.html#uid20" class="heading hyperref"><span class="number">2.2.3 </span>Encoding</a></h3>
+<div id="uid29" data-tralics-id="uid29" class="subsection" data-number="2.2.3"><h3><a href="day2_bencode.html#uid29" class="heading hyperref"><span class="number">2.2.3 </span>Encoding</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">encode</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span>  <span class="n">obj</span><span class="p">:</span> <span class="n">BencodeType</span><span class="p">)</span> <span class="p">:</span> <span class="kt">string</span>
 </pre></div></div>
 <p>we add forward declarating to encode proc because to encode a list we might encode another values <code>strings</code>, or even <code>lists</code> so we will recursively call encode if needed, feel free to skip to the next part.</p>
@@ -217,7 +217,7 @@
 </pre></div></div>
 <p>Simple proxy to encode <code>obj</code> of <code>BencodeType</code></p>
 </div>
-<div id="uid21" data-tralics-id="uid21" class="subsection" data-number="2.2.4"><h3><a href="day2_bencode.html#uid21" class="heading hyperref"><span class="number">2.2.4 </span>Decoding</a></h3>
+<div id="uid30" data-tralics-id="uid30" class="subsection" data-number="2.2.4"><h3><a href="day2_bencode.html#uid30" class="heading hyperref"><span class="number">2.2.4 </span>Decoding</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">decode</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Decoder</span><span class="p">,</span>  <span class="n">source</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span>
 </pre></div></div>
 <p>Forward declaration for <code>decode</code> same as <code>decode</code></p>

@@ -83,7 +83,7 @@
 </div>
 <div id="cid15" data-tralics-id="cid15" class="section" data-number="5.2"><h2><a href="day5_iniparser.html#cid15" class="heading hyperref"><span class="number">5.2 </span>Implementation</a></h2>
 <p class="noindent">You can certainly use regular expressions, like pythons configparser, but we will go for a simpler approach here, also we want to keep it pure so we don’t depend on <code>pcre</code></p>
-<div id="uid39" data-tralics-id="uid39" class="subsection" data-number="5.2.1"><h3><a href="day5_iniparser.html#uid39" class="heading hyperref"><span class="number">5.2.1 </span>Ini sample</a></h3>
+<div id="uid48" data-tralics-id="uid48" class="subsection" data-number="5.2.1"><h3><a href="day5_iniparser.html#uid48" class="heading hyperref"><span class="number">5.2.1 </span>Ini sample</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">[general]</span>
 <span class="na">appname</span> <span class="o">=</span> <span class="s">configparser</span>
 <span class="na">version</span> <span class="o">=</span> <span class="s">0.1</span>
@@ -94,7 +94,7 @@
 </pre></div></div>
 <p>Ini file consists of one or more sections and each section consists of one or more key value pairs separated by <code>=</code></p>
 </div>
-<div id="uid40" data-tralics-id="uid40" class="subsection" data-number="5.2.2"><h3><a href="day5_iniparser.html#uid40" class="heading hyperref"><span class="number">5.2.2 </span>Define your data types</a></h3>
+<div id="uid49" data-tralics-id="uid49" class="subsection" data-number="5.2.2"><h3><a href="day5_iniparser.html#uid49" class="heading hyperref"><span class="number">5.2.2 </span>Define your data types</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="n">tables</span><span class="p">,</span> <span class="n">strutils</span>
 </pre></div></div>
 <p>We will use tables extensively
@@ -131,7 +131,7 @@
 </pre></div></div>
 <p>define friendly <code>toString</code> proc using <code>$</code> operator</p>
 </div>
-<div id="uid41" data-tralics-id="uid41" class="subsection" data-number="5.2.3"><h3><a href="day5_iniparser.html#uid41" class="heading hyperref"><span class="number">5.2.3 </span>Define API</a></h3>
+<div id="uid50" data-tralics-id="uid50" class="subsection" data-number="5.2.3"><h3><a href="day5_iniparser.html#uid50" class="heading hyperref"><span class="number">5.2.3 </span>Define API</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>proc setSection*(this: Ini, name: string, section: Section) =
     this.sections[name] = section
 
@@ -184,9 +184,9 @@ proc sectionsCount*(this: Ini) : int =
 </pre></div></div>
 <p>Simple proc <code>toIniString</code> to convert the nim structures into Ini text string</p>
 </div>
-<div id="uid42" data-tralics-id="uid42" class="subsection" data-number="5.2.4"><h3><a href="day5_iniparser.html#uid42" class="heading hyperref"><span class="number">5.2.4 </span>Parse!</a></h3>
+<div id="uid51" data-tralics-id="uid51" class="subsection" data-number="5.2.4"><h3><a href="day5_iniparser.html#uid51" class="heading hyperref"><span class="number">5.2.4 </span>Parse!</a></h3>
 <p class="noindent">OK, here comes the cool part</p>
-<div id="uid43" data-tralics-id="uid43" class="subsubsection" data-number="5.2.4.1"><h4><a href="#uid43" class="heading">Parser states</a></h4>
+<div id="uid52" data-tralics-id="uid52" class="subsubsection" data-number="5.2.4.1"><h4><a href="#uid52" class="heading">Parser states</a></h4>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">ParserState</span> <span class="o">=</span> <span class="k">enum</span>
     <span class="n">readSection</span><span class="p">,</span> <span class="n">readKV</span>
 </pre></div></div>
@@ -194,7 +194,7 @@ proc sectionsCount*(this: Ini) : int =
 - readSection: when we are supposed to extract section name from the current line
 - readKV: when we are supposed to read the line in key value pair mode</p>
 </div>
-<div id="uid44" data-tralics-id="uid44" class="subsubsection" data-number="5.2.4.2"><h4><a href="#uid44" class="heading">ParseIni proc</a></h4>
+<div id="uid53" data-tralics-id="uid53" class="subsubsection" data-number="5.2.4.2"><h4><a href="#uid53" class="heading">ParseIni proc</a></h4>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">parseIni</span><span class="o">*</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="n">Ini</span> <span class="o">=</span> 
 </pre></div></div>
 <p>Here we define a proc <code>parseIni</code> that takes a string <code>s</code> and creates an <code>Ini</code> object</p>

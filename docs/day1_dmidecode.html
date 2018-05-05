@@ -130,18 +130,29 @@ BIOS Information
                 Targeted content distribution is supported
         BIOS Revision: 1.40
 </pre></div></div>
-<p>### DMI structure
-- DMIDecode output is some meta like comments, versions and one or more sections
-- Section: consists of a
-* handle line
-* title line
-* one or more indented properties
-- Property: consists of
-* key
-* optional value
-* optional list of indented items</p>
+<ul>
+<li>DMIDecode output is some meta like comments, versions and one or more sections
+</li>
+<li>Section: consists of a
+<ul>
+<li>handle line
+</li>
+<li>title line
+</li>
+<li>one or more indented properties
+</li></ul>
+</li>
+<li>Property: consists of
+<ul>
+<li>key
+</li>
+<li>optional value
+</li>
+<li>optional list of indented items
+</li></ul>
+</li></ul>
 </div>
-<div id="uid3" data-tralics-id="uid3" class="subsection" data-number="1.2.3"><h3><a href="day1_dmidecode.html#uid3" class="heading hyperref"><span class="number">1.2.3 </span>Mapping DMI to nim structures</a></h3>
+<div id="uid12" data-tralics-id="uid12" class="subsection" data-number="1.2.3"><h3><a href="day1_dmidecode.html#uid12" class="heading hyperref"><span class="number">1.2.3 </span>Mapping DMI to nim structures</a></h3>
 <p class="noindent">So ourplan is to have an api like
 </p><div class="code"><div class="highlight"><pre><span></span><span class="n">dmifile</span> <span class="o">=</span> <span class="n">parseDMI</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 <span class="n">dmifile</span><span class="o">[</span><span class="s">"section1"</span><span class="o">][</span><span class="s">"property1].value</span>
@@ -172,7 +183,7 @@ BIOS Information
 </p><div class="code"><div class="highlight"><pre><span></span>    <span class="n">getindentlevel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span>  <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">takewhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">isspace</span><span class="p">(),</span> <span class="n">l</span><span class="p">)))</span>
 </pre></div></div>
 </div>
-<div id="uid4" data-tralics-id="uid4" class="subsection" data-number="1.2.4"><h3><a href="day1_dmidecode.html#uid4" class="heading hyperref"><span class="number">1.2.4 </span>Parsing DMI source into nim structures</a></h3>
+<div id="uid13" data-tralics-id="uid13" class="subsection" data-number="1.2.4"><h3><a href="day1_dmidecode.html#uid13" class="heading hyperref"><span class="number">1.2.4 </span>Parsing DMI source into nim structures</a></h3>
 <p class="noindent">There’re many ways to parse the DMI (e.g using regex which would be fairly simple “feel free to implement it” and kindly send me a PR to update this tutorial)
 </p><div class="code"><div class="highlight"><pre><span></span>proc parseDMI* (source: string) : Table[string, Section]=
 </pre></div></div>

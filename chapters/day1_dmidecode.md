@@ -47,6 +47,7 @@ nimble init
 ```
 
 ### So how does dmidecode output look like?
+
 ```
 # dmidecode 3.1
 Getting SMBIOS data from sysfs.
@@ -64,7 +65,7 @@ System Information
         Family: Intel_Mobile
 ```
 
-or 
+or
 
 ```
 Getting SMBIOS data from sysfs.
@@ -97,7 +98,7 @@ BIOS Information
                 Targeted content distribution is supported
         BIOS Revision: 1.40
 ```
-### DMI structure
+
 - DMIDecode output is some meta like comments, versions and one or more sections
 - Section: consists of a 
     * handle line
