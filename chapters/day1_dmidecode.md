@@ -133,9 +133,10 @@ method addItem(this: Property, item: string) =
     this.items.add(item)
 
 ```
+
 As our parsing will depend on the indentation level we can use this handy function to get the indentation level of a line (number of spaces before the first asciiLetter)
 
-```
+```nim
 proc getIndentLevel(line: string) : int = 
     for i, c in pairs(line):
         if not c.isSpaceAscii():
@@ -192,6 +193,7 @@ type
     ParserState = enum
         noOp, sectionName, readKeyValue, readList
 ```
+
 - noOp: no action yet
 - sectionName: read sectionName
 - readKeyValue: read a line has colon `:` in it into a key value pair
@@ -200,7 +202,8 @@ type
 so our state is noOp until we reach line 
 ```Handle 0x0000, DMI type 0, 24 bytes```
 then moves to sectionName
-for line ```BIOS Information``` then state changes to reading properties
+
+for line `BIOS Information` then state changes to reading properties
 ```
         Vendor: LENOVO
         Version: 29CN40WW(V2.17)
@@ -208,14 +211,13 @@ for line ```BIOS Information``` then state changes to reading properties
         ROM Size: 2048 kB
         Characteristics:
 ```
-then we notice the indentation on the next line 
+
+then we notice the indentation on the next line is greater than the one on the current line
 ```
                 PCI is supported
-``` 
-is greater than the one on the current line
-```
         Characteristics:
 ```
+
 so state moves into readList to read the items related to property `Characterstics`
 ```
                 PCI is supported
@@ -237,15 +239,13 @@ so state moves into readList to read the items related to property `Charactersti
                 BIOS boot specification is supported
                 Targeted content distribution is supported
 ```
-and again it notices the indentation is of the next line 
+
+and again it notices the indentation is of the next line is less than the current line 
 ```
         BIOS Revision: 1.40
-```
-
-is less than the current line 
-```
                 Targeted content distribution is supported
 ```
+
 so state switches again into `readKeyValue`
 
 - if we encounter an empty line:
@@ -266,15 +266,17 @@ proc parseDMI* (source: string) : Table[string, Section]=
         s: Section = nil 
         k, v: string
 ```
+
 Here we define the current state, code lines, initialize a table `sects` from `sectionName` to `Section Object` and variables p `current property`, s `current section`, k, v `current property key, value`
 
 ```nim
     for i, l in pairs(lines):
 ```
+
 Start looping on index, line using `pairs` 
 > pairs is kinda like enumerate in python
 
-```
+```nim
         if l.startsWith("Handle"):
             s = new Section
             s.props = initTable[string, Property]()
@@ -282,6 +284,7 @@ Start looping on index, line using `pairs`
             state = sectionName
             continue 
 ```
+
 If we encounter the string `Handle` 
 - create new section object and initialize it's props table
 - keep track of the handle line
@@ -294,6 +297,7 @@ If we encounter the string `Handle`
                 sects[s.title] = s
             continue
 ```
+
 if line is empty and we have a section object `not nil` we finish the section and continue 
 
 ```nim
@@ -301,11 +305,12 @@ if line is empty and we have a section object `not nil` we finish the section an
             s.title = l
             state = readKeyValue  # change state into reading key value pairs
 ```
+
 If state is sectionName:
 - this line is a title line 
 - change state for the upcoming to readKeyValue
 
-```
+```nim
         elif state == readKeyValue:
             let pair = l.split({':'})
             k = pair[0].strip()
@@ -326,6 +331,7 @@ If state is readKeyValue
             if i < len(lines) and (getIndentlevel(l) < getIndentlevel(lines[i+1])) :
                 state = readList
 ```
+
 If the next line indentation is greater this means we're should be reading list of items regarding the current property `p`
 
 ```nim
@@ -333,6 +339,7 @@ If the next line indentation is greater this means we're should be reading list 
                 # add key/value pair directly
                 s.props[k] = p
 ```
+
 If not finish the property
 
 
@@ -344,6 +351,7 @@ If not finish the property
                 state = readKeyValue 
                 s.props[k] = p
 ```
+
 if state is `readList`
 - keep adding items to current property `p`
 - if the indentation level decreased change state to `readKeyValue` and finish property
@@ -351,5 +359,3 @@ if state is `readList`
     return sects
 
 ```
-
-Feel free to send PRs regarding idiomatic nim, tests, improvements to the tutorial, .. etc :)

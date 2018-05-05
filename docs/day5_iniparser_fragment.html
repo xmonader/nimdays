@@ -37,7 +37,7 @@
 </pre></div></div>
 </div><div id="cid15" data-tralics-id="cid15" class="section" data-number="5.2"><h2><a href="day5_iniparser_fragment.html#cid15" class="heading hyperref"><span class="number">5.2 </span>Implementation</a></h2>
 <p class="noindent">You can certainly use regular expressions, like pythons configparser, but we will go for a simpler approach here, also we want to keep it pure so we don’t depend on <code>pcre</code></p>
-<div id="uid16" data-tralics-id="uid16" class="subsection" data-number="5.2.1"><h3><a href="day5_iniparser_fragment.html#uid16" class="heading hyperref"><span class="number">5.2.1 </span>Ini sample</a></h3>
+<div id="uid23" data-tralics-id="uid23" class="subsection" data-number="5.2.1"><h3><a href="day5_iniparser_fragment.html#uid23" class="heading hyperref"><span class="number">5.2.1 </span>Ini sample</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">[general]</span>
 <span class="na">appname</span> <span class="o">=</span> <span class="s">configparser</span>
 <span class="na">version</span> <span class="o">=</span> <span class="s">0.1</span>
@@ -48,7 +48,7 @@
 </pre></div></div>
 <p>Ini file consists of one or more sections and each section consists of one or more key value pairs separated by <code>=</code></p>
 </div>
-<div id="uid17" data-tralics-id="uid17" class="subsection" data-number="5.2.2"><h3><a href="day5_iniparser_fragment.html#uid17" class="heading hyperref"><span class="number">5.2.2 </span>Define your data types</a></h3>
+<div id="uid24" data-tralics-id="uid24" class="subsection" data-number="5.2.2"><h3><a href="day5_iniparser_fragment.html#uid24" class="heading hyperref"><span class="number">5.2.2 </span>Define your data types</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="n">tables</span><span class="p">,</span> <span class="n">strutils</span>
 </pre></div></div>
 <p>We will use tables extensively
@@ -79,13 +79,13 @@
     ini.sections = initTable[string, Section]()
     return ini
 </pre></div></div>
-<p>To craete new Ini object
+<p>To create new Ini object
 </p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">`$`</span><span class="o">*</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Ini</span><span class="p">)</span> <span class="p">:</span> <span class="kt">string</span> <span class="o">=</span> 
     <span class="k">return</span> <span class="s">"&lt;Ini "</span> <span class="o">&amp;</span> <span class="o">$</span><span class="n">this</span><span class="p">.</span><span class="n">sections</span> <span class="o">&amp;</span> <span class="s">" &gt;"</span>
 </pre></div></div>
 <p>define friendly <code>toString</code> proc using <code>$</code> operator</p>
 </div>
-<div id="uid18" data-tralics-id="uid18" class="subsection" data-number="5.2.3"><h3><a href="day5_iniparser_fragment.html#uid18" class="heading hyperref"><span class="number">5.2.3 </span>Define API</a></h3>
+<div id="uid25" data-tralics-id="uid25" class="subsection" data-number="5.2.3"><h3><a href="day5_iniparser_fragment.html#uid25" class="heading hyperref"><span class="number">5.2.3 </span>Define API</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>proc setSection*(this: Ini, name: string, section: Section) =
     this.sections[name] = section
 
@@ -138,9 +138,9 @@ proc sectionsCount*(this: Ini) : int =
 </pre></div></div>
 <p>Simple proc <code>toIniString</code> to convert the nim structures into Ini text string</p>
 </div>
-<div id="uid19" data-tralics-id="uid19" class="subsection" data-number="5.2.4"><h3><a href="day5_iniparser_fragment.html#uid19" class="heading hyperref"><span class="number">5.2.4 </span>Parse!</a></h3>
+<div id="uid26" data-tralics-id="uid26" class="subsection" data-number="5.2.4"><h3><a href="day5_iniparser_fragment.html#uid26" class="heading hyperref"><span class="number">5.2.4 </span>Parse!</a></h3>
 <p class="noindent">OK, here comes the cool part</p>
-<div id="uid20" data-tralics-id="uid20" class="subsubsection" data-number="5.2.4.1"><h4><a href="#uid20" class="heading">Parser states</a></h4>
+<div id="uid27" data-tralics-id="uid27" class="subsubsection" data-number="5.2.4.1"><h4><a href="#uid27" class="heading">Parser states</a></h4>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">ParserState</span> <span class="o">=</span> <span class="k">enum</span>
     <span class="n">readSection</span><span class="p">,</span> <span class="n">readKV</span>
 </pre></div></div>
@@ -148,7 +148,7 @@ proc sectionsCount*(this: Ini) : int =
 - readSection: when we are supposed to extract section name from the current line
 - readKV: when we are supposed to read the line in key value pair mode</p>
 </div>
-<div id="uid21" data-tralics-id="uid21" class="subsubsection" data-number="5.2.4.2"><h4><a href="#uid21" class="heading">ParseIni proc</a></h4>
+<div id="uid28" data-tralics-id="uid28" class="subsubsection" data-number="5.2.4.2"><h4><a href="#uid28" class="heading">ParseIni proc</a></h4>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">parseIni</span><span class="o">*</span><span class="p">(</span><span class="n">s</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="n">Ini</span> <span class="o">=</span> 
 </pre></div></div>
 <p>Here we define a proc <code>parseIni</code> that takes a string <code>s</code> and creates an <code>Ini</code> object</p>
@@ -158,61 +158,51 @@ proc sectionsCount*(this: Ini) : int =
     
     <span class="kd">var</span> <span class="n">currentSectionName</span><span class="p">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s">""</span>
     <span class="kd">var</span> <span class="n">currentSection</span> <span class="o">=</span> <span class="n">newSection</span><span class="p">()</span>
-<span class="p">```</span> 
-<span class="o">-</span> <span class="p">`</span><span class="n">ini</span><span class="p">`</span> <span class="ow">is</span> <span class="n">the</span> <span class="k">object</span> <span class="n">to</span> <span class="n">be</span> <span class="n">returned</span> <span class="n">after</span> <span class="n">parsing</span>
-<span class="o">-</span> <span class="p">`</span><span class="n">state</span><span class="p">`</span> <span class="n">the</span> <span class="n">current</span> <span class="n">parser</span> <span class="n">state</span> <span class="p">(</span><span class="n">weather</span> <span class="n">it</span><span class="sc">'s `readSection` or `readKV`)</span>
-<span class="o">-</span> <span class="p">`</span><span class="n">lines</span><span class="p">`</span> <span class="n">input</span> <span class="kt">string</span> <span class="n">splitted</span> <span class="n">into</span> <span class="n">lines</span> <span class="p">`</span><span class="k">as</span> <span class="n">we</span> <span class="n">are</span> <span class="n">a</span> <span class="n">lines</span> <span class="n">based</span> <span class="n">parser</span><span class="p">`</span>
-<span class="o">-</span> <span class="p">`</span><span class="n">currentSectionName</span><span class="p">`</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">track</span> <span class="k">of</span> <span class="n">what</span> <span class="n">section</span> <span class="n">we</span> <span class="n">are</span> <span class="n">currently</span> <span class="ow">in</span>
-<span class="o">-</span> <span class="p">`</span><span class="n">currentSection</span><span class="p">`</span> <span class="n">to</span> <span class="n">populate</span> <span class="p">`</span><span class="n">ini</span><span class="p">.</span><span class="n">sections</span><span class="p">`</span> <span class="k">with</span> <span class="p">`</span><span class="n">Section</span><span class="p">`</span> <span class="k">object</span> <span class="n">using</span> <span class="p">`</span><span class="n">setSection</span><span class="p">`</span> <span class="k">proc</span>
-
-<span class="p">```</span><span class="n">nim</span>
-   <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
-<span class="p">```</span>
-<span class="k">for</span> <span class="n">each</span> <span class="n">line</span> 
-<span class="p">```</span><span class="n">nim</span>
-         <span class="k">if</span> <span class="n">line</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">""</span> <span class="ow">or</span> <span class="n">line</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s">";"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s">"#"</span><span class="p">):</span>
+</pre></div></div>
+<ul>
+<li><code>ini</code> is the object to be returned after parsing
+</li>
+<li><code>state</code> the current parser state (weather it’s <code>readSection</code> or <code>readKV</code>)
+</li>
+<li><code>lines</code> input string splitted into lines <code>as we are a lines based parser</code>
+</li>
+<li><code>currentSectionName</code> to keep track of what section we are currently in
+</li>
+<li><code>currentSection</code> to populate <code>ini.sections</code> with <code>Section</code> object using <code>setSection</code> proc
+</li></ul>
+<div class="code"><div class="highlight"><pre><span></span>   <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+</pre></div></div>
+<p>for each line
+</p><div class="code"><div class="highlight"><pre><span></span>         <span class="k">if</span> <span class="n">line</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s">""</span> <span class="ow">or</span> <span class="n">line</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s">";"</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s">"#"</span><span class="p">):</span>
             <span class="k">continue</span>
-<span class="p">```</span>
-<span class="n">We</span> <span class="k">continue</span> <span class="k">if</span> <span class="n">line</span> <span class="ow">is</span> <span class="n">safe</span> <span class="n">to</span> <span class="n">igore</span> <span class="p">`</span><span class="n">empty</span> <span class="n">line</span><span class="p">`</span> <span class="ow">or</span> <span class="n">starts</span> <span class="k">with</span> <span class="p">`;`</span> <span class="ow">or</span> <span class="p">`</span><span class="c">#`</span>
-
-<span class="p">```</span><span class="n">nim</span>
-        <span class="k">if</span> <span class="n">line</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s">"["</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span><span class="p">.</span><span class="n">endsWith</span><span class="p">(</span><span class="s">"]"</span><span class="p">):</span>
+</pre></div></div>
+<p>We continue if line is safe to igore <code>empty line</code> or starts with <code>;</code> or <code>#</code></p>
+<div class="code"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">line</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s">"["</span><span class="p">)</span> <span class="ow">and</span> <span class="n">line</span><span class="p">.</span><span class="n">endsWith</span><span class="p">(</span><span class="s">"]"</span><span class="p">):</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">readSection</span>
-<span class="p">```</span>
-<span class="k">if</span> <span class="n">line</span> <span class="n">startswith</span> <span class="p">`</span><span class="o">[</span><span class="p">`</span> <span class="ow">and</span> <span class="n">ends</span> <span class="k">with</span> <span class="p">`</span><span class="o">]</span><span class="p">`</span> <span class="n">then</span> <span class="n">we</span> <span class="kt">set</span> <span class="n">parser</span> <span class="n">state</span> <span class="n">to</span> <span class="p">`</span><span class="n">readSection</span><span class="p">`</span>
-
-<span class="p">```</span><span class="n">nim</span>
-        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">readSection</span><span class="p">:</span>
+</pre></div></div>
+<p>if line startswith <code>[</code> and ends with <code>]</code> then we set parser state to <code>readSection</code></p>
+<div class="code"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">readSection</span><span class="p">:</span>
             <span class="n">currentSectionName</span> <span class="o">=</span> <span class="n">line</span><span class="o">[</span><span class="mf">1</span><span class="p">..</span><span class="o">&lt;</span><span class="n">line</span><span class="p">.</span><span class="n">len</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span>
             <span class="n">ini</span><span class="p">.</span><span class="n">setSection</span><span class="p">(</span><span class="n">currentSectionName</span><span class="p">,</span> <span class="n">currentSection</span><span class="p">)</span>
             <span class="n">state</span> <span class="o">=</span> <span class="n">readKV</span>
             <span class="k">continue</span>
-<span class="p">```</span>
-<span class="k">if</span> <span class="n">parser</span> <span class="p">`</span><span class="n">state</span><span class="p">`</span> <span class="ow">is</span> <span class="p">`</span><span class="n">readSection</span><span class="p">`</span>
-<span class="o">-</span> <span class="n">extract</span> <span class="n">section</span> <span class="n">name</span> <span class="p">`</span><span class="n">between</span> <span class="o">[</span> <span class="ow">and</span> <span class="o">]</span><span class="p">`</span>
-<span class="o">-</span> <span class="n">add</span> <span class="n">section</span> <span class="k">object</span> <span class="n">to</span> <span class="n">the</span> <span class="n">ini</span> <span class="n">under</span> <span class="n">the</span> <span class="n">current</span> <span class="n">section</span> <span class="n">name</span>
-<span class="o">-</span> <span class="n">change</span> <span class="p">`</span><span class="n">state</span><span class="p">`</span> <span class="n">to</span> <span class="p">`</span><span class="n">readKV</span><span class="p">`</span> <span class="n">to</span> <span class="n">read</span> <span class="n">key</span> <span class="n">value</span> <span class="n">pairs</span>
-<span class="o">-</span> <span class="k">continue</span> <span class="n">the</span> <span class="n">loop</span> <span class="n">on</span> <span class="n">the</span> <span class="n">nextline</span> <span class="k">as</span> <span class="n">we</span><span class="sc">'re done processing the section name.</span>
-
-<span class="p">```</span><span class="n">nim</span>
-        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">readKV</span><span class="p">:</span>
+</pre></div></div>
+<p>if parser <code>state</code> is <code>readSection</code>
+- extract section name <code>between [ and ]</code>
+- add section object to the ini under the current section name
+- change <code>state</code> to <code>readKV</code> to read key value pairs
+- continue the loop on the nextline as we’re done processing the section name.</p>
+<div class="code"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">readKV</span><span class="p">:</span>
             <span class="k">let</span> <span class="n">parts</span> <span class="o">=</span> <span class="n">line</span><span class="p">.</span><span class="n">split</span><span class="p">({</span><span class="sc">'='</span><span class="p">})</span>
             <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="k">let</span> <span class="n">key</span> <span class="o">=</span> <span class="n">parts</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="k">let</span> <span class="n">val</span> <span class="o">=</span> <span class="n">parts</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="n">ini</span><span class="p">.</span><span class="n">setProperty</span><span class="p">(</span><span class="n">currentSectionName</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
-<span class="p">```</span>
-<span class="k">if</span> <span class="p">`</span><span class="n">state</span><span class="p">`</span> <span class="ow">is</span> <span class="p">`</span><span class="n">readKV</span><span class="p">`</span> 
-<span class="o">-</span> <span class="n">extract</span> <span class="p">`</span><span class="n">key</span><span class="p">`</span> <span class="ow">and</span> <span class="p">`</span><span class="n">val</span><span class="p">`</span> <span class="n">by</span> <span class="n">splitting</span> <span class="n">the</span> <span class="n">line</span> <span class="n">on</span> <span class="p">`</span><span class="o">=</span><span class="p">`</span>
-<span class="o">-</span> <span class="p">`</span><span class="n">setProperty</span><span class="p">`</span> <span class="n">under</span> <span class="n">the</span> <span class="p">`</span><span class="n">currentSectionName</span><span class="p">`</span> <span class="n">using</span> <span class="p">`</span><span class="n">key</span><span class="p">`</span> <span class="ow">and</span> <span class="p">`</span><span class="n">val</span><span class="p">`</span>
-<span class="p">```</span><span class="n">nim</span>
-    <span class="k">return</span> <span class="n">ini</span>
-<span class="p">```</span>
-<span class="n">Here</span> <span class="n">we</span> <span class="k">return</span> <span class="n">the</span> <span class="n">populated</span> <span class="p">`</span><span class="n">ini</span><span class="p">`</span> <span class="k">object</span><span class="p">.</span>
-
-
-<span class="c"># Thanks </span>
-<span class="n">To</span> <span class="n">you</span> <span class="k">for</span> <span class="n">taking</span> <span class="n">the</span> <span class="n">time</span> <span class="n">to</span> <span class="n">read</span> <span class="n">the</span> <span class="n">tutorial</span> <span class="ow">and</span> <span class="n">thanks</span> <span class="n">to</span> <span class="n">everyone</span> <span class="n">at</span> <span class="c">#nim on gitter for their valuable reviews.</span>
-<span class="n">Feel</span> <span class="n">free</span> <span class="n">to</span> <span class="n">send</span> <span class="n">me</span> <span class="n">PRs</span> <span class="n">to</span> <span class="n">make</span> <span class="n">this</span> <span class="n">tutorial</span><span class="o">/</span><span class="n">library</span> <span class="n">better</span> <span class="p">:)</span>
 </pre></div></div>
+<p>if <code>state</code> is <code>readKV</code>
+- extract <code>key</code> and <code>val</code> by splitting the line on <code>=</code>
+- <code>setProperty</code> under the <code>currentSectionName</code> using <code>key</code> and <code>val</code>
+</p><div class="code"><div class="highlight"><pre><span></span>    <span class="k">return</span> <span class="n">ini</span>
+</pre></div></div>
+<p>Here we return the populated <code>ini</code> object.</p>
 </div></div></div>

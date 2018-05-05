@@ -102,7 +102,7 @@ proc newIni*() : Ini =
     ini.sections = initTable[string, Section]()
     return ini
 ```
-To craete new Ini object
+To create new Ini object
 ```nim
 proc `$`*(this: Ini) : string = 
     return "<Ini " & $this.sections & " >"
@@ -182,9 +182,11 @@ Here we have two states
 - readKV: when we are supposed to read the line in key value pair mode
 
 #### ParseIni proc
+
 ```nim
 proc parseIni*(s: string) : Ini = 
 ```
+
 Here we define a proc `parseIni` that takes a string `s` and creates an `Ini` object
 
 ```nim
@@ -194,7 +196,8 @@ Here we define a proc `parseIni` that takes a string `s` and creates an `Ini` ob
     
     var currentSectionName: string = ""
     var currentSection = newSection()
-``` 
+```
+
 - `ini` is the object to be returned after parsing
 - `state` the current parser state (weather it's `readSection` or `readKV`)
 - `lines` input string splitted into lines `as we are a lines based parser`
@@ -245,8 +248,3 @@ if `state` is `readKV`
     return ini
 ```
 Here we return the populated `ini` object.
-
-
-# Thanks 
-To you for taking the time to read the tutorial and thanks to everyone at #nim on gitter for their valuable reviews.
-Feel free to send me PRs to make this tutorial/library better :)

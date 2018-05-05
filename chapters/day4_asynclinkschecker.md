@@ -170,5 +170,3 @@ proc threadsLinksChecker(links: seq[string]): void =
 
 
 > Note: you should use `nim.cfg` with flags `-d:ssl` to allow working with https
-
-Send me a PR for improvements

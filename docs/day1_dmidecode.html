@@ -162,11 +162,11 @@ BIOS Information
     <span class="n">this</span><span class="p">.</span><span class="n">items</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 </pre></div></div>
 <p>As our parsing will depend on the indentation level we can use this handy function to get the indentation level of a line (number of spaces before the first asciiLetter)</p>
-<div class="code"><div class="highlight"><pre><span></span>proc getIndentLevel(line: string) : int = 
-    for i, c in pairs(line):
-        if not c.isSpaceAscii():
-            return i
-    return 0
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">getIndentLevel</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="kt">int</span> <span class="o">=</span> 
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="p">.</span><span class="n">isSpaceAscii</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="mi">0</span>
 </pre></div></div>
 <p>It’d have been nicer to use <code>takewhile</code>, but it’s not available in nim stdlib
 </p><div class="code"><div class="highlight"><pre><span></span>    <span class="n">getindentlevel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span>  <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">takewhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">isspace</span><span class="p">(),</span> <span class="n">l</span><span class="p">)))</span>
@@ -212,152 +212,138 @@ BIOS Information
     <span class="n">ParserState</span> <span class="o">=</span> <span class="k">enum</span>
         <span class="n">noOp</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">readKeyValue</span><span class="p">,</span> <span class="n">readList</span>
 </pre></div></div>
-<p>- noOp: no action yet
-- sectionName: read sectionName
-- readKeyValue: read a line has colon <code>:</code> in it into a key value pair
-- readList: when the next line has greater indentation level than the property line</p>
+<ul>
+<li>noOp: no action yet
+</li>
+<li>sectionName: read sectionName
+</li>
+<li>readKeyValue: read a line has colon <code>:</code> in it into a key value pair
+</li>
+<li>readList: when the next line has greater indentation level than the property line
+</li></ul>
 <p>so our state is noOp until we reach line
 <code>Handle 0x0000, DMI type 0, 24 bytes</code>
-then moves to sectionName
-for line <code>BIOS Information</code> then state changes to reading properties
+then moves to sectionName</p>
+<p>for line <code>BIOS Information</code> then state changes to reading properties
 </p><div class="code"><div class="highlight"><pre><span></span>        Vendor: LENOVO
         Version: 29CN40WW(V2.17)
         Release Date: 04/13/2011
         ROM Size: 2048 kB
         Characteristics:
 </pre></div></div>
-<p>then we notice the indentation on the next line
+<p>then we notice the indentation on the next line is greater than the one on the current line
 </p><div class="code"><div class="highlight"><pre><span></span>                PCI is supported
-``` 
-is greater than the one on the current line
+        Characteristics:
 </pre></div></div>
-<p>Characteristics:
-</p><div class="code"><div class="highlight"><pre><span></span>so state moves into readList to read the items related to property `Characterstics`
+<p>so state moves into readList to read the items related to property <code>Characterstics</code>
+</p><div class="code"><div class="highlight"><pre><span></span>                PCI is supported
+                BIOS is upgradeable
+                BIOS shadowing is allowed
+                Boot from CD is supported
+                Selectable boot is supported
+                EDD is supported
+                Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
+                Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
+                5.25"/360 kB floppy services are supported (int 13h)
+                5.25"/1.2 MB floppy services are supported (int 13h)
+                3.5"/720 kB floppy services are supported (int 13h)
+                3.5"/2.88 MB floppy services are supported (int 13h)
+                8042 keyboard services are supported (int 9h)
+                CGA/mono video services are supported (int 10h)
+                ACPI is supported
+                USB legacy is supported
+                BIOS boot specification is supported
+                Targeted content distribution is supported
 </pre></div></div>
-<p>PCI is supported
-BIOS is upgradeable
-BIOS shadowing is allowed
-Boot from CD is supported
-Selectable boot is supported
-EDD is supported
-Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
-Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
-5.25”/360 kB floppy services are supported (int 13h)
-5.25”/1.2 MB floppy services are supported (int 13h)
-3.5”/720 kB floppy services are supported (int 13h)
-3.5”/2.88 MB floppy services are supported (int 13h)
-8042 keyboard services are supported (int 9h)
-CGA/mono video services are supported (int 10h)
-ACPI is supported
-USB legacy is supported
-BIOS boot specification is supported
-Targeted content distribution is supported
-</p><div class="code"><div class="highlight"><pre><span></span>and again it notices the indentation is of the next line 
+<p>and again it notices the indentation is of the next line is less than the current line
+</p><div class="code"><div class="highlight"><pre><span></span>        BIOS Revision: 1.40
+                Targeted content distribution is supported
 </pre></div></div>
-<p>BIOS Revision: 1.40
-</p><div class="code"><div class="highlight"><pre><span></span>is less than the current line 
-</pre></div></div>
-<p>Targeted content distribution is supported
-</p><div class="code"><div class="highlight"><pre><span></span>so state switches again into `readKeyValue`
-
-- if we encounter an empty line:
-    * if not in parsing state then it's a noOp we ignore meta and empty lines
-    * if in parsing state `current Section isn't nil` we finish parsing the section object
-
-
-```nim
-
-proc parseDMI* (source: string) : Table[string, Section]=
+<p>so state switches again into <code>readKeyValue</code></p>
+<ul>
+<li>if we encounter an empty line:
+<ul>
+<li>if not in parsing state then it’s a noOp we ignore meta and empty lines
+</li>
+<li>if in parsing state <code>current Section isn’t nil</code> we finish parsing the section object
+</li></ul>
+</li></ul>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">parseDMI</span><span class="o">*</span> <span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">Section</span><span class="o">]=</span>
     
-    var
-        state : ParserState = noOp
-        lines = strutils.splitLines(source)
-        sects = initTable[string, Section]()
+    <span class="kd">var</span>
+        <span class="n">state</span> <span class="p">:</span> <span class="n">ParserState</span> <span class="o">=</span> <span class="n">noOp</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">strutils</span><span class="p">.</span><span class="n">splitLines</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+        <span class="n">sects</span> <span class="o">=</span> <span class="n">initTable</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">Section</span><span class="o">]</span><span class="p">()</span>
         
-        p: Property = nil
-        s: Section = nil 
-        k, v: string
-```
-Here we define the current state, code lines, initialize a table `sects` from `sectionName` to `Section Object` and variables p `current property`, s `current section`, k, v `current property key, value`
-
-```nim
-    for i, l in pairs(lines):
-```
-Start looping on index, line using `pairs` 
-&gt; pairs is kinda like enumerate in python
+        <span class="n">p</span><span class="p">:</span> <span class="n">Property</span> <span class="o">=</span> <span class="kp">nil</span>
+        <span class="n">s</span><span class="p">:</span> <span class="n">Section</span> <span class="o">=</span> <span class="kp">nil</span> 
+        <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="kt">string</span>
 </pre></div></div>
-<p>if l.startsWith(“Handle”):
-s = new Section
-s.props = initTable<a href="" target="_blank" rel="noopener">string, Property</a>
-s.handleline = l
-state = sectionName
-continue
-</p><div class="code"><div class="highlight"><pre><span></span>If we encounter the string `Handle` 
-- create new section object and initialize it's props table
+<p>Here we define the current state, code lines, initialize a table <code>sects</code> from <code>sectionName</code> to <code>Section Object</code> and variables p <code>current property</code>, s <code>current section</code>, k, v <code>current property key, value</code></p>
+<div class="code"><div class="highlight"><pre><span></span>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+</pre></div></div>
+<p>Start looping on index, line using <code>pairs</code>
+&gt; pairs is kinda like enumerate in python</p>
+<div class="code"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">l</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s">"Handle"</span><span class="p">):</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Section</span>
+            <span class="n">s</span><span class="p">.</span><span class="n">props</span> <span class="o">=</span> <span class="n">initTable</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">Property</span><span class="o">]</span><span class="p">()</span>
+            <span class="n">s</span><span class="p">.</span><span class="n">handleline</span> <span class="o">=</span> <span class="n">l</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">sectionName</span>
+            <span class="k">continue</span> 
+</pre></div></div>
+<p>If we encounter the string <code>Handle</code>
+- create new section object and initialize it’s props table
 - keep track of the handle line
 - switch state to reading sectionName
-- continue the loop to move to the title line
-
-```nim
-        if l == "": # can be just new line before reading any sections. 
-            if s != nil:
-                sects[s.title] = s
-            continue
-```
-if line is empty and we have a section object `not nil` we finish the section and continue 
-
-```nim
-        if state == sectionName:  # current line is the title line
-            s.title = l
-            state = readKeyValue  # change state into reading key value pairs
-```
-If state is sectionName:
-- this line is a title line 
-- change state for the upcoming to readKeyValue
+- continue the loop to move to the title line</p>
+<div class="code"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="s">""</span><span class="p">:</span> <span class="c"># can be just new line before reading any sections. </span>
+            <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="kp">nil</span><span class="p">:</span>
+                <span class="n">sects</span><span class="o">[</span><span class="n">s</span><span class="p">.</span><span class="n">title</span><span class="o">]</span> <span class="o">=</span> <span class="n">s</span>
+            <span class="k">continue</span>
 </pre></div></div>
-<p>elif state == readKeyValue:
-let pair = l.split({‘:’})
-k = pair[0].strip()
-if len(pair) == 2:
-v = pair[1].strip()
-else: # value can be empty
-v = “”
-p = Property(val: v)
-p.items = newSeq<a href="" target="_blank" rel="noopener">string</a>
-p.val = v
-</p><div class="code"><div class="highlight"><pre><span></span>If state is readKeyValue
-- split the line on colon `:` to get key, value pair and set v to "" if not present
-- make current Property `p` and initialize its related fields `items`, `val`
-
-```nim
-            # current line indentation is &lt;  nextline indentation =&gt; change state to readList
-            if i &lt; len(lines) and (getIndentlevel(l) &lt; getIndentlevel(lines[i+1])) :
-                state = readList
-```
-If the next line indentation is greater this means we're should be reading list of items regarding the current property `p`
-
-```nim
-            else:
-                # add key/value pair directly
-                s.props[k] = p
-```
-If not finish the property
-
-
-```nim
-        elif state == readList:
-            # keep adding the current line to current property items and if dedented =&gt; change state to readKeyValue
-            p.add_item(l.strip())
-            if getindentlevel(l) &gt; getindentlevel(lines[i+1]):
-                state = readKeyValue 
-                s.props[k] = p
-```
-if state is `readList`
-- keep adding items to current property `p`
-- if the indentation level decreased change state to `readKeyValue` and finish property
+<p>if line is empty and we have a section object <code>not nil</code> we finish the section and continue</p>
+<div class="code"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">sectionName</span><span class="p">:</span>  <span class="c"># current line is the title line</span>
+            <span class="n">s</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">l</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="n">readKeyValue</span>  <span class="c"># change state into reading key value pairs</span>
 </pre></div></div>
-<p>return sects</p>
-<div class="code"><div class="highlight"><pre><span></span>Feel free to send PRs regarding idiomatic nim, tests, improvements to the tutorial, .. etc :)
+<p>If state is sectionName:
+- this line is a title line
+- change state for the upcoming to readKeyValue</p>
+<div class="code"><div class="highlight"><pre><span></span>        <span class="k">elif</span> <span class="n">state</span> <span class="o">==</span> <span class="n">readKeyValue</span><span class="p">:</span>
+            <span class="k">let</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">l</span><span class="p">.</span><span class="n">split</span><span class="p">({</span><span class="sc">':'</span><span class="p">})</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>                 <span class="c"># value can be empty</span>
+                <span class="n">v</span> <span class="o">=</span> <span class="s">""</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="n">v</span><span class="p">)</span>
+            <span class="n">p</span><span class="p">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">newSeq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span><span class="p">()</span>
+            <span class="n">p</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+</pre></div></div>
+<p>If state is readKeyValue
+- split the line on colon <code>:</code> to get key, value pair and set v to “” if not present
+- make current Property <code>p</code> and initialize its related fields <code>items</code>, <code>val</code></p>
+<div class="code"><div class="highlight"><pre><span></span>            <span class="c"># current line indentation is &lt;  nextline indentation =&gt; change state to readList</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">getIndentlevel</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">getIndentlevel</span><span class="p">(</span><span class="n">lines</span><span class="o">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">]</span><span class="p">))</span> <span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">readList</span>
+</pre></div></div>
+<p>If the next line indentation is greater this means we’re should be reading list of items regarding the current property <code>p</code></p>
+<div class="code"><div class="highlight"><pre><span></span>            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># add key/value pair directly</span>
+                <span class="n">s</span><span class="p">.</span><span class="n">props</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">p</span>
+</pre></div></div>
+<p>If not finish the property</p>
+<div class="code"><div class="highlight"><pre><span></span>        <span class="k">elif</span> <span class="n">state</span> <span class="o">==</span> <span class="n">readList</span><span class="p">:</span>
+            <span class="c"># keep adding the current line to current property items and if dedented =&gt; change state to readKeyValue</span>
+            <span class="n">p</span><span class="p">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">strip</span><span class="p">())</span>
+            <span class="k">if</span> <span class="n">getindentlevel</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">getindentlevel</span><span class="p">(</span><span class="n">lines</span><span class="o">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">]</span><span class="p">):</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">readKeyValue</span> 
+                <span class="n">s</span><span class="p">.</span><span class="n">props</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">p</span>
+</pre></div></div>
+<p>if state is <code>readList</code>
+- keep adding items to current property <code>p</code>
+- if the indentation level decreased change state to <code>readKeyValue</code> and finish property
+</p><div class="code"><div class="highlight"><pre><span></span>    return sects
 </pre></div></div>
 </div></div>
     </div>

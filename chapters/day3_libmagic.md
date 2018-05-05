@@ -115,9 +115,7 @@ proc magic_open(i:cint) : MagicPtr {.importc, dynlib:libName.}
 `magic_open` is a proc declared in dynamic lib `libmagic.so`, that is takes a cint "compatible c int" `i` and returns a `MagicPtr`.
 
 From the manpage 
-```
-The function magic_open() creates a magic cookie pointer and returns it.  It returns NULL if there was an error allocating the magic cookie.  The flags argument specifies how the other magic functions should behave
-```
+> The function magic_open() creates a magic cookie pointer and returns it.  It returns NULL if there was an error allocating the magic cookie.  The flags argument specifies how the other magic functions should behave
 
 
 ```nim
@@ -126,10 +124,8 @@ proc magic_close(p:MagicPtr): void {.importc,  dynlib:libName.}
 ```
 `magic_close` is a proc declared in dynlib `libmagic.so` and takes an argumnet p of type `MagicPtr` and returns `void`
 
-From the manpage:
-```
-The magic_close() function closes the magic(5) database and deallocates any resources used.
-```
+From the manpage
+> The magic_close() function closes the magic(5) database and deallocates any resources used.
 
 ```nim
 #int magic_load(magic_t, const char *);
@@ -138,10 +134,8 @@ proc magic_load(p:MagicPtr, s:cstring) : cint {.importc, dynlib: libName.}
 `magic_load` is a proc declared in dynlib `libmagic.so` takes argument p of type `MagicPtr` and a `cstring` "compatible c string" `s` and returns a `cint`
 
 From manpage:
-```
- The magic_load() function must be used to load the colon separated list of database files passed in as filename, or NULL for the default database
+> The magic_load() function must be used to load the colon separated list of database files passed in as filename, or NULL for the default database
      file before any magic queries can performed.
-```
 
 ```nim
 #int magic_errno(magic_t);
@@ -150,9 +144,7 @@ proc magic_error(p: MagicPtr) : cstring  {.importc, dynlib:libName.}
 `magic_errno` is a proc declared in dynlib `libmagic.so` and takes argument p of type `MagicPtr` and returns a `cstring`
 
 From manpage
-```
-     The magic_error() function returns a textual explanation of the last error, or NULL if there was no error.
-```
+> The magic_error() function returns a textual explanation of the last error, or NULL if there was no error.
 
 
 ```nim
@@ -162,10 +154,7 @@ proc magic_file(p:MagicPtr, filepath: cstring): cstring {.importc, dynlib: libNa
 `magic_file` is proc declared in dynlib `libmagic.so` takes argument p of type `MagicPtr` and a filepath of type `cstring` and returns a `cstring`
 
 From manpage:
-```
-     The magic_file() function returns a textual description of the contents of the filename argument, or NULL if an error occurred.  If the filename is
-     NULL, then stdin is used.
-```
+> The magic_file() function returns a textual description of the contents of the filename argument, or NULL if an error occurred.  If the filename is NULL, then stdin is used.
 
 
 ### Step 5: Friendly API
@@ -187,5 +176,3 @@ Only one note here to convert from `cstring` to `string` we use the `toString` o
 ```
         result = $magic_file(mt, cstring(filepath))
 ```
-
-Feel free to send me PRs to improve the library or tutorial :)

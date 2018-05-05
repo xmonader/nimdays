@@ -48,14 +48,14 @@
 <p class="noindent">We will be writing a simple linkschecker in both <code>sequential</code> and <code>asynchronous</code> style in nim</p>
 </div>
 <div id="cid12" data-tralics-id="cid12" class="section" data-number="4.2"><h2><a href="day4_asynclinkschecker.html#cid12" class="heading hyperref"><span class="number">4.2 </span>Implementation</a></h2>
-<div id="uid10" data-tralics-id="uid10" class="subsection" data-number="4.2.1"><h3><a href="day4_asynclinkschecker.html#uid10" class="heading hyperref"><span class="number">4.2.1 </span>Step 0: Imports</a></h3>
+<div id="uid17" data-tralics-id="uid17" class="subsection" data-number="4.2.1"><h3><a href="day4_asynclinkschecker.html#uid17" class="heading hyperref"><span class="number">4.2.1 </span>Step 0: Imports</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span>  <span class="n">os</span><span class="p">,</span> <span class="n">httpclient</span>
 <span class="kn">import</span> <span class="n">strutils</span>
 <span class="kn">import</span> <span class="n">times</span>
 <span class="kn">import</span> <span class="n">asyncdispatch</span>
 </pre></div></div>
 </div>
-<div id="uid11" data-tralics-id="uid11" class="subsection" data-number="4.2.2"><h3><a href="day4_asynclinkschecker.html#uid11" class="heading hyperref"><span class="number">4.2.2 </span>Step 1: Data types</a></h3>
+<div id="uid18" data-tralics-id="uid18" class="subsection" data-number="4.2.2"><h3><a href="day4_asynclinkschecker.html#uid18" class="heading hyperref"><span class="number">4.2.2 </span>Step 1: Data types</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span>
     <span class="n">LinkCheckResult</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span> 
         <span class="n">link</span><span class="p">:</span> <span class="kt">string</span>
@@ -63,7 +63,7 @@
 </pre></div></div>
 <p>LinkCheckResult is a simple representation for a link and its state</p>
 </div>
-<div id="uid12" data-tralics-id="uid12" class="subsection" data-number="4.2.3"><h3><a href="day4_asynclinkschecker.html#uid12" class="heading hyperref"><span class="number">4.2.3 </span>Step 2: GO Sequential!</a></h3>
+<div id="uid19" data-tralics-id="uid19" class="subsection" data-number="4.2.3"><h3><a href="day4_asynclinkschecker.html#uid19" class="heading hyperref"><span class="number">4.2.3 </span>Step 2: GO Sequential!</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">checkLink</span><span class="p">(</span><span class="n">link</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="n">LinkCheckResult</span>  <span class="o">=</span>
     <span class="kd">var</span> <span class="n">client</span> <span class="o">=</span> <span class="n">newHttpClient</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -94,7 +94,7 @@ https://github.com is true
 </pre></div></div>
 <p>On my lousy internet it took 7.7 seconds to finish :(</p>
 </div>
-<div id="uid13" data-tralics-id="uid13" class="subsection" data-number="4.2.4"><h3><a href="day4_asynclinkschecker.html#uid13" class="heading hyperref"><span class="number">4.2.4 </span>Step 3: GO ASYNC!</a></h3>
+<div id="uid20" data-tralics-id="uid20" class="subsection" data-number="4.2.4"><h3><a href="day4_asynclinkschecker.html#uid20" class="heading hyperref"><span class="number">4.2.4 </span>Step 3: GO ASYNC!</a></h3>
 <p class="noindent">We can do better than waiting on IO requests to finish</p>
 <div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">checkLinkAsync</span><span class="p">(</span><span class="n">link</span><span class="p">:</span> <span class="kt">string</span><span class="p">):</span> <span class="n">Future</span><span class="o">[</span><span class="n">LinkCheckResult</span><span class="o">]</span> <span class="p">{.</span><span class="n">async</span><span class="p">.}</span> <span class="o">=</span>
     <span class="kd">var</span> <span class="n">client</span> <span class="o">=</span> <span class="n">newAsyncHttpClient</span><span class="p">()</span>
@@ -142,7 +142,7 @@ https://github.com is true
 3.601503849029541
 </pre></div></div>
 </div>
-<div id="uid14" data-tralics-id="uid14" class="subsection" data-number="4.2.5"><h3><a href="day4_asynclinkschecker.html#uid14" class="heading hyperref"><span class="number">4.2.5 </span>Step 4 simple cli</a></h3>
+<div id="uid21" data-tralics-id="uid21" class="subsection" data-number="4.2.5"><h3><a href="day4_asynclinkschecker.html#uid21" class="heading hyperref"><span class="number">4.2.5 </span>Step 4 simple cli</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">main</span><span class="p">()</span><span class="o">=</span>
     <span class="n">echo</span> <span class="s">"Param count: "</span><span class="p">,</span> <span class="n">paramCount</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">paramCount</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -165,7 +165,7 @@ https://github.com is true
 </pre></div></div>
 <p>the only interesting part is <code>waitFor asyncLinksChecker(links)</code> as we said to call <code>async</code> proc from <code>sync</code> proc like this main proc you will need to use <code>waitFor</code></p>
 </div>
-<div id="uid15" data-tralics-id="uid15" class="subsection" data-number="4.2.6"><h3><a href="day4_asynclinkschecker.html#uid15" class="heading hyperref"><span class="number">4.2.6 </span>Extra, threading</a></h3>
+<div id="uid22" data-tralics-id="uid22" class="subsection" data-number="4.2.6"><h3><a href="day4_asynclinkschecker.html#uid22" class="heading hyperref"><span class="number">4.2.6 </span>Extra, threading</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="n">threadpool</span>
 <span class="k">proc </span><span class="nf">checkLinkParallel</span><span class="p">(</span><span class="n">link</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="n">LinkCheckResult</span> <span class="p">{.</span><span class="n">thread</span><span class="p">.}</span> <span class="o">=</span>
     <span class="kd">var</span> <span class="n">client</span> <span class="o">=</span> <span class="n">newHttpClient</span><span class="p">()</span>
@@ -187,8 +187,7 @@ https://github.com is true
 <p>- spawned <code>tasks</code> or <code>threads</code> returns a value of type <code>FlowVar[T]</code>, where <code>T</code> is the return value of the spawned <code>proc</code>
 - To get the value of a <code>FlowVar</code> we use <code></code> operator.</p>
 <blockquote class="quotation"><p class="quote">Note: you should use <code>nim.cfg</code> with flags <code>-d:ssl</code> to allow working with https</p>
-</blockquote><p>Send me a PR for improvements</p>
-</div></div>
+</blockquote></div></div>
     </div>
   </body>
 </html>
