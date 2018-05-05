@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link href="stylesheets/pygments.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="stylesheets/softcover.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="stylesheets/custom.css" media="screen" rel="stylesheet" type="text/css" />
+    
+    <title>nimdays</title>
+    
+      <script type="text/x-mathjax-config">
+              MathJax.Hub.Config({
+        "HTML-CSS": {
+          availableFonts: ["TeX"],
+        },
+        TeX: {
+          extensions: ["AMSmath.js", "AMSsymbols.js", "color.js"],
+          equationNumbers: {
+            autoNumber: "AMS",
+            formatNumber: function (n) { return "1" + '.' + n }
+          },
+          Macros: {
+            PolyTeX:    "Poly{\\TeX}",
+            PolyTeXnic: "Poly{\\TeX}nic",
+            "softcover": "\\texttt{softcover}",
+"unitvec": ["{\\hat #1}", 1]
+          }
+        },
+        showProcessingMessages: false,
+        messageStyle: "none",
+        imageFont: null,
+        "AssistiveMML": { disabled: true }
+      });
+
+        if (/PhantomJS/.test(window.navigator.userAgent)) {
+          MathJax.Hub.Queue([alert, 'MathJax Done']);
+        }
+      </script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+    
+  </head>
+  <body>
+    
+    <div id="book">
+      <div id="cid1" data-tralics-id="cid1" class="chapter" data-number="1" data-chapter="day1_dmidecode"><h1><a href="day1_dmidecode.html#cid1" class="heading hyperref"><span class="number">Chapter 1 </span>Day 1: Parsing DMIDecode output</a></h1>
+<p class="noindent">In our first day we will write a <a href="https://man.cx/?page=dmidecode(8)" target="_blank" rel="noopener">dmidecode</a> parser in nim</p>
+</div>
+<div id="cid2" data-tralics-id="cid2" class="section" data-number="1.1"><h2><a href="day1_dmidecode.html#cid2" class="heading hyperref"><span class="number">1.1 </span>What to expect ?</a></h2>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">sample1</span> <span class="o">=</span> <span class="s">"""</span>
+<span class="s"># dmidecode 3.1</span>
+<span class="s">Getting SMBIOS data from sysfs.</span>
+<span class="s">SMBIOS 2.6 present.</span>
+
+<span class="s">Handle 0x0001, DMI type 1, 27 bytes</span>
+<span class="s">System Information</span>
+<span class="s">        Manufacturer: LENOVO</span>
+<span class="s">        Product Name: 20042</span>
+<span class="s">        Version: Lenovo G560</span>
+<span class="s">        Serial Number: 2677240001087</span>
+<span class="s">        UUID: CB3E6A50-A77B-E011-88E9-B870F4165734</span>
+<span class="s">        Wake-up Type: Power Switch</span>
+<span class="s">        SKU Number: Calpella_CRB</span>
+<span class="s">        Family: Intel_Mobile</span>
+<span class="s">"""</span>
+
+<span class="kn">import</span> <span class="n">dmidecode</span><span class="p">,</span> <span class="n">tables</span>
+
+<span class="kd">var</span> <span class="n">obj</span> <span class="p">:</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">dmidecode</span><span class="p">.</span><span class="n">Section</span><span class="o">]</span>
+<span class="n">obj</span> <span class="o">=</span> <span class="n">parseDMI</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">secname</span><span class="p">,</span> <span class="n">sec</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+    <span class="n">echo</span> <span class="n">secname</span> <span class="o">&amp;</span> <span class="s">" with "</span> <span class="o">&amp;</span> <span class="o">$</span><span class="n">len</span><span class="p">(</span><span class="n">sec</span><span class="p">.</span><span class="n">props</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sec</span><span class="p">.</span><span class="n">props</span><span class="p">:</span>
+        <span class="n">echo</span> <span class="s">"k : "</span> <span class="o">&amp;</span> <span class="n">k</span> <span class="o">&amp;</span> <span class="s">" =&gt; "</span> <span class="o">&amp;</span> <span class="n">p</span><span class="p">.</span><span class="n">val</span> 
+        <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="p">.</span><span class="n">items</span><span class="p">:</span>
+                <span class="n">echo</span> <span class="s">"</span><span class="se">\t\t</span><span class="s"> I: "</span><span class="p">,</span> <span class="n">i</span>
+</pre></div></div>
+</div>
+<div id="cid3" data-tralics-id="cid3" class="section" data-number="1.2"><h2><a href="day1_dmidecode.html#cid3" class="heading hyperref"><span class="number">1.2 </span>Implementation</a></h2>
+<p class="noindent">a while ago at work (https://github.com/zero-os/0-core) we needed to parse some dmidecode output, and it sounds like an good problem with enough concepts to get my feet wet in nim.</p>
+<div id="uid1" data-tralics-id="uid1" class="subsection" data-number="1.2.1"><h3><a href="day1_dmidecode.html#uid1" class="heading hyperref"><span class="number">1.2.1 </span>nimble ready!</a></h3>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>mkdir dmidecode
+nimble init
+</pre></div></div>
+</div>
+<div id="uid2" data-tralics-id="uid2" class="subsection" data-number="1.2.2"><h3><a href="day1_dmidecode.html#uid2" class="heading hyperref"><span class="number">1.2.2 </span>So how does dmidecode output look like?</a></h3>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span># dmidecode 3.1
+Getting SMBIOS data from sysfs.
+SMBIOS 2.6 present.
+
+Handle 0x0001, DMI type 1, 27 bytes
+System Information
+        Manufacturer: LENOVO
+        Product Name: 20042
+        Version: Lenovo G560
+        Serial Number: 2677240001087
+        UUID: CB3E6A50-A77B-E011-88E9-B870F4165734
+        Wake-up Type: Power Switch
+        SKU Number: Calpella_CRB
+        Family: Intel_Mobile
+</pre></div></div>
+<p>or</p>
+<div class="code"><div class="highlight"><pre><span></span>Getting SMBIOS data from sysfs.
+SMBIOS 2.6 present.
+
+Handle 0x0000, DMI type 0, 24 bytes
+BIOS Information
+        Vendor: LENOVO
+        Version: 29CN40WW(V2.17)
+        Release Date: 04/13/2011
+        ROM Size: 2048 kB
+        Characteristics:
+                PCI is supported
+                BIOS is upgradeable
+                BIOS shadowing is allowed
+                Boot from CD is supported
+                Selectable boot is supported
+                EDD is supported
+                Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
+                Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
+                5.25"/360 kB floppy services are supported (int 13h)
+                5.25"/1.2 MB floppy services are supported (int 13h)
+                3.5"/720 kB floppy services are supported (int 13h)
+                3.5"/2.88 MB floppy services are supported (int 13h)
+                8042 keyboard services are supported (int 9h)
+                CGA/mono video services are supported (int 10h)
+                ACPI is supported
+                USB legacy is supported
+                BIOS boot specification is supported
+                Targeted content distribution is supported
+        BIOS Revision: 1.40
+</pre></div></div>
+<p>### DMI structure
+- DMIDecode output is some meta like comments, versions and one or more sections
+- Section: consists of a
+* handle line
+* title line
+* one or more indented properties
+- Property: consists of
+* key
+* optional value
+* optional list of indented items</p>
+</div>
+<div id="uid3" data-tralics-id="uid3" class="subsection" data-number="1.2.3"><h3><a href="day1_dmidecode.html#uid3" class="heading hyperref"><span class="number">1.2.3 </span>Mapping DMI to nim structures</a></h3>
+<p class="noindent">So ourplan is to have an api like
+</p><div class="code"><div class="highlight"><pre><span></span><span class="n">dmifile</span> <span class="o">=</span> <span class="n">parseDMI</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="n">dmifile</span><span class="o">[</span><span class="s">"section1"</span><span class="o">][</span><span class="s">"property1].value</span>
+</pre></div></div>
+<p>Let’s describe the document structure we have
+</p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span>  <span class="n">sequtils</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">strutils</span>
+
+<span class="k">type</span> 
+    <span class="n">Property</span><span class="o">*</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
+        <span class="n">val</span><span class="o">*</span><span class="p">:</span> <span class="kt">string</span>
+        <span class="n">items</span><span class="o">*</span><span class="p">:</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span>
+<span class="k">type</span>
+    <span class="n">Section</span><span class="o">*</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
+        <span class="n">handleLine</span><span class="o">*</span><span class="p">,</span> <span class="n">title</span><span class="o">*</span><span class="p">:</span> <span class="kt">string</span>
+        <span class="n">props</span><span class="o">*</span> <span class="p">:</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">Property</span><span class="o">]</span>
+
+<span class="k">method</span> <span class="n">addItem</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Property</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="o">=</span>
+    <span class="n">this</span><span class="p">.</span><span class="n">items</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+</pre></div></div>
+<p>As our parsing will depend on the indentation level we can use this handy function to get the indentation level of a line (number of spaces before the first asciiLetter)</p>
+<div class="code"><div class="highlight"><pre><span></span>proc getIndentLevel(line: string) : int = 
+    for i, c in pairs(line):
+        if not c.isSpaceAscii():
+            return i
+    return 0
+</pre></div></div>
+<p>It’d have been nicer to use <code>takewhile</code>, but it’s not available in nim stdlib
+</p><div class="code"><div class="highlight"><pre><span></span>    <span class="n">getindentlevel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span>  <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">takewhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">isspace</span><span class="p">(),</span> <span class="n">l</span><span class="p">)))</span>
+</pre></div></div>
+</div>
+<div id="uid4" data-tralics-id="uid4" class="subsection" data-number="1.2.4"><h3><a href="day1_dmidecode.html#uid4" class="heading hyperref"><span class="number">1.2.4 </span>Parsing DMI source into nim structures</a></h3>
+<p class="noindent">There’re many ways to parse the DMI (e.g using regex which would be fairly simple “feel free to implement it” and kindly send me a PR to update this tutorial)
+</p><div class="code"><div class="highlight"><pre><span></span>proc parseDMI* (source: string) : Table[string, Section]=
+</pre></div></div>
+<p>In plain english for output like this
+</p><div class="code"><div class="highlight"><pre><span></span>Getting SMBIOS data from sysfs.
+SMBIOS 2.6 present.
+
+Handle 0x0000, DMI type 0, 24 bytes
+BIOS Information
+        Vendor: LENOVO
+        Version: 29CN40WW(V2.17)
+        Release Date: 04/13/2011
+        ROM Size: 2048 kB
+        Characteristics:
+                PCI is supported
+                BIOS is upgradeable
+                BIOS shadowing is allowed
+                Boot from CD is supported
+                Selectable boot is supported
+                EDD is supported
+                Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
+                Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
+                5.25"/360 kB floppy services are supported (int 13h)
+                5.25"/1.2 MB floppy services are supported (int 13h)
+                3.5"/720 kB floppy services are supported (int 13h)
+                3.5"/2.88 MB floppy services are supported (int 13h)
+                8042 keyboard services are supported (int 9h)
+                CGA/mono video services are supported (int 10h)
+                ACPI is supported
+                USB legacy is supported
+                BIOS boot specification is supported
+                Targeted content distribution is supported
+        BIOS Revision: 1.40
+</pre></div></div>
+<p>we have couple of states
+</p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> 
+    <span class="n">ParserState</span> <span class="o">=</span> <span class="k">enum</span>
+        <span class="n">noOp</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">readKeyValue</span><span class="p">,</span> <span class="n">readList</span>
+</pre></div></div>
+<p>- noOp: no action yet
+- sectionName: read sectionName
+- readKeyValue: read a line has colon <code>:</code> in it into a key value pair
+- readList: when the next line has greater indentation level than the property line</p>
+<p>so our state is noOp until we reach line
+<code>Handle 0x0000, DMI type 0, 24 bytes</code>
+then moves to sectionName
+for line <code>BIOS Information</code> then state changes to reading properties
+</p><div class="code"><div class="highlight"><pre><span></span>        Vendor: LENOVO
+        Version: 29CN40WW(V2.17)
+        Release Date: 04/13/2011
+        ROM Size: 2048 kB
+        Characteristics:
+</pre></div></div>
+<p>then we notice the indentation on the next line
+</p><div class="code"><div class="highlight"><pre><span></span>                PCI is supported
+``` 
+is greater than the one on the current line
+</pre></div></div>
+<p>Characteristics:
+</p><div class="code"><div class="highlight"><pre><span></span>so state moves into readList to read the items related to property `Characterstics`
+</pre></div></div>
+<p>PCI is supported
+BIOS is upgradeable
+BIOS shadowing is allowed
+Boot from CD is supported
+Selectable boot is supported
+EDD is supported
+Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
+Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
+5.25”/360 kB floppy services are supported (int 13h)
+5.25”/1.2 MB floppy services are supported (int 13h)
+3.5”/720 kB floppy services are supported (int 13h)
+3.5”/2.88 MB floppy services are supported (int 13h)
+8042 keyboard services are supported (int 9h)
+CGA/mono video services are supported (int 10h)
+ACPI is supported
+USB legacy is supported
+BIOS boot specification is supported
+Targeted content distribution is supported
+</p><div class="code"><div class="highlight"><pre><span></span>and again it notices the indentation is of the next line 
+</pre></div></div>
+<p>BIOS Revision: 1.40
+</p><div class="code"><div class="highlight"><pre><span></span>is less than the current line 
+</pre></div></div>
+<p>Targeted content distribution is supported
+</p><div class="code"><div class="highlight"><pre><span></span>so state switches again into `readKeyValue`
+
+- if we encounter an empty line:
+    * if not in parsing state then it's a noOp we ignore meta and empty lines
+    * if in parsing state `current Section isn't nil` we finish parsing the section object
+
+
+```nim
+
+proc parseDMI* (source: string) : Table[string, Section]=
+    
+    var
+        state : ParserState = noOp
+        lines = strutils.splitLines(source)
+        sects = initTable[string, Section]()
+        
+        p: Property = nil
+        s: Section = nil 
+        k, v: string
+```
+Here we define the current state, code lines, initialize a table `sects` from `sectionName` to `Section Object` and variables p `current property`, s `current section`, k, v `current property key, value`
+
+```nim
+    for i, l in pairs(lines):
+```
+Start looping on index, line using `pairs` 
+&gt; pairs is kinda like enumerate in python
+</pre></div></div>
+<p>if l.startsWith(“Handle”):
+s = new Section
+s.props = initTable<a href="" target="_blank" rel="noopener">string, Property</a>
+s.handleline = l
+state = sectionName
+continue
+</p><div class="code"><div class="highlight"><pre><span></span>If we encounter the string `Handle` 
+- create new section object and initialize it's props table
+- keep track of the handle line
+- switch state to reading sectionName
+- continue the loop to move to the title line
+
+```nim
+        if l == "": # can be just new line before reading any sections. 
+            if s != nil:
+                sects[s.title] = s
+            continue
+```
+if line is empty and we have a section object `not nil` we finish the section and continue 
+
+```nim
+        if state == sectionName:  # current line is the title line
+            s.title = l
+            state = readKeyValue  # change state into reading key value pairs
+```
+If state is sectionName:
+- this line is a title line 
+- change state for the upcoming to readKeyValue
+</pre></div></div>
+<p>elif state == readKeyValue:
+let pair = l.split({‘:’})
+k = pair[0].strip()
+if len(pair) == 2:
+v = pair[1].strip()
+else: # value can be empty
+v = “”
+p = Property(val: v)
+p.items = newSeq<a href="" target="_blank" rel="noopener">string</a>
+p.val = v
+</p><div class="code"><div class="highlight"><pre><span></span>If state is readKeyValue
+- split the line on colon `:` to get key, value pair and set v to "" if not present
+- make current Property `p` and initialize its related fields `items`, `val`
+
+```nim
+            # current line indentation is &lt;  nextline indentation =&gt; change state to readList
+            if i &lt; len(lines) and (getIndentlevel(l) &lt; getIndentlevel(lines[i+1])) :
+                state = readList
+```
+If the next line indentation is greater this means we're should be reading list of items regarding the current property `p`
+
+```nim
+            else:
+                # add key/value pair directly
+                s.props[k] = p
+```
+If not finish the property
+
+
+```nim
+        elif state == readList:
+            # keep adding the current line to current property items and if dedented =&gt; change state to readKeyValue
+            p.add_item(l.strip())
+            if getindentlevel(l) &gt; getindentlevel(lines[i+1]):
+                state = readKeyValue 
+                s.props[k] = p
+```
+if state is `readList`
+- keep adding items to current property `p`
+- if the indentation level decreased change state to `readKeyValue` and finish property
+</pre></div></div>
+<p>return sects</p>
+<div class="code"><div class="highlight"><pre><span></span>Feel free to send PRs regarding idiomatic nim, tests, improvements to the tutorial, .. etc :)
+</pre></div></div>
+</div></div>
+    </div>
+  </body>
+</html>

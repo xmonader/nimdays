@@ -1,0 +1,178 @@
+<div id="cid16" data-tralics-id="cid16" class="chapter" data-number="6" data-chapter="day6_nistow"><h1><a href="day6_nistow_fragment.html#cid16" class="heading hyperref"><span class="number">Chapter 6 </span>Day 6: Manage your dotfiles easily with nistow</a></h1>
+<p class="noindent">Today we will create a tool to manage our dotfiles easily.</p>
+</div><div id="cid17" data-tralics-id="cid17" class="section" data-number="6.1"><h2><a href="day6_nistow_fragment.html#cid17" class="heading hyperref"><span class="number">6.1 </span>Dotfiles layout</a></h2>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>        i3
+        `-- .config
+            `-- i3
+                `-- config
+</pre></div></div>
+<p>So we have here a directory named i3 in the very top <code>indicates APP_NAME</code> and under it a tree of config paths.<span class="intersentencespace"></span> Here it means <code>config</code> file is supposed to be linked under <code>.config/i3/config</code> relative to <code>destination directory</code>
+&gt; Home directory is the default destination.</p>
+</div><div id="cid18" data-tralics-id="cid18" class="section" data-number="6.2"><h2><a href="day6_nistow_fragment.html#cid18" class="heading hyperref"><span class="number">6.2 </span>What do we expect?</a></h2>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>➜  ~ nistow --help
+    Stow 0.1.0
+        -h | --help     : show help
+        -v | --version  : show version
+        --verbose       : verbose messages
+        -s | --simulate : simulate stow operation
+        -f | --force    : override old links
+        -a | --app      : application path to stow
+        -d | --dest     : destination to stow to
+</pre></div></div>
+<p>- <code>–simulate</code> flag used to simulate on the filesystem without actual linking
+- <code>–app</code> application directory that’s compatible with the dotfiles layoud described above.<span class="intersentencespace"></span> - <code>–dest</code> destination to symlink files under, defaults to home dir.</p>
+<div class="code"><div class="highlight"><pre><span></span>nistow --app=/home/striky/wspace/dotfiles/localdir --dest=/tmp/tmpconf --verbose
+</pre></div></div>
+</div><div id="cid19" data-tralics-id="cid19" class="section" data-number="6.3"><h2><a href="day6_nistow_fragment.html#cid19" class="heading hyperref"><span class="number">6.3 </span>Implementation</a></h2>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">writeHelp</span><span class="p">()</span> <span class="o">=</span> 
+    <span class="n">echo</span> <span class="s">"""</span>
+<span class="s">Stow 0.1.0 (Manage your dotfiles easily)</span>
+
+<span class="s">Allowed arguments:</span>
+<span class="s">    -h | --help     : show help</span>
+<span class="s">    -v | --version  : show version</span>
+<span class="s">    --verbose       : verbose messages</span>
+<span class="s">    -s | --simulate : simulate stow operation</span>
+<span class="s">    -f | --force    : override old links</span>
+<span class="s">    -a | --app      : application path to stow</span>
+<span class="s">    -d | --dest     : destination to stow to</span>
+
+<span class="s">    """</span>
+</pre></div></div>
+<p><code>writeHelp</code> is a simple proc to write help string to the stdout</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">writeVersion</span><span class="p">()</span> <span class="o">=</span>
+    <span class="n">echo</span> <span class="s">"Stow version 0.1.0"</span>
+</pre></div></div>
+<p>To write version</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">cli</span><span class="o">*</span><span class="p">()</span> <span class="o">=</span>
+</pre></div></div>
+<p>Entry point for out commandline application</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="kd">var</span> 
+    <span class="n">simulate</span><span class="p">,</span> <span class="n">verbose</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="kt">bool</span> <span class="o">=</span> <span class="kp">false</span>
+    <span class="n">app</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="s">""</span>
+</pre></div></div>
+<p>Variables represents various options we allow in the application.</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="k">if</span> <span class="n">paramCount</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">writeHelp</span><span class="p">()</span>
+    <span class="n">quit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div></div>
+<p>If no arguments passed we will write the help string and <code>exit</code> or <code>quit</code> according to nim with <code>exit status</code> 0</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">getopt</span><span class="p">():</span>
+    <span class="k">case</span> <span class="n">kind</span>
+    <span class="k">of</span> <span class="n">cmdLongOption</span><span class="p">,</span> <span class="n">cmdShortOption</span><span class="p">:</span>
+        <span class="k">case</span> <span class="n">key</span>
+        <span class="k">of</span> <span class="s">"help"</span><span class="p">,</span> <span class="s">"h"</span><span class="p">:</span> 
+            <span class="n">writeHelp</span><span class="p">()</span>
+            <span class="n">quit</span><span class="p">()</span>
+        <span class="k">of</span> <span class="s">"version"</span><span class="p">,</span> <span class="s">"v"</span><span class="p">:</span>
+            <span class="n">writeVersion</span><span class="p">()</span>
+            <span class="n">quit</span><span class="p">()</span>
+        <span class="k">of</span> <span class="s">"simulate"</span><span class="p">,</span> <span class="s">"s"</span><span class="p">:</span> <span class="n">simulate</span> <span class="o">=</span> <span class="kp">true</span>
+        <span class="k">of</span> <span class="s">"verbose"</span><span class="p">:</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kp">true</span>
+        <span class="k">of</span> <span class="s">"force"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">:</span> <span class="n">force</span> <span class="o">=</span> <span class="kp">true</span>
+        <span class="k">of</span> <span class="s">"app"</span><span class="p">,</span> <span class="s">"a"</span><span class="p">:</span> <span class="n">app</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">of</span> <span class="s">"dest"</span><span class="p">,</span> <span class="s">"d"</span><span class="p">:</span> <span class="n">dest</span> <span class="o">=</span> <span class="n">val</span> 
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">discard</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">discard</span> 
+</pre></div></div>
+<p>Here we parse the commandline string using <code>getopt</code>.<span class="intersentencespace"></span> </p><div class="code"><div class="highlight"><pre><span></span>  <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">getopt</span><span class="p">():</span>
+    <span class="k">case</span> <span class="n">kind</span>
+    <span class="k">of</span> <span class="n">cmdLongOption</span><span class="p">,</span> <span class="n">cmdShortOption</span><span class="p">:</span>
+</pre></div></div>
+<p>So for <code>–app=/home/striky/dotfiles/i3 -f</code>
+kind for <code>–app</code> is <code>cmdLongOption</code> and for <code>-f</code> is <code>cmdShortOption</code>
+key for <code>–app</code> is <code>app</code> and for <code>-f</code> is <code>f</code>
+val for <code>–app</code> is <code>/home/striky/dotfiles/i3</code>
+val for <code>-f</code> we set to <code>true</code> in our parsing, because it’s mainly like a switch <code>boolean</code> if it exists it means we want it set to true.</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="k">if</span> <span class="n">dest</span><span class="p">.</span><span class="n">isNilOrEmpty</span><span class="p">():</span>
+    <span class="n">dest</span> <span class="o">=</span> <span class="n">getHomeDir</span><span class="p">()</span>
+</pre></div></div>
+<p>Here we set default <code>dest</code> to homeDir
+</p><div class="code"><div class="highlight"><pre><span></span>  <span class="k">if</span> <span class="n">app</span><span class="p">.</span><span class="n">isNilOrEmpty</span><span class="p">():</span>
+    <span class="n">echo</span> <span class="s">"Make sure to provide --app flags"</span>
+    <span class="n">quit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div></div>
+<p>Here we exit with error <code>exit status</code> 1 if app isn’t set.</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="k">try</span><span class="p">:</span>
+    <span class="n">stow</span><span class="p">(</span><span class="n">getLinkableFiles</span><span class="p">(</span><span class="n">appPath</span><span class="o">=</span><span class="n">app</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="n">dest</span><span class="p">),</span> <span class="n">simulate</span><span class="o">=</span><span class="n">simulate</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span>
+  <span class="k">except</span> <span class="n">ValueError</span><span class="p">:</span>
+    <span class="n">echo</span> <span class="s">"Error happened: "</span> <span class="o">&amp;</span> <span class="n">getCurrentExceptionMsg</span><span class="p">()</span>
+</pre></div></div>
+<p>Here we try to stow all the linkable files in <code>app</code> dir to <code>dest</code> dir and pass all the options we collected from the command line arguments <code>simulate</code>, <code>verbose</code>, <code>force</code>, and wrapped around <code>try/except</code> to show error to the user</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">when</span> <span class="n">isMainModule</span><span class="p">:</span>
+  <span class="n">cli</span><span class="p">()</span>
+</pre></div></div>
+<p>invoke our entry point <code>cli</code> if this module is the main module.</p>
+<p>OK! back to stow and getLinkableFiles</p>
+<p>We start with <code>getLinkableFiles</code>.<span class="intersentencespace"></span> Remember the dotfiles hierarchy?<span class="intersentencespace"></span> </p><div class="code"><div class="highlight"><pre><span></span>    # appPath: application's dotfiles directory
+    #     we expect dir to have the hierarchy.
+    #     i3
+    #     `-- .config
+    #         `-- i3
+    #         `-- config
+</pre></div></div>
+<p>We want to get all the files in there with full path and the link file to each one will be exactly the same except for the <code>appPath</code> name will be changed to <code>dest</code> path</p>
+<div class="code"><div class="highlight"><pre><span></span>[/home/striky/wspace/dotfiles/i3]/.config/i3/config -&gt; [/home/striky]/.config/i3/config
+__________________appPath________                      _____dest____
+</pre></div></div>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">type</span>
+  <span class="n">LinkInfo</span> <span class="o">=</span> <span class="k">tuple</span><span class="o">[</span><span class="n">original</span><span class="p">:</span><span class="kt">string</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span><span class="kt">string</span><span class="o">]</span> 
+</pre></div></div>
+<p>Simple type to represent the original path and where to symlink to</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">getLinkableFiles</span><span class="o">*</span><span class="p">(</span><span class="n">appPath</span><span class="p">:</span> <span class="kt">string</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span> <span class="kt">string</span><span class="o">=</span><span class="n">expandTilde</span><span class="p">(</span><span class="s">"~"</span><span class="p">)):</span> <span class="kt">seq</span><span class="o">[</span><span class="n">LinkInfo</span><span class="o">]</span> <span class="o">=</span>
+
+    <span class="c"># collects the linkable files in a certain app.</span>
+
+    <span class="c"># appPath: application's dotfiles directory</span>
+    <span class="c">#     we expect dir to have the hierarchy.</span>
+    <span class="c">#     i3</span>
+    <span class="c">#     `-- .config</span>
+    <span class="c">#         `-- i3</span>
+    <span class="c">#         `-- config</span>
+
+    <span class="c"># dest: destination of the link files : default is the home of user.</span>
+</pre></div></div>
+<p><code>getLinkableFiles</code> is a proc takes <code>appPath</code> and <code>dest</code> and returns a <code>seq</code> of LinkInfo contains this transformation for each file.</p>
+<div class="code"><div class="highlight"><pre><span></span>[/home/striky/wspace/dotfiles/i3]/A_FILE_PATH -&gt; [/home/striky]A_FILE_PATH
+__________________apppath________                _____dest____
+</pre></div></div>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="kd">var</span> <span class="n">appPath</span> <span class="o">=</span> <span class="n">expandTilde</span><span class="p">(</span><span class="n">appPath</span><span class="p">)</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">dirExists</span><span class="p">(</span><span class="n">appPath</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="n">newException</span><span class="p">(</span><span class="n">ValueError</span><span class="p">,</span> <span class="n">fmt</span><span class="p">(</span><span class="s">"App path {appPath} doesn't exist."</span><span class="p">))</span>
+  <span class="kd">var</span> <span class="n">linkables</span> <span class="o">=</span> <span class="n">newSeq</span><span class="o">[</span><span class="n">LinkInfo</span><span class="o">]</span><span class="p">()</span>
+  <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">walkDirRec</span><span class="p">(</span><span class="n">appPath</span><span class="p">,</span> <span class="n">yieldFilter</span><span class="o">=</span><span class="p">{</span><span class="n">pcFile</span><span class="p">}):</span>
+    <span class="k">let</span> <span class="n">linkpath</span> <span class="o">=</span> <span class="n">filepath</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">appPath</span><span class="p">,</span> <span class="n">dest</span><span class="p">)</span>
+    <span class="kd">var</span> <span class="n">linkInfo</span> <span class="p">:</span> <span class="n">LinkInfo</span> <span class="o">=</span> <span class="p">(</span><span class="n">original</span><span class="p">:</span><span class="n">filepath</span><span class="p">,</span> <span class="n">dest</span><span class="p">:</span><span class="n">linkpath</span><span class="p">)</span>
+    <span class="n">linkables</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">linkInfo</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">linkables</span>
+</pre></div></div>
+<p>Here, we walk over the <code>appPath</code> dir using <code>walkDirRec</code> and specify in <code>yieldFilter</code> argument that we’re interested in <code>pcFile</code> “file path component”, just call it entries of type regular file.</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">stow</span><span class="p">(</span><span class="n">linkables</span><span class="p">:</span> <span class="kt">seq</span><span class="o">[</span><span class="n">LinkInfo</span><span class="o">]</span><span class="p">,</span> <span class="n">simulate</span><span class="p">:</span> <span class="kt">bool</span><span class="o">=</span><span class="kp">true</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="kt">bool</span><span class="o">=</span><span class="kp">true</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="kt">bool</span><span class="o">=</span><span class="kp">false</span><span class="p">)</span> <span class="o">=</span> 
+    <span class="c"># Creates symoblic links and related directories</span>
+
+    <span class="c"># linkables is a list of tuples (filepath, linkpath) : List[Tuple[file_path, link_path]]</span>
+    <span class="c"># simulate does simulation with no effect on the filesystem: bool</span>
+    <span class="c"># verbose shows log messages: bool</span>
+
+  <span class="k">for</span> <span class="n">linkinfo</span> <span class="ow">in</span> <span class="n">linkables</span><span class="p">:</span>
+    <span class="k">let</span> <span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">linkpath</span><span class="p">)</span> <span class="o">=</span> <span class="n">linkinfo</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+      <span class="n">echo</span><span class="p">(</span><span class="n">fmt</span><span class="p">(</span><span class="s">"Will link {filepath} -&gt; {linkpath}"</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">simulate</span><span class="p">:</span>
+      <span class="n">createDir</span><span class="p">(</span><span class="n">parentDir</span><span class="p">(</span><span class="n">linkpath</span><span class="p">))</span>
+      <span class="k">if</span> <span class="ow">not</span> <span class="n">fileExists</span><span class="p">(</span><span class="n">linkpath</span><span class="p">):</span>
+        <span class="n">createSymlink</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">linkpath</span><span class="p">)</span>
+      <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">force</span><span class="p">:</span>
+          <span class="n">removeFile</span><span class="p">(</span><span class="n">linkpath</span><span class="p">)</span>
+          <span class="n">createSymlink</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">linkpath</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">echo</span><span class="p">(</span><span class="n">fmt</span><span class="p">(</span><span class="s">"Skipping linking {filepath} -&gt; {linkpath}"</span><span class="p">))</span>
+</pre></div></div>
+<p>Stow is pretty easy procedure, it takes in a list of <code>LinksInfo</code> that has all the information (original filename and destination symlink) and does the symlinking based on if it’s not a simulation and prints the messages if verbose is set to true</p>
+<p>Feel free to send improvements to this tutorial or nistow :)</p>
+</div>
