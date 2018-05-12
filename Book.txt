@@ -10,3 +10,4 @@ day3_libmagic.md
 day4_asynclinkschecker.md
 day5_iniparser.md
 day6_nistow.md
+day7_shorturl.md
