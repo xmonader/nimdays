@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link href="stylesheets/pygments.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="stylesheets/softcover.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="stylesheets/custom.css" media="screen" rel="stylesheet" type="text/css" />
+    
+    <title>nimdays</title>
+    
+      <script type="text/x-mathjax-config">
+              MathJax.Hub.Config({
+        "HTML-CSS": {
+          availableFonts: ["TeX"],
+        },
+        TeX: {
+          extensions: ["AMSmath.js", "AMSsymbols.js", "color.js"],
+          equationNumbers: {
+            autoNumber: "AMS",
+            formatNumber: function (n) { return "8" + '.' + n }
+          },
+          Macros: {
+            PolyTeX:    "Poly{\\TeX}",
+            PolyTeXnic: "Poly{\\TeX}nic",
+            "softcover": "\\texttt{softcover}",
+"unitvec": ["{\\hat #1}", 1]
+          }
+        },
+        showProcessingMessages: false,
+        messageStyle: "none",
+        imageFont: null,
+        "AssistiveMML": { disabled: true }
+      });
+
+        if (/PhantomJS/.test(window.navigator.userAgent)) {
+          MathJax.Hub.Queue([alert, 'MathJax Done']);
+        }
+      </script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+    
+  </head>
+  <body>
+    
+    <div id="book">
+      <div id="cid25" data-tralics-id="cid25" class="chapter" data-number="8" data-chapter="day8_minitest"><h1><a href="day8_minitest.html#cid25" class="heading hyperref"><span class="number">Chapter 8 </span>minitest</a></h1>
+<p class="noindent">I’m a big fan of <a href="http://www.gigamonkeys.com/book/" target="_blank" rel="noopener">Practical Common Lisp</a> and It has a chapter on <a href="http://www.gigamonkeys.com/book/practical-building-a-unit-test-framework.html" target="_blank" rel="noopener">building a unittest framework using macros</a> and I didn’t get the chance to tinker with nim macros just yet, So today we will be building almost the same thing in nim.</p>
+</div>
+<div id="cid26" data-tralics-id="cid26" class="section" data-number="8.1"><h2><a href="day8_minitest.html#cid26" class="heading hyperref"><span class="number">8.1 </span>So what’s up?</a></h2>
+<p class="noindent">Imagine you want to check for some expression and print a specific message donating the expression
+</p><div class="code"><div class="highlight"><pre><span></span>  <span class="n">doAssert</span><span class="p">(</span><span class="mi">1</span><span class="o">==</span><span class="mi">2</span><span class="p">,</span> <span class="s">"1 == 2 failed"</span><span class="p">)</span>
+</pre></div></div>
+<p>Here we want to assure that 1==2 or show a message with <code>1==2 failed</code> and it goes on for whatever we want to check for</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="n">doAssert</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">==</span><span class="mi">3</span><span class="p">,</span> <span class="s">"1+2 == 3 failed"</span><span class="p">)</span>
+  <span class="n">doAssert</span><span class="p">(</span><span class="mi">5</span><span class="o">*</span><span class="mi">2</span><span class="o">==</span><span class="mi">10</span><span class="p">,</span> <span class="s">"5*2 == 10 failed"</span><span class="p">)</span>
+</pre></div></div>
+<p>We can already see the boilerplate here, repeating the expression twice one for the check and one for the message itself.</p>
+</div>
+<div id="cid27" data-tralics-id="cid27" class="section" data-number="8.2"><h2><a href="day8_minitest.html#cid27" class="heading hyperref"><span class="number">8.2 </span>What to expect?</a></h2>
+<p class="noindent">We expect having a DSL to remove the boilerplate we’re suffering from in the prev.<span class="intersentencespace"></span> section.</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="n">check</span><span class="p">(</span><span class="mi">3</span><span class="o">==</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">check</span><span class="p">(</span><span class="mi">6</span><span class="o">+</span><span class="mi">5</span><span class="o">*</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">16</span><span class="p">)</span>
+</pre></div></div>
+<p>And this will print
+</p><div class="code"><div class="highlight"><pre><span></span>3 == 1 + 2 .. passed
+6 + 5 * 2 == 16 .. passed
+</pre></div></div>
+<p>And it should evolve to allow grouping of test checks</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="n">check</span><span class="p">(</span><span class="mi">3</span><span class="o">==</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+  <span class="n">check</span><span class="p">(</span><span class="mi">6</span><span class="o">+</span><span class="mi">5</span><span class="o">*</span><span class="mi">2</span> <span class="o">==</span> <span class="mi">16</span><span class="p">)</span>
+  
+  <span class="n">suite</span> <span class="s">"Arith"</span><span class="p">:</span>
+    <span class="n">check</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">==</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">check</span><span class="p">(</span><span class="mi">3</span><span class="o">+</span><span class="mi">2</span><span class="o">==</span><span class="mi">5</span><span class="p">)</span>
+
+  <span class="n">suite</span> <span class="s">"Strs"</span><span class="p">:</span>
+    <span class="n">check</span><span class="p">(</span><span class="s">"HELLO"</span><span class="p">.</span><span class="n">toLowerAscii</span><span class="p">()</span> <span class="o">==</span> <span class="s">"hello"</span><span class="p">)</span>
+    <span class="n">check</span><span class="p">(</span><span class="s">""</span><span class="p">.</span><span class="n">isNilOrEmpty</span><span class="p">()</span> <span class="o">==</span> <span class="kp">true</span><span class="p">)</span>
+</pre></div></div>
+<p>Resulting something like this
+</p><div class="code"><div class="highlight"><pre><span></span>3 == 1 + 2 .. passed
+6 + 5 * 2 == 16 .. passed
+==================================================
+Arith
+==================================================
+ 1 + 2 == 3 .. passed
+ 3 + 2 == 5 .. passed
+==================================================
+Strs
+==================================================
+ "HELLO".toLowerAscii() == "hello" .. passed
+ "".isNilOrEmpty() == true .. passed
+</pre></div></div>
+</div>
+<div id="cid28" data-tralics-id="cid28" class="section" data-number="8.3"><h2><a href="day8_minitest.html#cid28" class="heading hyperref"><span class="number">8.3 </span>Implementation</a></h2>
+<p class="noindent">So nim has two way to do macros</p>
+<div id="uid88" data-tralics-id="uid88" class="subsection" data-number="8.3.1"><h3><a href="day8_minitest.html#uid88" class="heading hyperref"><span class="number">8.3.1 </span>templates</a></h3>
+<p class="noindent">Which are like functions that called in compilation time like <code>preprocessor</code></p>
+<p>From the nim manual
+</p><div class="code"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="p">`</span><span class="o">!=</span><span class="p">`</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">untyped</span><span class="p">):</span> <span class="n">untyped</span> <span class="o">=</span>
+  <span class="c"># this definition exists in the System module</span>
+  <span class="ow">not</span> <span class="p">(</span><span class="n">a</span> <span class="o">==</span> <span class="n">b</span><span class="p">)</span>
+
+<span class="n">assert</span><span class="p">(</span><span class="mi">5</span> <span class="o">!=</span> <span class="mi">6</span><span class="p">)</span> <span class="c"># the compiler rewrites that to: assert(not (5 == 6))</span>
+</pre></div></div>
+<p>so in compile time <code>5 != 6</code> will be converted into <code>not ( 5 == 6)</code> and the whole expression will be <code>assert(not ( 5== 6))</code></p>
+<p>So what’re we gonna do is check for the passed expression to convert it to a string to be printed in the terminal output and if the expression fails we append <code>failed</code> message or any other custom failure message</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">template</span> <span class="n">check</span><span class="o">*</span><span class="p">(</span><span class="n">exp</span><span class="p">:</span><span class="n">untyped</span><span class="p">,</span> <span class="n">failureMsg</span><span class="p">:</span><span class="kt">string</span><span class="o">=</span><span class="s">"failed"</span><span class="p">,</span> <span class="n">indent</span><span class="p">:</span><span class="n">uint</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span> <span class="n">void</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="n">indentationStr</span> <span class="o">=</span> <span class="n">repeat</span><span class="p">(</span><span class="sc">' '</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span> 
+  <span class="k">let</span> <span class="n">expStr</span><span class="p">:</span> <span class="kt">string</span> <span class="o">=</span> <span class="n">astToStr</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+  <span class="kd">var</span> <span class="n">msg</span><span class="p">:</span> <span class="kt">string</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">exp</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">msg</span><span class="p">.</span><span class="n">isNilOrEmpty</span><span class="p">():</span>
+      <span class="n">msg</span> <span class="o">=</span> <span class="n">indentationStr</span> <span class="o">&amp;</span> <span class="n">expStr</span> <span class="o">&amp;</span> <span class="s">" .. "</span> <span class="o">&amp;</span> <span class="n">failureMsg</span>
+  <span class="k">else</span><span class="p">:</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="n">indentationStr</span> <span class="o">&amp;</span> <span class="n">expStr</span> <span class="o">&amp;</span> <span class="s">" .. passed"</span>
+      
+  <span class="n">echo</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div></div>
+<ul>
+<li><code>untyped</code> means the expression doesn’t have to have a type yet, imagine passing variable name that doesn’t exist yet <code>defineVar(myVar, 5)</code> so here <code>myVar</code> needs to be untyped or the compiler will complain.<span class="intersentencespace"></span> check the manual for more info https://nim-lang.org/docs/manual.html#templates
+</li>
+<li><code>astToStr</code> converts the AST <code>exp</code> to a string
+</li>
+<li><code>indent</code> amount of spaces prefixing the message.<span class="intersentencespace"></span>
+</li></ul>
+</div>
+<div id="uid92" data-tralics-id="uid92" class="subsection" data-number="8.3.2"><h3><a href="day8_minitest.html#uid92" class="heading hyperref"><span class="number">8.3.2 </span>Macros</a></h3>
+<p class="noindent">Nim provides us with a way to access the AST in a very low level when we templates don’t cut it.</p>
+<p>What we expected is having a <code>suite</code> macro
+</p><div class="code"><div class="highlight"><pre><span></span>  suite "Strs":
+    check("HELLO".toLowerAscii() == "hello")
+    check("".isNilOrEmpty() == true)
+</pre></div></div>
+<p>that takes a <code>name</code> for the suite and bunch of <code>statements</code>
+- Please note there’re two kind of macros and we’re interested in the <code>statements macro</code> here
+- Statments macro is a macro that has <code>colon</code> <code>:</code> operator followed by bunch of statements</p>
+<div id="uid93" data-tralics-id="uid93" class="subsubsection" data-number="8.3.2.1"><h4><a href="#uid93" class="heading">dumpTree</a></h4>
+<p class="noindent">dumpTree is amazing to debug the ast and print them in a good visual way</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="n">dumpTree</span><span class="p">:</span>
+    <span class="n">suite</span> <span class="s">"Strs"</span><span class="p">:</span>
+      <span class="n">check</span><span class="p">(</span><span class="s">"HELLO"</span><span class="p">.</span><span class="n">toLowerAscii</span><span class="p">()</span> <span class="o">==</span> <span class="s">"hello"</span><span class="p">)</span>
+</pre></div></div>
+<div class="code"><div class="highlight"><pre><span></span>Ident ident"suite"
+    StrLit Strs
+    StmtList
+      Call
+        Ident ident"check"
+        Infix
+          Ident ident"=="
+          Call
+            DotExpr
+              StrLit HELLO
+              Ident ident"toLowerAscii"
+          StrLit hello
+</pre></div></div>
+<ul>
+<li><code>dumpTree</code> says it got <code>Identifier Ident</code> named <code>suite</code>
+</li>
+<li><code>suite</code> contains <code>StringLiteral</code> node with value <code>Strs</code>
+</li>
+<li><code>suite</code> contains <code>StmtList</code> node
+</li>
+<li>first statement in <code>StmtList</code> is a <code>call</code> statement
+</li>
+<li><code>call</code> statement consist of <code>procedure</code> name <code>check</code> in this case and args list and so on..<span class="intersentencespace"></span>
+</li></ul>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">macro</span> <span class="n">suite</span><span class="o">*</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="kt">string</span><span class="p">,</span> <span class="n">exprs</span><span class="p">:</span> <span class="n">untyped</span><span class="p">)</span> <span class="p">:</span> <span class="n">typed</span> <span class="o">=</span> 
+</pre></div></div>
+<p>Here, we define a macro <code>suite</code> takes <code>name</code> and bunch of statements <code>exprs</code>
+- Macro must return an AST in our case will be list of statements of <code>check</code> call statemenets
+- Need the messages to be indented</p>
+<p>To achieve the indentation we can either print tab before calling <code>check</code> or overwrite check to pass <code>indent</code> option, we will go with overwrite the <code>check</code> call ASTs</p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="kd">var</span> <span class="n">result</span> <span class="o">=</span> <span class="n">newStmtList</span><span class="p">()</span>
+</pre></div></div>
+<p>We will be returning a list of statments right?</p>
+<div class="code"><div class="highlight"><pre><span></span>  let equline = newCall("repeat", newStrLitNode("="), newIntLitNode(50))
+</pre></div></div>
+<p>statement node that equals <code>repeat("=", 50)</code></p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="k">let</span> <span class="n">writeEquline</span> <span class="o">=</span> <span class="n">newCall</span><span class="p">(</span><span class="s">"echo"</span><span class="p">,</span> <span class="n">equline</span><span class="p">)</span>
+</pre></div></div>
+<p>statement node the equals <code>echo repeat("=", 50)</code></p>
+<div class="code"><div class="highlight"><pre><span></span>  <span class="n">add</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">writeEquline</span><span class="p">,</span> <span class="n">newCall</span><span class="p">(</span><span class="s">"echo"</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+  <span class="n">add</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">writeEquline</span><span class="p">)</span>
+</pre></div></div>
+<p>this will generate
+</p><div class="code"><div class="highlight"><pre><span></span>================
+$name
+================
+</pre></div></div>
+<p>Now we iterate over the passed statements to <code>suite</code> macro and check for its kind
+</p><div class="code"><div class="highlight"><pre><span></span>  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="mf">0</span><span class="p">..</span><span class="o">&lt;</span><span class="n">exprs</span><span class="p">.</span><span class="n">len</span><span class="p">:</span>
+    <span class="kd">var</span> <span class="n">exp</span> <span class="o">=</span> <span class="n">exprs</span><span class="o">[</span><span class="n">i</span><span class="o">]</span>
+    <span class="k">let</span> <span class="n">expKind</span> <span class="o">=</span> <span class="n">exp</span><span class="p">.</span><span class="n">kind</span>
+    <span class="k">case</span> <span class="n">expKind</span>
+    <span class="k">of</span> <span class="n">nnkCall</span><span class="p">:</span>
+      <span class="k">case</span> <span class="n">exp</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="n">kind</span>
+      <span class="k">of</span> <span class="n">nnkIdent</span><span class="p">:</span>
+        <span class="k">let</span> <span class="n">identName</span> <span class="o">=</span> <span class="o">$</span><span class="n">exp</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="n">ident</span>
+        <span class="k">if</span> <span class="n">identName</span> <span class="o">==</span> <span class="s">"check"</span><span class="p">:</span>
+</pre></div></div>
+<ul>
+<li>If we’re in a <code>check</code> call we will convert it from <code>check(expr)</code> =&gt; <code>check(expr, "", 1)</code>
+</li></ul>
+<div class="code"><div class="highlight"><pre><span></span>          <span class="kd">var</span> <span class="n">checkWithIndent</span> <span class="o">=</span> <span class="n">exp</span>
+          <span class="n">checkWithIndent</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">newStrLitNode</span><span class="p">(</span><span class="s">""</span><span class="p">))</span>
+          <span class="n">checkWithIndent</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">newIntLitNode</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+          <span class="n">add</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">checkWithIndent</span><span class="p">)</span>
+</pre></div></div>
+<p>otherwise we add any other statement as is unprocessesed.</p>
+<div class="code"><div class="highlight"><pre><span></span>      <span class="k">else</span><span class="p">:</span>
+        <span class="n">add</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">exp</span><span class="p">)</span> 
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">discard</span>
+        
+  <span class="k">return</span> <span class="n">result</span>
+</pre></div></div>
+</div></div></div>
+    </div>
+  </body>
+</html>
