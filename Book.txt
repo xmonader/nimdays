@@ -11,3 +11,4 @@ day4_asynclinkschecker.md
 day5_iniparser.md
 day6_nistow.md
 day7_shorturl.md
+day8_minitest.md
