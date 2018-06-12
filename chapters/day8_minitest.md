@@ -1,6 +1,6 @@
 # minitest 
 
-I'm a big fan of [Practical Common Lisp](http://www.gigamonkeys.com/book/) and I didn't get the chance to tinker with nim macros just yet.
+I'm a big fan of [Practical Common Lisp](http://www.gigamonkeys.com/book/) and It has a chapter on [building a unittest framework using macros](http://www.gigamonkeys.com/book/practical-building-a-unit-test-framework.html) and I didn't get the chance to tinker with nim macros just yet, So today we will be building almost the same thing in nim.
 
 
 ## So what's up?
