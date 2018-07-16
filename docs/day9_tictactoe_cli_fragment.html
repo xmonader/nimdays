@@ -1,0 +1,263 @@
+<div id="cid29" data-tralics-id="cid29" class="chapter" data-number="9" data-chapter="day9_tictactoe_cli"><h1><a href="day9_tictactoe_cli_fragment.html#cid29" class="heading hyperref"><span class="number">Chapter 9 </span>Day 9: Tic tac toe</a></h1>
+<p class="noindent">Who didn’t play <a href="https://en.wikipedia.org/wiki/Tic-tac-toe" target="_blank" rel="noopener">Tic tac toe</a> with his friends?<span class="intersentencespace"></span> :)</p>
+</div><div id="cid30" data-tralics-id="cid30" class="section" data-number="9.1"><h2><a href="day9_tictactoe_cli_fragment.html#cid30" class="heading hyperref"><span class="number">9.1 </span>What to expect</a></h2>
+<p class="noindent">Today we will implement tic tac toe game in Nim, with 2 modes
+- Human vs Human
+- Human vs AI</p>
+</div><div id="cid31" data-tralics-id="cid31" class="section" data-number="9.2"><h2><a href="day9_tictactoe_cli_fragment.html#cid31" class="heading hyperref"><span class="number">9.2 </span>Implementation</a></h2>
+<p class="noindent">So, let’s get it.<span class="intersentencespace"></span> The winner in the game is the first one who manages to get 3 cells on the board to be the same in the same column or row or diagonally first.</p>
+<div id="uid100" data-tralics-id="uid100" class="subsection" data-number="9.2.1"><h3><a href="day9_tictactoe_cli_fragment.html#uid100" class="heading hyperref"><span class="number">9.2.1 </span>imports</a></h3>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="n">sequtils</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">strutils</span><span class="p">,</span> <span class="n">strformat</span><span class="p">,</span> <span class="n">random</span><span class="p">,</span> <span class="n">os</span><span class="p">,</span> <span class="n">parseopt2</span>
+
+<span class="n">randomize</span><span class="p">()</span>
+</pre></div></div>
+</div>
+<div id="uid101" data-tralics-id="uid101" class="subsection" data-number="9.2.2"><h3><a href="day9_tictactoe_cli_fragment.html#uid101" class="heading hyperref"><span class="number">9.2.2 </span>Constraints and objects</a></h3>
+<p class="noindent">As the game allow turns we should have a way to keep track of the next player</p>
+<div class="code"><div class="highlight"><pre><span></span>let NEXT_PLAYER = {"X":"O", "O":"X"}.toTable
+</pre></div></div>
+<p>Here we use a table to tell us the next player</p>
+<div id="uid102" data-tralics-id="uid102" class="subsubsection" data-number="9.2.2.1"><h4><a href="#uid102" class="heading">Board</a></h4>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> 
+  <span class="n">Board</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span> <span class="k">of</span> <span class="n">RootObj</span>
+    <span class="n">list</span><span class="p">:</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span>
+</pre></div></div>
+<p>Here we define a simple class representing the board
+- list is a sequence representing the cells <code>maybe cells is a better name</code>
+- please note list is just a sequenece of elements <code>0 1 2 3 4 5 6 7 8</code> but we visualize it as</p>
+<div class="code"><div class="highlight"><pre><span></span>0 1 2
+3 4 5
+6 7 9
+</pre></div></div>
+<p>instead of using a 2d array for the sake of simplicity</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">WINS</span> <span class="o">=</span> <span class="o">@[</span> <span class="o">@[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">]</span><span class="p">,</span> <span class="o">@[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="o">]</span><span class="p">,</span> <span class="o">@[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="o">]</span><span class="p">,</span> <span class="o">@[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="o">]</span><span class="p">,</span> <span class="o">@[</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">7</span><span class="o">]</span><span class="p">,</span> <span class="o">@[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">8</span><span class="o">]</span><span class="p">,</span> <span class="o">@[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="o">]</span><span class="p">,</span> <span class="o">@[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="o">]</span> <span class="o">]</span>
+</pre></div></div>
+<p>We talked <code>WIN</code> patterns cells in the same row or the same column or in same diagonal</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">newBoard</span><span class="p">():</span> <span class="n">Board</span> <span class="o">=</span>
+  <span class="kd">var</span> <span class="n">b</span> <span class="o">=</span> <span class="n">Board</span><span class="p">()</span>
+  <span class="n">b</span><span class="p">.</span><span class="n">list</span> <span class="o">=</span> <span class="o">@[</span><span class="s">"0"</span><span class="p">,</span> <span class="s">"1"</span><span class="p">,</span> <span class="s">"2"</span><span class="p">,</span> <span class="s">"3"</span><span class="p">,</span> <span class="s">"4"</span><span class="p">,</span> <span class="s">"5"</span><span class="p">,</span> <span class="s">"6"</span><span class="p">,</span> <span class="s">"7"</span><span class="p">,</span> <span class="s">"8"</span><span class="o">]</span>
+  <span class="k">return</span> <span class="n">b</span>
+</pre></div></div>
+<p>this is the initializer of the board and sets the cell value to the string represention of its index</p>
+<div3 id="uid103" data-tralics-id="uid103" data-number="">Winning
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">done</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Board</span><span class="p">):</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="kt">string</span><span class="p">)</span> <span class="o">=</span>
+    <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">WINS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">w</span><span class="o">[</span><span class="mi">0</span><span class="o">]]</span> <span class="o">==</span> <span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">w</span><span class="o">[</span><span class="mi">1</span><span class="o">]]</span> <span class="ow">and</span> <span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">w</span><span class="o">[</span><span class="mi">1</span><span class="o">]]</span>  <span class="o">==</span> <span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">w</span><span class="o">[</span><span class="mi">2</span><span class="o">]]</span><span class="p">:</span>
+          <span class="k">if</span> <span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">w</span><span class="o">[</span><span class="mi">0</span><span class="o">]]</span> <span class="o">==</span> <span class="s">"X"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kp">true</span><span class="p">,</span> <span class="s">"X"</span><span class="p">)</span>
+          <span class="k">elif</span> <span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">w</span><span class="o">[</span><span class="mi">0</span><span class="o">]]</span> <span class="o">==</span> <span class="s">"O"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kp">true</span><span class="p">,</span> <span class="s">"O"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">all</span><span class="p">(</span><span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="k">proc</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="kt">string</span><span class="p">):</span><span class="kt">bool</span> <span class="o">=</span> <span class="n">x</span> <span class="ow">in</span> <span class="o">@[</span><span class="s">"O"</span><span class="p">,</span> <span class="s">"X"</span><span class="o">]</span><span class="p">)</span> <span class="o">==</span> <span class="kp">true</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kp">true</span><span class="p">,</span> <span class="s">"tie"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span><span class="kp">false</span><span class="p">,</span> <span class="s">"going"</span><span class="p">)</span>
+</pre></div></div>
+<p>Here we check for the state of the game and the winner if all of the item in <code>WIN</code> patterns are the same</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">`$`</span><span class="p">(</span><span class="n">this</span><span class="p">:</span><span class="n">Board</span><span class="p">):</span> <span class="kt">string</span> <span class="o">=</span>
+  <span class="k">let</span> <span class="n">rows</span><span class="p">:</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]]</span> <span class="o">=</span> <span class="o">@[</span><span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="mf">0</span><span class="p">..</span><span class="mi">2</span><span class="o">]</span><span class="p">,</span> <span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="mf">3</span><span class="p">..</span><span class="mi">5</span><span class="o">]</span><span class="p">,</span> <span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="mf">6</span><span class="p">..</span><span class="mi">8</span><span class="o">]]</span>
+  <span class="k">for</span> <span class="n">row</span>  <span class="ow">in</span> <span class="n">rows</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+      <span class="n">stdout</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">cell</span> <span class="o">&amp;</span> <span class="s">" | "</span><span class="p">)</span>
+    <span class="n">echo</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">--------------"</span><span class="p">)</span>
+</pre></div></div>
+<p>Here we have the string representation of the board so we can show it as 3x3 grid in a lovely way</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">emptySpots</span><span class="p">(</span><span class="n">this</span><span class="p">:</span><span class="n">Board</span><span class="p">):</span><span class="kt">seq</span><span class="o">[</span><span class="kt">int</span><span class="o">]</span> <span class="o">=</span>
+    <span class="kd">var</span> <span class="n">emptyindices</span> <span class="o">=</span> <span class="n">newSeq</span><span class="o">[</span><span class="kt">int</span><span class="o">]</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">this</span><span class="p">.</span><span class="n">list</span><span class="p">:</span>
+      <span class="k">if</span> <span class="n">i</span><span class="p">.</span><span class="n">isDigit</span><span class="p">():</span>
+        <span class="n">emptyindices</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">parseInt</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">emptyindices</span>
+</pre></div></div>
+<p>Here we have a simple helper function that returns the empty spots indices <code>the spots that doesn’t have X or O in it</code>, remember all the cells are initialized to the string representation of their indices.</p>
+</div3></div>
+<div id="uid104" data-tralics-id="uid104" class="subsubsection" data-number="9.2.2.2"><h4><a href="#uid104" class="heading">Game</a></h4>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span>
+  <span class="n">Game</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span> <span class="k">of</span> <span class="n">RootObj</span>
+    <span class="n">currentPlayer</span><span class="o">*</span><span class="p">:</span> <span class="kt">string</span>
+    <span class="n">board</span><span class="o">*</span><span class="p">:</span> <span class="n">Board</span>
+    <span class="n">aiPlayer</span><span class="o">*</span><span class="p">:</span> <span class="kt">string</span>
+    <span class="n">difficulty</span><span class="o">*</span><span class="p">:</span> <span class="kt">int</span>
+
+
+<span class="k">proc </span><span class="nf">newGame</span><span class="p">(</span><span class="n">aiPlayer</span><span class="p">:</span><span class="kt">string</span><span class="o">=</span><span class="s">""</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">:</span><span class="kt">int</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span> <span class="n">Game</span> <span class="o">=</span>
+  <span class="kd">var</span>
+    <span class="n">game</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Game</span>
+
+  <span class="n">game</span><span class="p">.</span><span class="n">board</span> <span class="o">=</span> <span class="n">newBoard</span><span class="p">()</span>
+  <span class="n">game</span><span class="p">.</span><span class="n">currentPlayer</span> <span class="o">=</span> <span class="s">"X"</span>
+  <span class="n">game</span><span class="p">.</span><span class="n">aiPlayer</span> <span class="o">=</span> <span class="n">aiPlayer</span>
+  <span class="n">game</span><span class="p">.</span><span class="n">difficulty</span> <span class="o">=</span> <span class="n">difficulty</span>
+  
+  <span class="k">return</span> <span class="n">game</span>
+        <span class="c"># 0 1 2</span>
+        <span class="c"># 3 4 5</span>
+        <span class="c"># 6 7 8 </span>
+</pre></div></div>
+<p>Here we have another object representing the game and the players and the difficulty and wether it has an AI player or not and who is the current player</p>
+<ul>
+<li>difficulty is only logical in case of AI, it means when does the AI start calculating moves and considering scenarios, 9 is the hardest, 0 is the easiest.<span class="intersentencespace"></span>
+</li></ul>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">changePlayer</span><span class="p">(</span><span class="n">this</span><span class="p">:</span><span class="n">Game</span><span class="p">)</span> <span class="p">:</span> <span class="n">void</span> <span class="o">=</span>
+  <span class="n">this</span><span class="p">.</span><span class="n">currentPlayer</span> <span class="o">=</span> <span class="n">NEXT_PLAYER</span><span class="o">[</span><span class="n">this</span><span class="p">.</span><span class="n">currentPlayer</span><span class="o">]</span>   
+</pre></div></div>
+<p>Simple procedure to switch turns between players</p>
+</div>
+<div id="uid106" data-tralics-id="uid106" class="subsubsection" data-number="9.2.2.3"><h4><a href="#uid106" class="heading">Start the game</a></h4>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">startGame</span><span class="o">*</span><span class="p">(</span><span class="n">this</span><span class="p">:</span><span class="n">Game</span><span class="p">):</span> <span class="n">void</span><span class="o">=</span>
+    <span class="k">while</span> <span class="kp">true</span><span class="p">:</span>
+        <span class="n">echo</span> <span class="n">this</span><span class="p">.</span><span class="n">board</span>
+        <span class="k">if</span> <span class="n">this</span><span class="p">.</span><span class="n">aiPlayer</span> <span class="o">!=</span> <span class="n">this</span><span class="p">.</span><span class="n">currentPlayer</span><span class="p">:</span>
+          <span class="n">stdout</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">"Enter move: "</span><span class="p">)</span>
+          <span class="k">let</span> <span class="n">move</span> <span class="o">=</span> <span class="n">stdin</span><span class="p">.</span><span class="n">readLine</span><span class="p">()</span>
+          <span class="n">this</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">parseInt</span><span class="p">(</span><span class="o">$</span><span class="n">move</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">currentPlayer</span>
+        <span class="n">this</span><span class="p">.</span><span class="n">change_player</span><span class="p">()</span>
+        <span class="k">let</span> <span class="p">(</span><span class="n">done</span><span class="p">,</span> <span class="n">winner</span><span class="p">)</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">done</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">done</span> <span class="o">==</span> <span class="kp">true</span><span class="p">:</span>
+          <span class="n">echo</span> <span class="n">this</span><span class="p">.</span><span class="n">board</span>
+          <span class="k">if</span> <span class="n">winner</span> <span class="o">==</span> <span class="s">"tie"</span><span class="p">:</span>
+              <span class="n">echo</span><span class="p">(</span><span class="s">"TIE"</span><span class="p">)</span>
+          <span class="k">else</span><span class="p">:</span>
+              <span class="n">echo</span><span class="p">(</span><span class="s">"WINNER IS :"</span><span class="p">,</span> <span class="n">winner</span> <span class="p">)</span>
+          <span class="k">break</span>           
+</pre></div></div>
+<p>Here if we don’t have <code>aiPlayer</code> if not set it’s just a game with 2 humans switching turns and checking for the winner after each move</p>
+</div></div>
+<div id="uid107" data-tralics-id="uid107" class="subsection" data-number="9.2.3"><h3><a href="day9_tictactoe_cli_fragment.html#uid107" class="heading hyperref"><span class="number">9.2.3 </span>Minmax and AI support</a></h3>
+<p class="noindent"><a href="https://en.wikipedia.org/wiki/Minimax" target="_blank" rel="noopener">Minmax</a> is an algorithm mainly used to predict the possible moves in the future and how to minimize the losses and maximize the chances of winning</p>
+<ul>
+<li>https://www.youtube.com/watch?v=6ELUvkSkCts
+</li>
+<li>https://www.youtube.com/watch?v=CwziaVrM_vc&amp;t=1199s
+</li></ul>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> 
+  <span class="n">Move</span> <span class="o">=</span> <span class="k">tuple</span><span class="o">[</span><span class="n">score</span><span class="p">:</span><span class="kt">int</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span><span class="kt">int</span><span class="o">]</span>
+</pre></div></div>
+<p>We need a type Move on a certain idx to represent if it’s a good/bad move <code>depending on the score</code></p>
+<ul>
+<li>good means minimizing chances of the human to win or making AI win =&gt; high score +10
+</li>
+<li>bad means maximizing chances of the human to win or making AI lose =&gt; low score -10
+</li></ul>
+<p>So let’s say we are in this situation
+</p><div class="code"><div class="highlight"><pre><span></span>X 1 X
+O 4 X
+X O O
+</pre></div></div>
+<p>And it’s <code>AI turn</code> we have two possible moves</p>
+<div class="code"><div class="highlight"><pre><span></span>X 1 X
+O O X
+X O O
+</pre></div></div>
+<p>this moves is clearly wrong because the next move to human will allow him to win the first row So this is a bad move we give it score -10
+or</p>
+<div class="code"><div class="highlight"><pre><span></span>X O X
+O 4 X
+X O O
+</pre></div></div>
+<p>this moves minimizes the losses (leads to a TIE instead of making human wins) so we give it a higher score</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">getBestMove</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Game</span><span class="p">,</span> <span class="n">board</span><span class="p">:</span> <span class="n">Board</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span><span class="kt">string</span><span class="p">):</span> <span class="n">Move</span> <span class="o">=</span>
+        <span class="k">let</span> <span class="p">(</span><span class="n">done</span><span class="p">,</span> <span class="n">winner</span><span class="p">)</span> <span class="o">=</span> <span class="n">board</span><span class="p">.</span><span class="n">done</span><span class="p">()</span>
+        <span class="c"># determine the score of the move by checking where does it lead to a win or loss.</span>
+        <span class="k">if</span> <span class="n">done</span> <span class="o">==</span> <span class="kp">true</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">winner</span> <span class="o">==</span>  <span class="n">this</span><span class="p">.</span><span class="n">aiPlayer</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="n">score</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">winner</span> <span class="o">!=</span> <span class="s">"tie"</span><span class="p">:</span> <span class="c">#human</span>
+                <span class="k">return</span> <span class="p">(</span><span class="n">score</span><span class="p">:(</span><span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="n">idx</span><span class="p">:</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span><span class="n">score</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span><span class="mi">0</span><span class="p">)</span>
+            
+        <span class="k">let</span> <span class="n">empty_spots</span> <span class="o">=</span> <span class="n">board</span><span class="p">.</span><span class="n">empty_spots</span><span class="p">()</span>
+        <span class="kd">var</span> <span class="n">moves</span> <span class="o">=</span> <span class="n">newSeq</span><span class="o">[</span><span class="n">Move</span><span class="o">]</span><span class="p">()</span> 
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">empty_spots</span><span class="p">:</span>
+            <span class="c"># we calculate more new trees depending on the current situation and see where the upcoming moves lead</span>
+            <span class="kd">var</span> <span class="n">newboard</span> <span class="o">=</span> <span class="n">newBoard</span><span class="p">()</span>
+
+            <span class="n">newboard</span><span class="p">.</span><span class="n">list</span> <span class="o">=</span> <span class="n">map</span><span class="p">(</span><span class="n">board</span><span class="p">.</span><span class="n">list</span><span class="p">,</span> <span class="k">proc</span><span class="p">(</span><span class="n">x</span><span class="p">:</span><span class="kt">string</span><span class="p">):</span><span class="kt">string</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">newboard</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span> <span class="o">=</span> <span class="n">player</span>
+            <span class="k">let</span> <span class="n">score</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">getBestMove</span><span class="p">(</span><span class="n">newboard</span><span class="p">,</span> <span class="n">NEXT_PLAYER</span><span class="o">[</span><span class="n">player</span><span class="o">]</span><span class="p">).</span><span class="n">score</span>
+            <span class="k">let</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span>
+            <span class="k">let</span> <span class="n">move</span> <span class="o">=</span> <span class="p">(</span><span class="n">score</span><span class="p">:</span><span class="n">score</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span><span class="n">idx</span><span class="p">)</span>
+            <span class="n">moves</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">move</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">player</span> <span class="o">==</span> <span class="n">this</span><span class="p">.</span><span class="n">aiPlayer</span><span class="p">:</span>
+          <span class="k">return</span> <span class="n">max</span><span class="p">(</span><span class="n">moves</span><span class="p">)</span>          
+          <span class="c"># var bestScore = -1000</span>
+          <span class="c"># var bestMove: Move </span>
+          <span class="c"># for m in moves:</span>
+          <span class="c">#   if m.score &gt; bestScore:</span>
+          <span class="c">#     bestMove = m</span>
+          <span class="c">#     bestScore = m.score</span>
+          <span class="c"># return bestMove</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">return</span> <span class="n">min</span><span class="p">(</span><span class="n">moves</span><span class="p">)</span>          
+          <span class="c"># var bestScore = 1000</span>
+          <span class="c"># var bestMove: Move </span>
+          <span class="c"># for m in moves:</span>
+          <span class="c">#   if m.score &lt; bestScore:</span>
+          <span class="c">#     bestMove = m</span>
+          <span class="c">#     bestScore = m.score</span>
+          <span class="c"># return bestMove</span>
+</pre></div></div>
+<p>Here we have a highly annotated <code>getBestMove</code> procedure to calculate recursively the best move for us</p>
+<p>Now our startGame should look like this</p>
+<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">startGame</span><span class="o">*</span><span class="p">(</span><span class="n">this</span><span class="p">:</span><span class="n">Game</span><span class="p">):</span> <span class="n">void</span><span class="o">=</span>
+    <span class="k">while</span> <span class="kp">true</span><span class="p">:</span>
+        <span class="sd">##old code</span>
+
+        <span class="sd">## AI check</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">this</span><span class="p">.</span><span class="n">currentPlayer</span> <span class="o">==</span> <span class="n">this</span><span class="p">.</span><span class="n">aiPlayer</span><span class="p">:</span>
+              <span class="k">let</span> <span class="n">emptyspots</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">emptySpots</span><span class="p">()</span>
+              <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">emptyspots</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">this</span><span class="p">.</span><span class="n">difficulty</span><span class="p">:</span>
+                  <span class="n">echo</span><span class="p">(</span><span class="s">"AI MOVE.."</span><span class="p">)</span>
+                  <span class="k">let</span> <span class="n">move</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">getbestmove</span><span class="p">(</span><span class="n">this</span><span class="p">.</span><span class="n">board</span><span class="p">,</span> <span class="n">this</span><span class="p">.</span><span class="n">aiPlayer</span><span class="p">)</span>
+                  <span class="n">this</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">move</span><span class="p">.</span><span class="n">idx</span><span class="o">]</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">aiPlayer</span>
+              <span class="k">else</span><span class="p">:</span>
+                  <span class="n">echo</span><span class="p">(</span><span class="s">"RANDOM GUESS"</span><span class="p">)</span>
+                  <span class="n">this</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">emptyspots</span><span class="p">.</span><span class="n">rand</span><span class="p">()</span><span class="o">]</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">aiPlayer</span>
+  
+        <span class="sd">## oldcode    </span>
+</pre></div></div>
+<p>Here we allow the game to use difficulty which means when does the AI starts calculating the moves and making the tree?<span class="intersentencespace"></span> from the beginning 9 cells left or when there’re 4 cells left?<span class="intersentencespace"></span> you can set it the way you want it, and until u reach the starting difficulty situation AI will use random guesses (from the available <code>emptyspots</code>) instead of calculating</p>
+</div>
+<div id="uid112" data-tralics-id="uid112" class="subsection" data-number="9.2.4"><h3><a href="day9_tictactoe_cli_fragment.html#uid112" class="heading hyperref"><span class="number">9.2.4 </span>CLI entry</a></h3>
+<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">writeHelp</span><span class="p">()</span> <span class="o">=</span> 
+  <span class="n">echo</span> <span class="s">"""</span>
+<span class="s">TicTacToe 0.1.0 (MinMax version)</span>
+<span class="s">Allowed arguments:</span>
+<span class="s">  -h | --help         : show help</span>
+<span class="s">  -a | --ai           : AI player [X or O]</span>
+<span class="s">  -l | --difficulty   : destination to stow to</span>
+<span class="s">  """</span>
+
+<span class="k">proc </span><span class="nf">cli</span><span class="o">*</span><span class="p">()</span> <span class="o">=</span>
+  <span class="kd">var</span> 
+    <span class="n">aiplayer</span> <span class="o">=</span> <span class="s">""</span>
+    <span class="n">difficulty</span> <span class="o">=</span> <span class="mi">9</span>
+
+  <span class="k">for</span> <span class="n">kind</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">getopt</span><span class="p">():</span>
+    <span class="k">case</span> <span class="n">kind</span>
+    <span class="k">of</span> <span class="n">cmdLongOption</span><span class="p">,</span> <span class="n">cmdShortOption</span><span class="p">:</span>
+        <span class="k">case</span> <span class="n">key</span>
+        <span class="k">of</span> <span class="s">"help"</span><span class="p">,</span> <span class="s">"h"</span><span class="p">:</span> 
+            <span class="n">writeHelp</span><span class="p">()</span>
+            <span class="c"># quit()</span>
+        <span class="k">of</span> <span class="s">"aiplayer"</span><span class="p">,</span> <span class="s">"a"</span><span class="p">:</span>
+          <span class="n">echo</span> <span class="s">"AIPLAYER: "</span> <span class="o">&amp;</span> <span class="n">val</span>
+          <span class="n">aiplayer</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="k">of</span> <span class="s">"level"</span><span class="p">,</span> <span class="s">"l"</span><span class="p">:</span> <span class="n">difficulty</span> <span class="o">=</span> <span class="n">parseInt</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+          <span class="k">discard</span>
+    <span class="k">else</span><span class="p">:</span>
+      <span class="k">discard</span> 
+
+  <span class="k">let</span> <span class="n">g</span> <span class="o">=</span> <span class="n">newGame</span><span class="p">(</span><span class="n">aiPlayer</span><span class="o">=</span><span class="n">aiplayer</span><span class="p">,</span> <span class="n">difficulty</span><span class="o">=</span><span class="n">difficulty</span><span class="p">)</span>
+  <span class="n">g</span><span class="p">.</span><span class="n">startGame</span><span class="p">()</span>
+
+
+<span class="k">when</span> <span class="n">isMainModule</span><span class="p">:</span>
+  <span class="n">cli</span><span class="p">()</span>
+</pre></div></div>
+<p>Code is available on <a href="https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_cli.nim" target="_blank" rel="noopener">https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_cli.nim</a></p>
+</div></div>
