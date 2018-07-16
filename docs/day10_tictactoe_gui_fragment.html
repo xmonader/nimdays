@@ -1,10 +1,13 @@
 <div id="cid32" data-tralics-id="cid32" class="chapter" data-number="10" data-chapter="day10_tictactoe_gui"><h1><a href="day10_tictactoe_gui_fragment.html#cid32" class="heading hyperref"><span class="number">Chapter 10 </span>Day 10: Tic tac toe with GUI!!</a></h1>
 <p class="noindent">Hopefully, you’re done with day 9 and enjoyed playing tic tac toe.</p>
 </div><div id="cid33" data-tralics-id="cid33" class="section" data-number="10.1"><h2><a href="day10_tictactoe_gui_fragment.html#cid33" class="heading hyperref"><span class="number">10.1 </span>Expectation</a></h2>
-<p class="noindent">It’s fun to play on the command line, but it’d be very cool to have some GUI with some buttons using libui bindings in Nim</p>
+<p class="noindent">It’s fun to play on the command line, but it’d be very cool to have some GUI with some buttons using <a href="https://github.com/nim-lang/ui" target="_blank" rel="noopener">libui</a> bindings in Nim</p>
+<ul>
+<li>make sure to install it using <code>nimble install ui</code>
+</li></ul>
 </div><div id="cid34" data-tralics-id="cid34" class="section" data-number="10.2"><h2><a href="day10_tictactoe_gui_fragment.html#cid34" class="heading hyperref"><span class="number">10.2 </span>Implementation</a></h2>
 <p class="noindent">In the previous day we reached some good abstraction separating the logic for the command line gui and the minmax algorithm and it’s not tightly coupled</p>
-<div id="uid113" data-tralics-id="uid113" class="subsection" data-number="10.2.1"><h3><a href="day10_tictactoe_gui_fragment.html#uid113" class="heading hyperref"><span class="number">10.2.1 </span>minimal ui application</a></h3>
+<div id="uid114" data-tralics-id="uid114" class="subsection" data-number="10.2.1"><h3><a href="day10_tictactoe_gui_fragment.html#uid114" class="heading hyperref"><span class="number">10.2.1 </span>minimal ui application</a></h3>
 <p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">gui</span><span class="o">*</span><span class="p">()</span> <span class="o">=</span> 
   <span class="kd">var</span> <span class="n">mainwin</span> <span class="o">=</span> <span class="n">newWindow</span><span class="p">(</span><span class="s">"tictactoe"</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
   <span class="n">show</span><span class="p">(</span><span class="n">mainwin</span><span class="p">)</span>
@@ -17,7 +20,7 @@
 </pre></div></div>
 <p>Here we create a window 400x500 with a title <code>tictactoe</code> and we show it and start its mainLoop <code>getting ready to receive and dispatch events</code></p>
 </div>
-<div id="uid114" data-tralics-id="uid114" class="subsection" data-number="10.2.2"><h3><a href="day10_tictactoe_gui_fragment.html#uid114" class="heading hyperref"><span class="number">10.2.2 </span>TicTacToe GUI</a></h3>
+<div id="uid115" data-tralics-id="uid115" class="subsection" data-number="10.2.2"><h3><a href="day10_tictactoe_gui_fragment.html#uid115" class="heading hyperref"><span class="number">10.2.2 </span>TicTacToe GUI</a></h3>
 <p class="noindent">We can imagine the gui to be something like that</p>
 <div class="code"><div class="highlight"><pre><span></span>---------------------------------------------
 |  ---------------------------------------  |

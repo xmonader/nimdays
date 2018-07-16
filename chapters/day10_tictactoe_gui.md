@@ -2,7 +2,9 @@
 Hopefully, you're done with day 9 and enjoyed playing tic tac toe.
 
 ## Expectation
-It's fun to play on the command line, but it'd be very cool to have some GUI with some buttons using libui bindings in Nim
+It's fun to play on the command line, but it'd be very cool to have some GUI with some buttons using [libui](https://github.com/nim-lang/ui) bindings in Nim
+
+- make sure to install it using `nimble install ui`
 
 ## Implementation
 In the previous day we reached some good abstraction separating the logic for the command line gui and the minmax algorithm and it's not tightly coupled 
