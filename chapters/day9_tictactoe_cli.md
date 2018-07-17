@@ -184,27 +184,27 @@ We need a type Move on a certain idx to represent if it's a good/bad move `depen
 
 So let's say we are in this situation
 ```
-X 1 X
-O 4 X
+O X X
+X 4 5 
 X O O
 ```
-And it's `AI turn` we have two possible moves
+And it's `AI turn` we have two possible moves (4 or 5)
 
 ```
-X 1 X
-O O X
+O X X
+X 4 O 
 X O O
 ```
 
-this moves is clearly wrong because the next move to human will allow him to win the first row So this is a bad move we give it score -10
+this move (to 5) is clearly wrong because the next move to human will allow him to complete the diagonal (2, 4, 6) So this is a bad move we give it score -10
 or 
 
 ```
-X O X
-O 4 X
+O X X
+X O 5 
 X O O
 ```
-this moves minimizes the losses (leads to a TIE instead of making human wins) so we give it a higher score 
+this move (to 4) minimizes the losses (leads to a TIE instead of making human wins) so we give it a higher score 
 
 ```nim
 proc getBestMove(this: Game, board: Board, player:string): Move =
