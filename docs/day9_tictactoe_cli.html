@@ -186,22 +186,22 @@
 <li>bad means maximizing chances of the human to win or making AI lose =&gt; low score -10
 </li></ul>
 <p>So let’s say we are in this situation
-</p><div class="code"><div class="highlight"><pre><span></span>X 1 X
-O 4 X
+</p><div class="code"><div class="highlight"><pre><span></span>O X X
+X 4 5 
 X O O
 </pre></div></div>
-<p>And it’s <code>AI turn</code> we have two possible moves</p>
-<div class="code"><div class="highlight"><pre><span></span>X 1 X
-O O X
+<p>And it’s <code>AI turn</code> we have two possible moves (4 or 5)</p>
+<div class="code"><div class="highlight"><pre><span></span>O X X
+X 4 O 
 X O O
 </pre></div></div>
-<p>this moves is clearly wrong because the next move to human will allow him to win the first row So this is a bad move we give it score -10
+<p>this move (to 5) is clearly wrong because the next move to human will allow him to complete the diagonal (2, 4, 6) So this is a bad move we give it score -10
 or</p>
-<div class="code"><div class="highlight"><pre><span></span>X O X
-O 4 X
+<div class="code"><div class="highlight"><pre><span></span>O X X
+X O 5 
 X O O
 </pre></div></div>
-<p>this moves minimizes the losses (leads to a TIE instead of making human wins) so we give it a higher score</p>
+<p>this move (to 4) minimizes the losses (leads to a TIE instead of making human wins) so we give it a higher score</p>
 <div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">getBestMove</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Game</span><span class="p">,</span> <span class="n">board</span><span class="p">:</span> <span class="n">Board</span><span class="p">,</span> <span class="n">player</span><span class="p">:</span><span class="kt">string</span><span class="p">):</span> <span class="n">Move</span> <span class="o">=</span>
         <span class="k">let</span> <span class="p">(</span><span class="n">done</span><span class="p">,</span> <span class="n">winner</span><span class="p">)</span> <span class="o">=</span> <span class="n">board</span><span class="p">.</span><span class="n">done</span><span class="p">()</span>
         <span class="c"># determine the score of the move by checking where does it lead to a win or loss.</span>
