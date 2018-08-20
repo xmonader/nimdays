@@ -1,3 +1,4 @@
+softcover build:html
 rm -rf docs
 cp -R html docs
 rm -rf docs/images
