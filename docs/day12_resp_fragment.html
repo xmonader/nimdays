@@ -1,12 +1,8 @@
-# Day 12: Implementing Redis Protocol
-Today we will implement RESP (REdis Serialization Protocol) in Nim. Hopefully you read Day 2 on bencode data format (encoding/parsing) because we will be using the same techniques.
-
-## RESP
-
-From [redis protocol page](https://redis.io/topics/protocol).
-
-```
-Redis clients communicate with the Redis server using a protocol called RESP (REdis Serialization Protocol). While the protocol was designed specifically for Redis, it can be used for other client-server software projects.
+<div id="cid38" data-tralics-id="cid38" class="chapter" data-number="12" data-chapter="day12_resp"><h1><a href="day12_resp_fragment.html#cid38" class="heading hyperref"><span class="number">Chapter 12 </span>Day 12: Implementing Redis Protocol</a></h1>
+<p class="noindent">Today we will implement RESP (REdis Serialization Protocol) in Nim.<span class="intersentencespace"></span> Hopefully you read Day 2 on bencode data format (encoding/parsing) because we will be using the same techniques.</p>
+</div><div id="cid39" data-tralics-id="cid39" class="section" data-number="12.1"><h2><a href="day12_resp_fragment.html#cid39" class="heading hyperref"><span class="number">12.1 </span>RESP</a></h2>
+<p class="noindent">From <a href="https://redis.io/topics/protocol" target="_blank" rel="noopener">redis protocol page</a>.</p>
+<div class="code"><div class="highlight"><pre><span></span>Redis clients communicate with the Redis server using a protocol called RESP (REdis Serialization Protocol). While the protocol was designed specifically for Redis, it can be used for other client-server software projects.
 
 RESP is a compromise between the following things:
 
@@ -14,16 +10,13 @@ Simple to implement.
 Fast to parse.
 Human readable.
 RESP can serialize different data types like integers, strings, arrays. There is also a specific type for errors. Requests are sent from the client to the Redis server as arrays of strings representing the arguments of the command to execute. Redis replies with a command-specific data type.
-```
-
-So, basically we have 5 types (ints, strings, bulkstrings, errors, arrays)
-
-## What do we expect?
-
-- able to decode strings into Reasonable structures in Nim
-
-```nim
-  echo decodeString("*3\r\n:1\r\n:2\r\n:3\r\n\r\n")
+</pre></div></div>
+<p>So, basically we have 5 types (ints, strings, bulkstrings, errors, arrays, )
+## What do we expect?</p>
+<ul>
+<li>able to decode strings into Reasonable structures in Nim
+</li></ul>
+<div class="code"><div class="highlight"><pre><span></span>  echo decodeString("*3\r\n:1\r\n:2\r\n:3\r\n\r\n")
   # # @[1, 2, 3]
   echo decodeString("+Hello, World\r\n")
   # # Hello, World
@@ -39,8 +32,7 @@ So, basically we have 5 types (ints, strings, bulkstrings, errors, arrays)
   # @[@[1, 2, 3], @[5, 7, Hello Word, Err, foobar]]
   echo $decodeString("*4\r\n:51231\r\n$3\r\nfoo\r\n$-1\r\n$3\r\nbar\r\n")
   # @[51231, foo, , bar]
-```
-
+  ```
 - able to encode Nim structures representing Redis values into RESP 
 
 ```nim
@@ -63,17 +55,14 @@ So, basically we have 5 types (ints, strings, bulkstrings, errors, arrays)
 
 ## Implementation
 
-### Imports and constants
+### Initials
 
 Let's starts with main imports
-
-```
-import strformat, strutils, sequtils,
-const CRLF = "\r\n"
-const REDISNIL = "\0\0"
-```
-
-- CRLF is really important because lots of the protocol depends on that separator `\r\n`
+</pre></div></div>
+<p>import strformat, strutils, sequtils,
+const CRLF = “”
+const REDISNIL = “”
+</p><div class="code"><div class="highlight"><pre><span></span>- CRLF is really important because lots of the protocol depends on that separator `\r\n`
 - REDISNIL `\0\0` to represent `Nil` values
 
 ### Data types
@@ -93,9 +82,7 @@ Again, as in Bencode chapter we will define a variant `RedisValue` that represen
     of vkArray: l*: seq[RedisValue]
 
 ```
-
 Let's add `$`, `hash`, `==` procedures
-
 ```nim
 
 proc `$`*(obj: RedisValue): string = 
@@ -138,13 +125,15 @@ proc `==`* (a, b: RedisValue): bool =
 
 ```
 
+
+
+
 ### Encoder
 Encoding is just converting the variant `RedisValue` to the correct representation according to RESP
 
 #### Encode simple strings
 
 To encode simple strings specs says `OK` should be `+OK\r\n`
-
 ```nim
 
 proc encodeStr(v: RedisValue) : string =
@@ -155,7 +144,6 @@ proc encodeStr(v: RedisValue) : string =
 #### Encode Errors
 
 To encode errors we should precede it with `-` and end it with `\r\n`. So `Notfound` should be encoded as `-Notfound\r\n`
-
 ```nim
 proc encodeErr(v: RedisValue) : string =
   return fmt"-{v.err}{CRLF}"
@@ -163,36 +151,27 @@ proc encodeErr(v: RedisValue) : string =
 
 #### Encode Ints
 Ints are encoded `:NUM\r\n` so 95 is `:95\r\n`
-
 ```nim
 proc encodeInt(v: RedisValue) : string =
   return fmt":{v.i}{CRLF}"
 ```
 
+
 #### Encode Bulkstrings
 
 From RESP page
-
-```
-Bulk Strings are used in order to represent a single binary safe string up to 512 MB in length.
-
-Bulk Strings are encoded in the following way:
-
-A "$" byte followed by the number of bytes composing the string (a prefixed length), terminated by CRLF.
-The actual string data.
-A final CRLF.
-So the string "foobar" is encoded as follows:
-
-"$6\r\nfoobar\r\n"
-When an empty string is just:
-
-"$0\r\n\r\n"
-RESP Bulk Strings can also be used in order to signal non-existence of a value using a special format that is used to represent a Null value. In this special format the length is -1, and there is no data, so a Null is represented as:
-
-"$-1\r\n"
-```
-
-```nim
+</pre></div></div>
+<p>Bulk Strings are used in order to represent a single binary safe string up to 512 MB in length.</p>
+<p>Bulk Strings are encoded in the following way:</p>
+<p>A “$” byte followed by the number of bytes composing the string (a prefixed length), terminated by CRLF.
+The actual string data.<span class="intersentencespace"></span> A final CRLF.
+So the string “foobar” is encoded as follows:</p>
+<p>“$6”
+When an empty string is just:</p>
+<p>“$0”
+RESP Bulk Strings can also be used in order to signal non-existence of a value using a special format that is used to represent a Null value.<span class="intersentencespace"></span> In this special format the length is -1, and there is no data, so a Null is represented as:</p>
+<p>”$-1”
+</p><div class="code"><div class="highlight"><pre><span></span>```nim
 proc encodeBulkStr(v: RedisValue) : string =
   return fmt"${v.bs.len}{CRLF}{v.bs}{CRLF}"
 
@@ -209,27 +188,23 @@ To encode an array we do `*` followed by array length then `\r\n` then encode ea
 
 proc encode*(v: RedisValue) : string 
 proc encodeArray(v: RedisValue): string = 
-  var res = "*" & $len(v.l) & CRLF
+  var res = "*" &amp; $len(v.l) &amp; CRLF
   for el in v.l:
-    res &= encode(el)
-  res &= CRLF
+    res &amp;= encode(el)
+  res &amp;= CRLF
   return res
 
 ```
 
-So for instance to encode `encodeValue(RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:"Hello World"), RedisValue(kind:vkInt, i:23)]  ))`
+So for instance to encode 
+```nim 
+encodeValue(RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:"Hello World"), RedisValue(kind:vkInt, i:23)]  ))
+```
 The result should be
-```
-*2\r\n
-+Hello World\r\n
-:23\r\n
-\r\n
-```
-
-#### Encode any data type
+</pre></div></div>
+<p><em>2+Hello World:23<div class="code"><div class="highlight"><pre><span></span>#### Encode any data type
 
 Here we switch on the passed variant and dispatch the encoding to the reasonable encoder.
-
 ```nim
 proc encode*(v: RedisValue) : string =
   case v.kind 
@@ -284,7 +259,7 @@ Bulkstrings are between `$` followed by the string length and `\r\n`
 
 - string length == 0: empty string
 - string length == -1: nil
-- string length > 0: string with data
+- string length &gt; 0: string with data
 
 ```nim
 
@@ -301,6 +276,7 @@ proc decodeBulkStr(s:string): (RedisValue, int) =
     let nextcrlf = s.find(CRLF, crlfpos+len(CRLF))
     bulk = s[crlfpos+len(CRLF)..nextcrlf-1] 
     return (RedisValue(kind:vkBulkStr, bs:bulk), nextcrlf+len(CRLF))
+
 ```
 
 
@@ -328,32 +304,23 @@ proc decodeArray(s: string): (RedisValue, int) =
     
     return (RedisValue(kind:vkArray, l:arr), i)
   
-  while i < len(s) and len(arr) < arrlen:
+  while i &lt; len(s) and len(arr) &lt; arrlen:
     var pair = decode(s[i..len(s)])
     var obj = pair[0]
     arr.add(obj)
     i += pair[1]
   return (RedisValue(kind:vkArray, l:arr), i+len(CRLF))
 ```
-
-So this RESP 
-```
-*2\r\n
-+Hello World\r\n
-:23\r\n
-\r\n
-```
-
-Should be decoded to `RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:"Hello World"), RedisValue(kind:vkInt, i:23)]  )`
+</pre></div></div></em></p>
+<p><em>*2+Hello World:23<div class="code"><div class="highlight"><pre><span></span>Should be decoded to `RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:"Hello World"), RedisValue(kind:vkInt, i:23)]  )`
 
 #### Decode any object
 
 Based on the first character we dispatch to the correct decoder then we skip `the processed count` in the string to decode the next object.
-
 ```nim
 proc decode(s: string): (RedisValue, int) =
   var i = 0 
-  while i < len(s):
+  while i &lt; len(s):
     var curchar = $s[i]
     if curchar == "+":
       var pair = decodeStr(s[i..s.find(CRLF, i)+len(CRLF)])
@@ -394,17 +361,15 @@ proc decode(s: string): (RedisValue, int) =
 In redis, commands are sent as List of `RedisValues`
 
 so `GET USER` is converted to `*2\r\n$3\r\nGET\r\n$4\r\nUSER\r\n\r\n`
-
-```nim
-proc prepareCommand*(this: Redis, command: string, args:seq[string]): string =
-  let cmdArgs = concat(@[command], args)
-  var cmdAsRedisValues = newSeq[RedisValue]()
-  for cmd in cmdArgs:
-    cmdAsRedisValues.add(RedisValue(kind:vkBulkStr, bs:cmd))
-  var arr = RedisValue(kind:vkArray, l: cmdAsRedisValues)
-
-  return encode(arr)
-```
-
-### nim-resp
+</pre></div></div></em></p>
+<p><em>proc prepareCommand</em>(this: Redis, command: string, args:seq[string]): string =
+let cmdArgs = concat(@[command], args)
+var cmdAsRedisValues = newSeq<a href="" target="_blank" rel="noopener">RedisValue</a>
+for cmd in cmdArgs:
+cmdAsRedisValues.add(RedisValue(kind:vkBulkStr, bs:cmd))
+var arr = RedisValue(kind:vkArray, l: cmdAsRedisValues)</p>
+<p>return encode(arr)
+</p><div class="code"><div class="highlight"><pre><span></span>### nim-resp
 That day is based on [nim-resp](https://github.com/xmonader/nim-resp) project, and on-going effort to create a redis client in Nim, it supports pipelining feature and all of the previous code. Feel free to send PRs or open issues 
+</pre></div></div>
+</div>
