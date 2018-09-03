@@ -85,7 +85,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html" class="active">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html" class="active">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -147,9 +147,9 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="day1_dmidecode.html#day-1-parsing-dmidecode-output" id="day-1-parsing-dmidecode-output"><h1>Day 1: Parsing DMIDecode output</h1></a>
+                        <a class="header" href="day01_dmidecode.html#day-1-parsing-dmidecode-output" id="day-1-parsing-dmidecode-output"><h1>Day 1: Parsing DMIDecode output</h1></a>
 <p>In our first day we will write a <a href="https://man.cx/?page=dmidecode(8)">dmidecode</a> parser in nim</p>
-<a class="header" href="day1_dmidecode.html#what-to-expect-" id="what-to-expect-"><h2>What to expect ?</h2></a>
+<a class="header" href="day01_dmidecode.html#what-to-expect-" id="what-to-expect-"><h2>What to expect ?</h2></a>
 <pre><code class="language-Nimrod">let sample1 = &quot;&quot;&quot;
 # dmidecode 3.1
 Getting SMBIOS data from sysfs.
@@ -180,13 +180,13 @@ for secname, sec in obj:
                 echo &quot;\t\t I: &quot;, i
 
 </code></pre>
-<a class="header" href="day1_dmidecode.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="day01_dmidecode.html#implementation" id="implementation"><h2>Implementation</h2></a>
 <p>a while ago at work (https://github.com/zero-os/0-core) we needed to parse some dmidecode output, and it sounds like an good problem with enough concepts to get my feet wet in nim.</p>
-<a class="header" href="day1_dmidecode.html#nimble-ready" id="nimble-ready"><h3>nimble ready!</h3></a>
+<a class="header" href="day01_dmidecode.html#nimble-ready" id="nimble-ready"><h3>nimble ready!</h3></a>
 <pre><code class="language-bash">mkdir dmidecode
 nimble init
 </code></pre>
-<a class="header" href="day1_dmidecode.html#so-how-does-dmidecode-output-look-like" id="so-how-does-dmidecode-output-look-like"><h3>So how does dmidecode output look like?</h3></a>
+<a class="header" href="day01_dmidecode.html#so-how-does-dmidecode-output-look-like" id="so-how-does-dmidecode-output-look-like"><h3>So how does dmidecode output look like?</h3></a>
 <pre><code># dmidecode 3.1
 Getting SMBIOS data from sysfs.
 SMBIOS 2.6 present.
@@ -250,7 +250,7 @@ BIOS Information
 </ul>
 </li>
 </ul>
-<a class="header" href="day1_dmidecode.html#mapping-dmi-to-nim-structures" id="mapping-dmi-to-nim-structures"><h3>Mapping DMI to nim structures</h3></a>
+<a class="header" href="day01_dmidecode.html#mapping-dmi-to-nim-structures" id="mapping-dmi-to-nim-structures"><h3>Mapping DMI to nim structures</h3></a>
 <p>So ourplan is to have an api like</p>
 <pre><code class="language-Nimrod">dmifile = parseDMI(source)
 dmifile[&quot;section1&quot;][&quot;property1].value
@@ -281,7 +281,7 @@ method addItem(this: Property, item: string) =
 <p>It'd have been nicer to use <code>takewhile</code>, but it's not available in nim stdlib</p>
 <pre><code class="language-python">    getindentlevel = lambda l:  len(list(takewhile(lambda c: c.isspace(), l)))
 </code></pre>
-<a class="header" href="day1_dmidecode.html#parsing-dmi-source-into-nim-structures" id="parsing-dmi-source-into-nim-structures"><h3>Parsing DMI source into nim structures</h3></a>
+<a class="header" href="day01_dmidecode.html#parsing-dmi-source-into-nim-structures" id="parsing-dmi-source-into-nim-structures"><h3>Parsing DMI source into nim structures</h3></a>
 <p>There're many ways to parse the DMI (e.g using regex which would be fairly simple &quot;feel free to implement it&quot; and kindly send me a PR to update this tutorial)</p>
 <pre><code>proc parseDMI* (source: string) : Table[string, Section]=
 </code></pre>
@@ -471,7 +471,7 @@ proc parseDMI* (source: string) : Table[string, Section]=
                         
 
                         
-                            <a rel="next" href="day2_bencode.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="day02_bencode.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -485,7 +485,7 @@ proc parseDMI* (source: string) : Table[string, Section]=
                 
 
                 
-                    <a href="day2_bencode.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="day02_bencode.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

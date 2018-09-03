@@ -1,6 +1,6 @@
 # Day 11 ( Bake applications)
 
-I used to work on application 2 years ago, and It was a bit like ansible defining recipes to create applications and managng their dependencies.
+I used to work on application 2 years ago, and It was a bit like ansible defining recipes to create applications and managing their dependencies.
 
 
 ## What to expect

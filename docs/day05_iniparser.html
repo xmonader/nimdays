@@ -85,7 +85,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html" class="active">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html" class="active">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -147,12 +147,12 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="day5_iniparser.html#day-5-creating-ini-parser" id="day-5-creating-ini-parser"><h1>Day 5: Creating INI Parser</h1></a>
+                        <a class="header" href="day05_iniparser.html#day-5-creating-ini-parser" id="day-5-creating-ini-parser"><h1>Day 5: Creating INI Parser</h1></a>
 <p>this is a pure <a href="https://en.wikipedia.org/wiki/Ini_file">Ini</a> parser for nim</p>
 <blockquote>
 <p>Nim has advanced <a href="https://nim-lang.org/docs/parsecfg.html">parsecfg</a></p>
 </blockquote>
-<a class="header" href="day5_iniparser.html#what-to-expect-" id="what-to-expect-"><h2>What to expect ?</h2></a>
+<a class="header" href="day05_iniparser.html#what-to-expect-" id="what-to-expect-"><h2>What to expect ?</h2></a>
 <pre><code class="language-Nimrod">let sample1 = &quot;&quot;&quot;
 
 [general]
@@ -186,9 +186,9 @@ echo d.toIniString()
 let s = d.getSection(&quot;author&quot;)
 echo $s
 </code></pre>
-<a class="header" href="day5_iniparser.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="day05_iniparser.html#implementation" id="implementation"><h2>Implementation</h2></a>
 <p>You can certainly use regular expressions, like pythons configparser, but we will go for a simpler approach here, also we want to keep it pure so we don't depend on <code>pcre</code></p>
-<a class="header" href="day5_iniparser.html#ini-sample" id="ini-sample"><h3>Ini sample</h3></a>
+<a class="header" href="day05_iniparser.html#ini-sample" id="ini-sample"><h3>Ini sample</h3></a>
 <pre><code class="language-ini">
 [general]
 appname = configparser
@@ -199,7 +199,7 @@ name = xmonader
 email = notxmonader@gmail.com
 </code></pre>
 <p>Ini file consists of one or more sections and each section consists of one or more key value pairs separated by <code>=</code></p>
-<a class="header" href="day5_iniparser.html#define-your-data-types" id="define-your-data-types"><h3>Define your data types</h3></a>
+<a class="header" href="day05_iniparser.html#define-your-data-types" id="define-your-data-types"><h3>Define your data types</h3></a>
 <pre><code class="language-Nimrod">import tables, strutils
 
 </code></pre>
@@ -236,7 +236,7 @@ email = notxmonader@gmail.com
     return &quot;&lt;Ini &quot; &amp; $this.sections &amp; &quot; &gt;&quot;
 </code></pre>
 <p>define friendly <code>toString</code> proc using <code>$</code> operator</p>
-<a class="header" href="day5_iniparser.html#define-api" id="define-api"><h3>Define API</h3></a>
+<a class="header" href="day05_iniparser.html#define-api" id="define-api"><h3>Define API</h3></a>
 <pre><code>proc setSection*(this: Ini, name: string, section: Section) =
     this.sections[name] = section
 
@@ -289,9 +289,9 @@ proc deleteProperty*(this: Ini, sectionName: string, key: string) =
     return output
 </code></pre>
 <p>Simple proc <code>toIniString</code> to convert the nim structures into Ini text string</p>
-<a class="header" href="day5_iniparser.html#parse" id="parse"><h3>Parse!</h3></a>
+<a class="header" href="day05_iniparser.html#parse" id="parse"><h3>Parse!</h3></a>
 <p>OK, here comes the cool part</p>
-<a class="header" href="day5_iniparser.html#parser-states" id="parser-states"><h4>Parser states</h4></a>
+<a class="header" href="day05_iniparser.html#parser-states" id="parser-states"><h4>Parser states</h4></a>
 <pre><code class="language-Nimrod">type ParserState = enum
     readSection, readKV
 </code></pre>
@@ -300,7 +300,7 @@ proc deleteProperty*(this: Ini, sectionName: string, key: string) =
 <li>readSection: when we are supposed to extract section name from the current line</li>
 <li>readKV: when we are supposed to read the line in key value pair mode</li>
 </ul>
-<a class="header" href="day5_iniparser.html#parseini-proc" id="parseini-proc"><h4>ParseIni proc</h4></a>
+<a class="header" href="day05_iniparser.html#parseini-proc" id="parseini-proc"><h4>ParseIni proc</h4></a>
 <pre><code class="language-Nimrod">proc parseIni*(s: string) : Ini = 
 </code></pre>
 <p>Here we define a proc <code>parseIni</code> that takes a string <code>s</code> and creates an <code>Ini</code> object</p>
@@ -363,13 +363,13 @@ proc deleteProperty*(this: Ini, sectionName: string, key: string) =
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="day4_asynclinkschecker.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="day04_asynclinkschecker.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="day6_nistow.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="day06_nistow.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -381,13 +381,13 @@ proc deleteProperty*(this: Ini, sectionName: string, key: string) =
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="day4_asynclinkschecker.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="day04_asynclinkschecker.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="day6_nistow.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="day06_nistow.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

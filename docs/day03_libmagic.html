@@ -85,7 +85,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html" class="active">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html" class="active">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -147,7 +147,7 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="day3_libmagic.html#day-3-talking-to-c-ffi-and-libmagic" id="day-3-talking-to-c-ffi-and-libmagic"><h1>Day 3: Talking to C (FFI and libmagic)</h1></a>
+                        <a class="header" href="day03_libmagic.html#day-3-talking-to-c-ffi-and-libmagic" id="day-3-talking-to-c-ffi-and-libmagic"><h1>Day 3: Talking to C (FFI and libmagic)</h1></a>
 <p>Libmagic is a magic number recognition library, remember everytime you called <code>file</code> utility on a file to know its type?</p>
 <pre><code>➜  file /usr/bin/rm
 /usr/bin/rm: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=cbae26b2a032b1ce3129d56aee2bcf70dd8deeb0, stripped
@@ -156,7 +156,7 @@
 ➜  file /usr/include/stdio.h
 /usr/include/stdio.h: C source, ASCII text
 </code></pre>
-<a class="header" href="day3_libmagic.html#what-to-expect" id="what-to-expect"><h2>What to expect?</h2></a>
+<a class="header" href="day03_libmagic.html#what-to-expect" id="what-to-expect"><h2>What to expect?</h2></a>
 <pre><code class="language-Nimrod">import magic
 
 echo magic.guessFile(&quot;/usr/bin/rm&quot;)
@@ -164,14 +164,14 @@ echo magic.guessFile(&quot;/usr/bin/rm&quot;)
 <p>The output should be something like</p>
 <pre><code>ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=cbae26b2a032b1ce3129d56aee2bcf70dd8deeb0, stripped
 </code></pre>
-<a class="header" href="day3_libmagic.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="day03_libmagic.html#implementation" id="implementation"><h2>Implementation</h2></a>
 <p><a href="https://livebook.manning.com/#!/book/nim-in-action/chapter-8/1">FFI Chapter</a> of <a href="https://www.manning.com/books/nim-in-action">Nim in Action</a> is freely available.</p>
-<a class="header" href="day3_libmagic.html#step-1-get-the-library-info" id="step-1-get-the-library-info"><h3>Step 1: Get the library info</h3></a>
+<a class="header" href="day03_libmagic.html#step-1-get-the-library-info" id="step-1-get-the-library-info"><h3>Step 1: Get the library info</h3></a>
 <p>Well, libmagic has <code>libmagic.so</code> in your library path <code>/usr/lib/libmagic.so</code> and a header file <code>magic.h</code> in <code>/usr/include/magic.h</code>.
 create a constant for the libmagic library name.</p>
 <pre><code class="language-Nimrod">const libName* = &quot;libmagic.so&quot;
 </code></pre>
-<a class="header" href="day3_libmagic.html#step-2-extract-constants" id="step-2-extract-constants"><h3>Step 2: Extract constants</h3></a>
+<a class="header" href="day03_libmagic.html#step-2-extract-constants" id="step-2-extract-constants"><h3>Step 2: Extract constants</h3></a>
 <p>We should extract the constants from the header</p>
 <pre><code class="language-c">#define MAGIC_NONE              0x0000000 /* No flags */
 #define MAGIC_DEBUG             0x0000001 /* Turn on debugging */
@@ -205,13 +205,13 @@ const  MAGIC_NO_CHECK_ELF* = 0x010000            # Don't check for elf details
 const  MAGIC_NO_CHECK_ASCII* = 0x020000         # Don't check for ascii files 
 const  MAGIC_NO_CHECK_TOKENS* = 0x100000         # Don't check ascii/tokens 
 </code></pre>
-<a class="header" href="day3_libmagic.html#step-3-extract-the-types" id="step-3-extract-the-types"><h3>Step 3: Extract the types</h3></a>
+<a class="header" href="day03_libmagic.html#step-3-extract-the-types" id="step-3-extract-the-types"><h3>Step 3: Extract the types</h3></a>
 <p><code>typedef struct magic_set *magic_t;</code>
 so the only type we have is a pointer to some struct (object)</p>
 <pre><code class="language-Nimrod">type Magic = object
 type MagicPtr* = ptr Magic 
 </code></pre>
-<a class="header" href="day3_libmagic.html#step-4-extract-procedures" id="step-4-extract-procedures"><h3>Step 4: Extract procedures</h3></a>
+<a class="header" href="day03_libmagic.html#step-4-extract-procedures" id="step-4-extract-procedures"><h3>Step 4: Extract procedures</h3></a>
 <pre><code class="language-c">magic_t magic_open(int);
 void magic_close(magic_t);
 
@@ -275,7 +275,7 @@ proc magic_file(p:MagicPtr, filepath: cstring): cstring {.importc, dynlib: libNa
 <blockquote>
 <p>The magic_file() function returns a textual description of the contents of the filename argument, or NULL if an error occurred.  If the filename is NULL, then stdin is used.</p>
 </blockquote>
-<a class="header" href="day3_libmagic.html#step-5-friendly-api" id="step-5-friendly-api"><h3>Step 5: Friendly API</h3></a>
+<a class="header" href="day03_libmagic.html#step-5-friendly-api" id="step-5-friendly-api"><h3>Step 5: Friendly API</h3></a>
 <p>It'd be annoying for people to write C code and take care of pointers and such in a higher level language like nim</p>
 <p>So let's expose a proc <code>guessFile</code> takes a filepath and flags and internally use the functions we exposed through the FFI in the previous step.</p>
 <pre><code class="language-Nimrod">proc guessFile*(filepath: string, flags: cint = MAGIC_NONE): string =
@@ -296,13 +296,13 @@ proc magic_file(p:MagicPtr, filepath: cstring): cstring {.importc, dynlib: libNa
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="day2_bencode.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="day02_bencode.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="day4_asynclinkschecker.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="day04_asynclinkschecker.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -314,13 +314,13 @@ proc magic_file(p:MagicPtr, filepath: cstring): cstring {.importc, dynlib: libNa
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="day2_bencode.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="day02_bencode.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="day4_asynclinkschecker.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="day04_asynclinkschecker.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

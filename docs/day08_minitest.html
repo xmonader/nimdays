@@ -85,7 +85,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html" class="active">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html" class="active">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -147,9 +147,9 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="day8_minitest.html#day-8-minitest" id="day-8-minitest"><h1>Day 8: minitest</h1></a>
+                        <a class="header" href="day08_minitest.html#day-8-minitest" id="day-8-minitest"><h1>Day 8: minitest</h1></a>
 <p>I'm a big fan of <a href="http://www.gigamonkeys.com/book/">Practical Common Lisp</a> and It has a chapter on <a href="http://www.gigamonkeys.com/book/practical-building-a-unit-test-framework.html">building a unittest framework using macros</a> and I didn't get the chance to tinker with nim macros just yet, So today we will be building almost the same thing in nim.</p>
-<a class="header" href="day8_minitest.html#so-whats-up" id="so-whats-up"><h2>So what's up?</h2></a>
+<a class="header" href="day08_minitest.html#so-whats-up" id="so-whats-up"><h2>So what's up?</h2></a>
 <p>Imagine you want to check for some expression and print a specific message donating the expression</p>
 <pre><code class="language-Nimrod">  doAssert(1==2, &quot;1 == 2 failed&quot;)
 </code></pre>
@@ -159,7 +159,7 @@
 
 </code></pre>
 <p>We can already see the boilerplate here, repeating the expression twice one for the check and one for the message itself.</p>
-<a class="header" href="day8_minitest.html#what-to-expect" id="what-to-expect"><h2>What to expect?</h2></a>
+<a class="header" href="day08_minitest.html#what-to-expect" id="what-to-expect"><h2>What to expect?</h2></a>
 <p>We expect having a DSL to remove the boilerplate we're suffering from in the prev. section.</p>
 <pre><code class="language-Nimrod">  check(3==1+2)
   check(6+5*2 == 16)
@@ -196,9 +196,9 @@ Strs
  &quot;&quot;.isNilOrEmpty() == true .. passed
 
 </code></pre>
-<a class="header" href="day8_minitest.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="day08_minitest.html#implementation" id="implementation"><h2>Implementation</h2></a>
 <p>So nim has two way to do macros</p>
-<a class="header" href="day8_minitest.html#templates" id="templates"><h3>templates</h3></a>
+<a class="header" href="day08_minitest.html#templates" id="templates"><h3>templates</h3></a>
 <p>Which are like functions that called in compilation time like <code>preprocessor</code></p>
 <p>From the nim manual</p>
 <pre><code class="language-Nimrod">template `!=` (a, b: untyped): untyped =
@@ -232,7 +232,7 @@ assert(5 != 6) # the compiler rewrites that to: assert(not (5 == 6))
 <p><code>indent</code> amount of spaces prefixing the message.</p>
 </li>
 </ul>
-<a class="header" href="day8_minitest.html#macros" id="macros"><h3>Macros</h3></a>
+<a class="header" href="day08_minitest.html#macros" id="macros"><h3>Macros</h3></a>
 <p>Nim provides us with a way to access the AST in a very low level when we templates don't cut it.</p>
 <p>What we expected is having a <code>suite</code> macro</p>
 <pre><code>  suite &quot;Strs&quot;:
@@ -244,7 +244,7 @@ assert(5 != 6) # the compiler rewrites that to: assert(not (5 == 6))
 <li>Please note there're two kind of macros and we're interested in the <code>statements macro</code> here</li>
 <li>Statments macro is a macro that has <code>colon</code> <code>:</code> operator followed by bunch of statements</li>
 </ul>
-<a class="header" href="day8_minitest.html#dumptree" id="dumptree"><h4>dumpTree</h4></a>
+<a class="header" href="day08_minitest.html#dumptree" id="dumptree"><h4>dumpTree</h4></a>
 <p>dumpTree is amazing to debug the ast and print them in a good visual way</p>
 <pre><code class="language-Nimrod">
   dumpTree:
@@ -332,13 +332,13 @@ $name
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="day7_shorturl.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="day07_shorturl.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="day9_tictactoe_cli.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="day09_tictactoe_cli.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -350,13 +350,13 @@ $name
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="day7_shorturl.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="day07_shorturl.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="day9_tictactoe_cli.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="day09_tictactoe_cli.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 

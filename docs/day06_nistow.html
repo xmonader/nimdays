@@ -85,7 +85,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html" class="active">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html" class="active">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -147,9 +147,9 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="day6_nistow.html#day-6-manage-your-dotfiles-easily-with-nistow" id="day-6-manage-your-dotfiles-easily-with-nistow"><h1>Day 6: Manage your dotfiles easily with nistow</h1></a>
+                        <a class="header" href="day06_nistow.html#day-6-manage-your-dotfiles-easily-with-nistow" id="day-6-manage-your-dotfiles-easily-with-nistow"><h1>Day 6: Manage your dotfiles easily with nistow</h1></a>
 <p>Today we will create a tool to manage our dotfiles easily.</p>
-<a class="header" href="day6_nistow.html#dotfiles-layout" id="dotfiles-layout"><h2>Dotfiles layout</h2></a>
+<a class="header" href="day06_nistow.html#dotfiles-layout" id="dotfiles-layout"><h2>Dotfiles layout</h2></a>
 <pre><code>        i3
         `-- .config
             `-- i3
@@ -159,7 +159,7 @@
 <blockquote>
 <p>Home directory is the default destination.</p>
 </blockquote>
-<a class="header" href="day6_nistow.html#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
+<a class="header" href="day06_nistow.html#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
 <pre><code>➜  ~ nistow --help
     Stow 0.1.0
         -h | --help     : show help
@@ -177,7 +177,7 @@
 </ul>
 <pre><code>nistow --app=/home/striky/wspace/dotfiles/localdir --dest=/tmp/tmpconf --verbose
 </code></pre>
-<a class="header" href="day6_nistow.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="day06_nistow.html#implementation" id="implementation"><h2>Implementation</h2></a>
 <pre><code class="language-Nimrod">proc writeHelp() = 
     echo &quot;&quot;&quot;
 Stow 0.1.0 (Manage your dotfiles easily)
@@ -337,13 +337,13 @@ __________________apppath________                _____dest____
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
                         
-                            <a rel="prev" href="day5_iniparser.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="day05_iniparser.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <i class="fa fa-angle-left"></i>
                             </a>
                         
 
                         
-                            <a rel="next" href="day7_shorturl.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next" href="day07_shorturl.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         
@@ -355,13 +355,13 @@ __________________apppath________                _____dest____
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
                 
-                    <a href="day5_iniparser.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a href="day05_iniparser.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <i class="fa fa-angle-left"></i>
                     </a>
                 
 
                 
-                    <a href="day7_shorturl.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a href="day07_shorturl.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>
                     </a>
                 
