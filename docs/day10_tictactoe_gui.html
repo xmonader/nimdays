@@ -1,74 +1,176 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <link href="stylesheets/pygments.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/softcover.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/custom.css" media="screen" rel="stylesheet" type="text/css" />
-    
-    <title>nimdays</title>
-    
-      <script type="text/x-mathjax-config">
-              MathJax.Hub.Config({
-        "HTML-CSS": {
-          availableFonts: ["TeX"],
-        },
-        TeX: {
-          extensions: ["AMSmath.js", "AMSsymbols.js", "color.js"],
-          equationNumbers: {
-            autoNumber: "AMS",
-            formatNumber: function (n) { return "10" + '.' + n }
-          },
-          Macros: {
-            PolyTeX:    "Poly{\\TeX}",
-            PolyTeXnic: "Poly{\\TeX}nic",
-            "softcover": "\\texttt{softcover}",
-"unitvec": ["{\\hat #1}", 1]
-          }
-        },
-        showProcessingMessages: false,
-        messageStyle: "none",
-        imageFont: null,
-        "AssistiveMML": { disabled: true }
-      });
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 10: TicTacToe GUI - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
 
-        if (/PhantomJS/.test(window.navigator.userAgent)) {
-          MathJax.Hub.Queue([alert, 'MathJax Done']);
-        }
-      </script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_SVG"></script>
-    
-  </head>
-  <body>
-    
-    <div id="book">
-      <div id="cid32" data-tralics-id="cid32" class="chapter" data-number="10" data-chapter="day10_tictactoe_gui"><h1><a href="day10_tictactoe_gui.html#cid32" class="heading hyperref"><span class="number">Chapter 10 </span>Day 10: Tic tac toe with GUI!!</a></h1>
-<p class="noindent">Hopefully, you’re done with day 9 and enjoyed playing tic tac toe.</p>
-</div>
-<div id="cid33" data-tralics-id="cid33" class="section" data-number="10.1"><h2><a href="day10_tictactoe_gui.html#cid33" class="heading hyperref"><span class="number">10.1 </span>Expectation</a></h2>
-<p class="noindent">It’s fun to play on the command line, but it’d be very cool to have some GUI with some buttons using <a href="https://github.com/nim-lang/ui" target="_blank" rel="noopener">libui</a> bindings in Nim</p>
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <noscript>
+            <style type="text/css">
+                .javascript-only {
+                    display: none;
+                }
+            </style>
+        </noscript>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html" class="active">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons javascript-only">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </div>
+                <div id="searchresults-outer" class="searchresults-outer">
+                    <div class="searchresults-header" id="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="day10_tictactoe_gui.html#day-10-tic-tac-toe-with-gui" id="day-10-tic-tac-toe-with-gui"><h1>Day 10: Tic tac toe with GUI!!</h1></a>
+<p>Hopefully, you're done with day 9 and enjoyed playing tic tac toe.</p>
+<a class="header" href="day10_tictactoe_gui.html#expectation" id="expectation"><h2>Expectation</h2></a>
+<p>It's fun to play on the command line, but it'd be very cool to have some GUI with some buttons using <a href="https://github.com/nim-lang/ui">libui</a> bindings in Nim</p>
 <ul>
-<li>make sure to install it using <code>nimble install ui</code>
-</li></ul>
-</div>
-<div id="cid34" data-tralics-id="cid34" class="section" data-number="10.2"><h2><a href="day10_tictactoe_gui.html#cid34" class="heading hyperref"><span class="number">10.2 </span>Implementation</a></h2>
-<p class="noindent">In the previous day we reached some good abstraction separating the logic for the command line gui and the minmax algorithm and it’s not tightly coupled</p>
-<div id="uid114" data-tralics-id="uid114" class="subsection" data-number="10.2.1"><h3><a href="day10_tictactoe_gui.html#uid114" class="heading hyperref"><span class="number">10.2.1 </span>minimal ui application</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">gui</span><span class="o">*</span><span class="p">()</span> <span class="o">=</span> 
-  <span class="kd">var</span> <span class="n">mainwin</span> <span class="o">=</span> <span class="n">newWindow</span><span class="p">(</span><span class="s">"tictactoe"</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
-  <span class="n">show</span><span class="p">(</span><span class="n">mainwin</span><span class="p">)</span>
-  <span class="n">mainLoop</span><span class="p">()</span>
+<li>make sure to install it using <code>nimble install ui</code></li>
+</ul>
+<a class="header" href="day10_tictactoe_gui.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<p>In the previous day we reached some good abstraction separating the logic for the command line gui and the minmax algorithm and it's not tightly coupled</p>
+<a class="header" href="day10_tictactoe_gui.html#minimal-ui-application" id="minimal-ui-application"><h3>minimal ui application</h3></a>
+<pre><code class="language-Nimrod">proc gui*() = 
+  var mainwin = newWindow(&quot;tictactoe&quot;, 400, 500, true)
+  show(mainwin)
+  mainLoop()
 
-<span class="k">when</span> <span class="n">isMainModule</span><span class="p">:</span>
-  <span class="c"># cli()</span>
-  <span class="n">init</span><span class="p">()</span>
-  <span class="n">gui</span><span class="p">()</span>
-</pre></div></div>
+when isMainModule:
+  # cli()
+  init()
+  gui()
+</code></pre>
 <p>Here we create a window 400x500 with a title <code>tictactoe</code> and we show it and start its mainLoop <code>getting ready to receive and dispatch events</code></p>
-</div>
-<div id="uid115" data-tralics-id="uid115" class="subsection" data-number="10.2.2"><h3><a href="day10_tictactoe_gui.html#uid115" class="heading hyperref"><span class="number">10.2.2 </span>TicTacToe GUI</a></h3>
-<p class="noindent">We can imagine the gui to be something like that</p>
-<div class="code"><div class="highlight"><pre><span></span>---------------------------------------------
+<a class="header" href="day10_tictactoe_gui.html#tictactoe-gui" id="tictactoe-gui"><h3>TicTacToe GUI</h3></a>
+<p>We can imagine the gui to be something like that</p>
+<pre><code>---------------------------------------------
 |  ---------------------------------------  |
 +  | INFO LABEL | button to restart       | +
 |  ---------------------------------------| |
@@ -80,153 +182,217 @@
 |  |  btn     |    btn  |   btn           | |
 +  |--------------------------------------| +
 ---------------------------------------------
-</pre></div></div>
+</code></pre>
 <ul>
-<li>a window that contains a vertical box
-</li>
-<li>the vertical box contains 4 rows
-</li>
-<li>first row to show information about the current game and a button to reset the game
-</li>
-<li>and the other rows represent the 3x3 tictactoe grid that will reflect <code>game.list</code> :)
-</li>
-<li>and 9 buttons to be pressed to set X or O
-</li>
-<li>we will support human vs AI so when human presses a button it gets disabled and the AI presses the button that minimizes its loss and that button gets disabled too.<span class="intersentencespace"></span>
-</li></ul>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">gui</span><span class="o">*</span><span class="p">()</span> <span class="o">=</span> 
-  <span class="kd">var</span> <span class="n">mainwin</span> <span class="o">=</span> <span class="n">newWindow</span><span class="p">(</span><span class="s">"tictactoe"</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">500</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
+<li>a window that contains  a vertical box</li>
+<li>the vertical box contains 4 rows</li>
+<li>first row to show information about the current game and a button to reset the game</li>
+<li>and the other rows represent the 3x3 tictactoe grid that will reflect <code>game.list</code> :)</li>
+<li>and 9 buttons to be pressed to set X or O</li>
+<li>we will support human vs AI so when human presses a button it gets disabled and the AI presses the button that minimizes its loss and that button gets disabled too.</li>
+</ul>
+<pre><code class="language-Nimrod">proc gui*() = 
+  var mainwin = newWindow(&quot;tictactoe&quot;, 400, 500, true)
 
-  <span class="c"># game object to contain the state, the players, the difficulty,...</span>
-  <span class="kd">var</span> <span class="n">g</span> <span class="o">=</span> <span class="n">newGame</span><span class="p">(</span><span class="n">aiPlayer</span><span class="o">=</span><span class="s">"O"</span><span class="p">,</span> <span class="n">difficulty</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
+  # game object to contain the state, the players, the difficulty,...
+  var g = newGame(aiPlayer=&quot;O&quot;, difficulty=9)
 
-  <span class="kd">var</span> <span class="n">currentMove</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-  <span class="n">mainwin</span><span class="p">.</span><span class="n">margined</span> <span class="o">=</span> <span class="kp">true</span>
-  <span class="n">mainwin</span><span class="p">.</span><span class="n">onClosing</span> <span class="o">=</span> <span class="p">(</span><span class="k">proc</span> <span class="p">():</span> <span class="kt">bool</span> <span class="o">=</span> <span class="k">return</span> <span class="kp">true</span><span class="p">)</span>
+  var currentMove = -1
+  mainwin.margined = true
+  mainwin.onClosing = (proc (): bool = return true)
 
 
-  <span class="c"># set up the boxes </span>
-  <span class="k">let</span> <span class="n">box</span> <span class="o">=</span> <span class="n">newVerticalBox</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
-  <span class="k">let</span> <span class="n">hbox0</span> <span class="o">=</span> <span class="n">newHorizontalBox</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
-  <span class="k">let</span> <span class="n">hbox1</span> <span class="o">=</span> <span class="n">newHorizontalBox</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
-  <span class="k">let</span> <span class="n">hbox2</span> <span class="o">=</span> <span class="n">newHorizontalBox</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
-  <span class="k">let</span> <span class="n">hbox3</span> <span class="o">=</span> <span class="n">newHorizontalBox</span><span class="p">(</span><span class="kp">true</span><span class="p">)</span>
-  <span class="c"># list of buttons </span>
-  <span class="kd">var</span> <span class="n">buttons</span> <span class="o">=</span> <span class="n">newSeq</span><span class="o">[</span><span class="n">Button</span><span class="o">]</span><span class="p">()</span>
+  # set up the boxes 
+  let box = newVerticalBox(true)
+  let hbox0 = newHorizontalBox(true)
+  let hbox1 = newHorizontalBox(true)
+  let hbox2 = newHorizontalBox(true)
+  let hbox3 = newHorizontalBox(true)
+  # list of buttons 
+  var buttons = newSeq[Button]()
 
-  <span class="c"># information label</span>
-  <span class="kd">var</span> <span class="n">labelInfo</span> <span class="o">=</span> <span class="n">newLabel</span><span class="p">(</span><span class="s">"Info: Player X turn"</span><span class="p">)</span>
-  <span class="n">hbox0</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">labelInfo</span><span class="p">)</span>
+  # information label
+  var labelInfo = newLabel(&quot;Info: Player X turn&quot;)
+  hbox0.add(labelInfo)
 
-  <span class="c"># restart button</span>
-  <span class="n">hbox0</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">newButton</span><span class="p">(</span><span class="s">"Restart"</span><span class="p">,</span> <span class="k">proc</span><span class="p">()</span> <span class="o">=</span> 
-                            <span class="n">g</span> <span class="o">=</span><span class="n">newGame</span><span class="p">(</span><span class="n">aiPlayer</span><span class="o">=</span><span class="s">"O"</span><span class="p">,</span> <span class="n">difficulty</span><span class="o">=</span><span class="mi">9</span><span class="p">)</span>
-                            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">buttons</span><span class="p">.</span><span class="n">pairs</span><span class="p">:</span>
-                              <span class="n">b</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="o">$</span><span class="n">i</span>
-                              <span class="n">b</span><span class="p">.</span><span class="n">enable</span><span class="p">()))</span>
-</pre></div></div>
+  # restart button
+  hbox0.add(newButton(&quot;Restart&quot;, proc() = 
+                            g =newGame(aiPlayer=&quot;O&quot;, difficulty=9)
+                            for i, b in buttons.pairs:
+                              b.text = $i
+                              b.enable()))
+</code></pre>
 <p>Here we setup the layout we just described and create a button Restart that resets the game again and restore the buttons text and enables them all</p>
-<div class="code"><div class="highlight"><pre><span></span>  <span class="c"># create the buttons</span>
-  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">countup</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
-    <span class="kd">var</span> <span class="n">handler</span> <span class="p">:</span> <span class="k">proc</span><span class="p">()</span> 
-    <span class="n">closureScope</span><span class="p">:</span>
-      <span class="k">let</span> <span class="n">senderId</span> <span class="o">=</span> <span class="n">i</span>
-      <span class="n">handler</span> <span class="o">=</span> <span class="k">proc</span><span class="p">()</span> <span class="o">=</span>
-        <span class="n">currentMove</span> <span class="o">=</span> <span class="n">senderId</span>
-        <span class="n">g</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">senderId</span><span class="o">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">currentPlayer</span>
-        <span class="n">g</span><span class="p">.</span><span class="n">change_player</span><span class="p">()</span>
-        <span class="n">labelInfo</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">"Current player: "</span> <span class="o">&amp;</span> <span class="n">g</span><span class="p">.</span><span class="n">currentPlayer</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">list</span><span class="p">.</span><span class="n">pairs</span><span class="p">:</span>
-          <span class="n">buttons</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="k">let</span> <span class="p">(</span><span class="n">done</span><span class="p">,</span> <span class="n">winner</span><span class="p">)</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">done</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">done</span> <span class="o">==</span> <span class="kp">true</span><span class="p">:</span>
-          <span class="n">echo</span> <span class="n">g</span><span class="p">.</span><span class="n">board</span>
-          <span class="k">if</span> <span class="n">winner</span> <span class="o">==</span> <span class="s">"tie"</span><span class="p">:</span>
-              <span class="n">labelInfo</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">"Tie.."</span>
-          <span class="k">else</span><span class="p">:</span>
-            <span class="n">labelInfo</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">winner</span> <span class="o">&amp;</span> <span class="s">" won."</span>
-        <span class="k">else</span><span class="p">:</span>
-          <span class="n">aiPlay</span><span class="p">()</span>
-        <span class="n">buttons</span><span class="o">[</span><span class="n">senderId</span><span class="o">]</span><span class="p">.</span><span class="n">disable</span><span class="p">()</span>
+<pre><code class="language-Nimrod">  # create the buttons
+  for i in countup(0, 8):
+    var handler : proc() 
+    closureScope:
+      let senderId = i
+      handler = proc() =
+        currentMove = senderId
+        g.board.list[senderId] = g.currentPlayer
+        g.change_player()
+        labelInfo.text = &quot;Current player: &quot; &amp; g.currentPlayer
+        for i, v in g.board.list.pairs:
+          buttons[i].text = v
+        let (done, winner) = g.board.done()
+        if done == true:
+          echo g.board
+          if winner == &quot;tie&quot;:
+              labelInfo.text = &quot;Tie..&quot;
+          else:
+            labelInfo.text = winner &amp; &quot; won.&quot;
+        else:
+          aiPlay()
+        buttons[senderId].disable()
 
-    <span class="n">buttons</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">newButton</span><span class="p">(</span><span class="o">$</span><span class="n">i</span><span class="p">,</span> <span class="n">handler</span><span class="p">))</span>
- <span class="p">```</span>
-
- <span class="o">-</span> <span class="n">Here</span> <span class="n">we</span> <span class="n">create</span> <span class="n">the</span> <span class="n">buttons</span> <span class="n">please</span> <span class="n">notice</span> <span class="n">we</span> <span class="n">are</span> <span class="n">using</span> <span class="p">`</span><span class="n">closureScope</span><span class="p">`</span> <span class="n">feature</span> <span class="n">to</span> <span class="n">capture</span> <span class="n">the</span> <span class="n">button</span> <span class="n">id</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">track</span> <span class="k">of</span> <span class="n">which</span> <span class="n">button</span> <span class="ow">is</span> <span class="n">clicked</span>
- <span class="o">-</span> <span class="n">after</span> <span class="n">pressing</span> <span class="kt">set</span> <span class="kt">set</span> <span class="n">the</span> <span class="n">text</span> <span class="k">of</span> <span class="n">the</span> <span class="n">button</span> <span class="n">to</span> <span class="p">`</span><span class="n">X</span><span class="p">`</span>
- <span class="o">-</span> <span class="n">we</span> <span class="n">disable</span> <span class="n">the</span> <span class="n">button</span> <span class="n">so</span> <span class="n">we</span> <span class="n">don</span><span class="sc">'t receive anymore events.</span>
- <span class="o">-</span> <span class="n">switch</span> <span class="n">turns</span>
- <span class="o">-</span> <span class="n">update</span> <span class="n">the</span> <span class="n">information</span> <span class="n">label</span> <span class="n">whether</span> <span class="n">about</span> <span class="n">the</span> <span class="n">next</span> <span class="n">player</span> <span class="ow">or</span> <span class="n">the</span> <span class="n">game</span> <span class="n">state</span>
- <span class="o">-</span> <span class="k">if</span> <span class="n">the</span> <span class="n">game</span> <span class="ow">is</span> <span class="n">still</span> <span class="n">going</span> <span class="n">we</span> <span class="n">ask</span> <span class="n">the</span> <span class="n">AI</span> <span class="k">for</span> <span class="n">a</span> <span class="n">move</span>
-
-
-<span class="p">```</span><span class="n">nim</span>
-
-  <span class="c"># code to run when the game asks the ai to play (after each move from the human..)</span>
-  <span class="k">proc </span><span class="nf">aiPlay</span><span class="p">()</span> <span class="o">=</span> 
-    <span class="k">if</span> <span class="n">g</span><span class="p">.</span><span class="n">currentPlayer</span> <span class="o">==</span> <span class="n">g</span><span class="p">.</span><span class="n">aiPlayer</span><span class="p">:</span>
-      <span class="k">let</span> <span class="n">emptySpots</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">emptySpots</span><span class="p">()</span>
-      <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">emptySpots</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">g</span><span class="p">.</span><span class="n">difficulty</span><span class="p">:</span>
-        <span class="k">let</span> <span class="n">move</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">getBestMove</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">board</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">aiPlayer</span><span class="p">)</span>
-        <span class="n">g</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">move</span><span class="p">.</span><span class="n">idx</span><span class="o">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">aiPlayer</span>
-        <span class="n">buttons</span><span class="o">[</span><span class="n">move</span><span class="p">.</span><span class="n">idx</span><span class="o">]</span><span class="p">.</span><span class="n">disable</span><span class="p">()</span>
-      <span class="k">else</span><span class="p">:</span>
-        <span class="k">let</span> <span class="n">rndmove</span> <span class="o">=</span> <span class="n">emptyspots</span><span class="p">.</span><span class="n">rand</span><span class="p">()</span>
-        <span class="n">g</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">list</span><span class="o">[</span><span class="n">rndmove</span><span class="o">]</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">aiPlayer</span>
-    <span class="n">g</span><span class="p">.</span><span class="n">change_player</span><span class="p">()</span>
-    <span class="n">labelInfo</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">"Current player: "</span> <span class="o">&amp;</span> <span class="n">g</span><span class="p">.</span><span class="n">currentPlayer</span>
-
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">g</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">list</span><span class="p">.</span><span class="n">pairs</span><span class="p">:</span>
-      <span class="n">buttons</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">v</span>
-      
-    <span class="k">let</span> <span class="p">(</span><span class="n">done</span><span class="p">,</span> <span class="n">winner</span><span class="p">)</span> <span class="o">=</span> <span class="n">g</span><span class="p">.</span><span class="n">board</span><span class="p">.</span><span class="n">done</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">done</span> <span class="o">==</span> <span class="kp">true</span><span class="p">:</span>
-      <span class="n">echo</span> <span class="n">g</span><span class="p">.</span><span class="n">board</span>
-      <span class="k">if</span> <span class="n">winner</span> <span class="o">==</span> <span class="s">"tie"</span><span class="p">:</span>
-          <span class="n">labelInfo</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="s">"Tie.."</span>
-      <span class="k">else</span><span class="p">:</span>
-        <span class="n">labelInfo</span><span class="p">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">winner</span> <span class="o">&amp;</span> <span class="s">" won."</span>
-
-<span class="p">```</span>
-
-<span class="o">-</span> <span class="n">using</span> <span class="n">minmax</span> <span class="n">algorithm</span> <span class="kn">from</span> <span class="n">the</span> <span class="n">previous</span> <span class="n">day</span> <span class="n">we</span> <span class="n">calculate</span> <span class="n">the</span> <span class="n">best</span> <span class="n">move</span>
-<span class="o">-</span> <span class="n">change</span> <span class="n">the</span> <span class="n">button</span> <span class="n">text</span> <span class="n">to</span> <span class="p">`</span><span class="n">O</span><span class="p">`</span>
-<span class="o">-</span> <span class="n">disable</span> <span class="n">the</span> <span class="n">button</span>
-<span class="o">-</span> <span class="n">update</span> <span class="n">the</span> <span class="n">information</span> <span class="n">label</span>
-
- <span class="p">```</span><span class="n">nim</span>
-
-  <span class="n">hbox1</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">buttons</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">)</span>
-  <span class="n">hbox1</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">buttons</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">)</span>
-  <span class="n">hbox1</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">buttons</span><span class="o">[</span><span class="mi">2</span><span class="o">]</span><span class="p">)</span>
-
-  <span class="n">hbox2</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">buttons</span><span class="o">[</span><span class="mi">3</span><span class="o">]</span><span class="p">)</span>
-  <span class="n">hbox2</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">buttons</span><span class="o">[</span><span class="mi">4</span><span class="o">]</span><span class="p">)</span>
-  <span class="n">hbox2</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">buttons</span><span class="o">[</span><span class="mi">5</span><span class="o">]</span><span class="p">)</span>
-
-  <span class="n">hbox3</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">buttons</span><span class="o">[</span><span class="mi">6</span><span class="o">]</span><span class="p">)</span>
-  <span class="n">hbox3</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">buttons</span><span class="o">[</span><span class="mi">7</span><span class="o">]</span><span class="p">)</span>
-  <span class="n">hbox3</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">buttons</span><span class="o">[</span><span class="mi">8</span><span class="o">]</span><span class="p">)</span>
-  
-  <span class="n">box</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">hbox0</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
-  <span class="n">box</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">hbox1</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
-  <span class="n">box</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">hbox2</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
-  <span class="n">box</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">hbox3</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
-  <span class="n">mainwin</span><span class="p">.</span><span class="n">setChild</span><span class="p">(</span><span class="n">box</span><span class="p">)</span>
-</pre></div></div>
+    buttons.add(newButton($i, handler))
+</code></pre>
 <ul>
-<li>Here we add the buttons to their correct rows in the correct columns and set the main widget
-</li></ul>
-<div class="code"><div class="highlight"><pre><span></span>  <span class="n">show</span><span class="p">(</span><span class="n">mainwin</span><span class="p">)</span>
-  <span class="n">mainLoop</span><span class="p">()</span>
+<li>Here we create the buttons please notice we are using <code>closureScope</code> feature to capture the button id to keep track of which button is clicked</li>
+<li>after pressing set set the text of the button to <code>X</code></li>
+<li>we disable the button so we don't receive anymore events.</li>
+<li>switch turns</li>
+<li>update the information label whether about the next player or the game state</li>
+<li>if the game is still going we ask the AI for a move</li>
+</ul>
+<pre><code class="language-Nimrod">
+  # code to run when the game asks the ai to play (after each move from the human..)
+  proc aiPlay() = 
+    if g.currentPlayer == g.aiPlayer:
+      let emptySpots = g.board.emptySpots()
+      if len(emptySpots) &lt;= g.difficulty:
+        let move = g.getBestMove(g.board, g.aiPlayer)
+        g.board.list[move.idx] = g.aiPlayer
+        buttons[move.idx].disable()
+      else:
+        let rndmove = emptyspots.rand()
+        g.board.list[rndmove] = g.aiPlayer
+    g.change_player()
+    labelInfo.text = &quot;Current player: &quot; &amp; g.currentPlayer
 
-<span class="k">when</span> <span class="n">isMainModule</span><span class="p">:</span>
-  <span class="n">init</span><span class="p">()</span>
-  <span class="n">gui</span><span class="p">()</span>
-</pre></div></div>
-<p>Code is available on <a href="https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_gui.nim" target="_blank" rel="noopener">https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_gui.nim</a></p>
-</div></div>
-    </div>
-  </body>
+    for i, v in g.board.list.pairs:
+      buttons[i].text = v
+      
+    let (done, winner) = g.board.done()
+
+    if done == true:
+      echo g.board
+      if winner == &quot;tie&quot;:
+          labelInfo.text = &quot;Tie..&quot;
+      else:
+        labelInfo.text = winner &amp; &quot; won.&quot;
+
+</code></pre>
+<ul>
+<li>using minmax algorithm from the previous day we calculate the best move</li>
+<li>change the button text to <code>O</code></li>
+<li>disable the button</li>
+<li>update the information label</li>
+</ul>
+<pre><code class="language-Nimrod">
+ hbox1.add(buttons[0])
+ hbox1.add(buttons[1])
+ hbox1.add(buttons[2])
+
+ hbox2.add(buttons[3])
+ hbox2.add(buttons[4])
+ hbox2.add(buttons[5])
+
+ hbox3.add(buttons[6])
+ hbox3.add(buttons[7])
+ hbox3.add(buttons[8])
+ 
+ box.add(hbox0, true)
+ box.add(hbox1, true)
+ box.add(hbox2, true)
+ box.add(hbox3, true)
+ mainwin.setChild(box)
+
+</code></pre>
+<ul>
+<li>Here we add the buttons to their correct rows in the correct columns and set the main widget</li>
+</ul>
+<pre><code class="language-Nimrod">  show(mainwin)
+  mainLoop()
+
+when isMainModule:
+  init()
+  gui()
+</code></pre>
+<p>Code is available on <a href="https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_gui.nim">https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_gui.nim</a></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day9_tictactoe_cli.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="day11_buildsystem.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day9_tictactoe_cli.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="day11_buildsystem.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
 </html>

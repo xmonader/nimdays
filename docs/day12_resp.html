@@ -1,53 +1,157 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <link href="stylesheets/pygments.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/softcover.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/custom.css" media="screen" rel="stylesheet" type="text/css" />
-    
-    <title>nimdays</title>
-    
-      <script type="text/x-mathjax-config">
-              MathJax.Hub.Config({
-        "HTML-CSS": {
-          availableFonts: ["TeX"],
-        },
-        TeX: {
-          extensions: ["AMSmath.js", "AMSsymbols.js", "color.js"],
-          equationNumbers: {
-            autoNumber: "AMS",
-            formatNumber: function (n) { return "12" + '.' + n }
-          },
-          Macros: {
-            PolyTeX:    "Poly{\\TeX}",
-            PolyTeXnic: "Poly{\\TeX}nic",
-            "softcover": "\\texttt{softcover}",
-"unitvec": ["{\\hat #1}", 1]
-          }
-        },
-        showProcessingMessages: false,
-        messageStyle: "none",
-        imageFont: null,
-        "AssistiveMML": { disabled: true }
-      });
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 12: Redis Protocol - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
 
-        if (/PhantomJS/.test(window.navigator.userAgent)) {
-          MathJax.Hub.Queue([alert, 'MathJax Done']);
-        }
-      </script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_SVG"></script>
-    
-  </head>
-  <body>
-    
-    <div id="book">
-      <div id="cid38" data-tralics-id="cid38" class="chapter" data-number="12" data-chapter="day12_resp"><h1><a href="day12_resp.html#cid38" class="heading hyperref"><span class="number">Chapter 12 </span>Day 12: Implementing Redis Protocol</a></h1>
-<p class="noindent">Today we will implement RESP (REdis Serialization Protocol) in Nim.<span class="intersentencespace"></span> Hopefully you read Day 2 on bencode data format (encoding/parsing) because we will be using the same techniques.</p>
-</div>
-<div id="cid39" data-tralics-id="cid39" class="section" data-number="12.1"><h2><a href="day12_resp.html#cid39" class="heading hyperref"><span class="number">12.1 </span>RESP</a></h2>
-<p class="noindent">From <a href="https://redis.io/topics/protocol" target="_blank" rel="noopener">redis protocol page</a>.</p>
-<div class="code"><div class="highlight"><pre><span></span>Redis clients communicate with the Redis server using a protocol called RESP (REdis Serialization Protocol). While the protocol was designed specifically for Redis, it can be used for other client-server software projects.
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <noscript>
+            <style type="text/css">
+                .javascript-only {
+                    display: none;
+                }
+            </style>
+        </noscript>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html" class="active">Day 12: Redis Protocol</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons javascript-only">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </div>
+                <div id="searchresults-outer" class="searchresults-outer">
+                    <div class="searchresults-header" id="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="day12_resp.html#day-12-implementing-redis-protocol" id="day-12-implementing-redis-protocol"><h1>Day 12: Implementing Redis Protocol</h1></a>
+<p>Today we will implement RESP (REdis Serialization Protocol) in Nim. Hopefully you read Day 2 on bencode data format (encoding/parsing) because we will be using the same techniques.</p>
+<a class="header" href="day12_resp.html#resp" id="resp"><h2>RESP</h2></a>
+<p>From <a href="https://redis.io/topics/protocol">redis protocol page</a>.</p>
+<pre><code>Redis clients communicate with the Redis server using a protocol called RESP (REdis Serialization Protocol). While the protocol was designed specifically for Redis, it can be used for other client-server software projects.
 
 RESP is a compromise between the following things:
 
@@ -55,66 +159,62 @@ Simple to implement.
 Fast to parse.
 Human readable.
 RESP can serialize different data types like integers, strings, arrays. There is also a specific type for errors. Requests are sent from the client to the Redis server as arrays of strings representing the arguments of the command to execute. Redis replies with a command-specific data type.
-</pre></div></div>
-<p>So, basically we have 5 types (ints, strings, bulkstrings, errors, arrays, )
-## What do we expect?</p>
+</code></pre>
+<p>So, basically we have 5 types (ints, strings, bulkstrings, errors, arrays)</p>
+<a class="header" href="day12_resp.html#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
 <ul>
-<li>able to decode strings into Reasonable structures in Nim
-</li></ul>
-<div class="code"><div class="highlight"><pre><span></span>  echo decodeString("*3\r\n:1\r\n:2\r\n:3\r\n\r\n")
+<li>able to decode strings into Reasonable structures in Nim</li>
+</ul>
+<pre><code class="language-Nimrod">  echo decodeString(&quot;*3\r\n:1\r\n:2\r\n:3\r\n\r\n&quot;)
   # # @[1, 2, 3]
-  echo decodeString("+Hello, World\r\n")
+  echo decodeString(&quot;+Hello, World\r\n&quot;)
   # # Hello, World
-  echo decodeString("-Not found\r\n")
+  echo decodeString(&quot;-Not found\r\n&quot;)
   # # Not found
-  echo decodeString(":1512\r\n")
+  echo decodeString(&quot;:1512\r\n&quot;)
   # # 1512
-  echo $decodeString("$32\r\nHello, World THIS IS REALLY NICE\r\n")
+  echo $decodeString(&quot;$32\r\nHello, World THIS IS REALLY NICE\r\n&quot;)
   # Hello, World THIS IS REALLY NICE
-  echo decodeString("*2\r\n+Hello World\r\n:23\r\n")
+  echo decodeString(&quot;*2\r\n+Hello World\r\n:23\r\n&quot;)
   # @[Hello World, 23]
-  echo decodeString("*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n\r\n*5\r\n:5\r\n:7\r\n+Hello Word\r\n-Err\r\n$6\r\nfoobar\r\n")
+  echo decodeString(&quot;*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n\r\n*5\r\n:5\r\n:7\r\n+Hello Word\r\n-Err\r\n$6\r\nfoobar\r\n&quot;)
   # @[@[1, 2, 3], @[5, 7, Hello Word, Err, foobar]]
-  echo $decodeString("*4\r\n:51231\r\n$3\r\nfoo\r\n$-1\r\n$3\r\nbar\r\n")
+  echo $decodeString(&quot;*4\r\n:51231\r\n$3\r\nfoo\r\n$-1\r\n$3\r\nbar\r\n&quot;)
   # @[51231, foo, , bar]
-  ```
-- able to encode Nim structures representing Redis values into RESP 
-
-```nim
-  echo $encodeValue(RedisValue(kind:vkStr, s:"Hello, World"))
+</code></pre>
+<ul>
+<li>able to encode Nim structures representing Redis values into RESP</li>
+</ul>
+<pre><code class="language-Nimrod">  echo $encodeValue(RedisValue(kind:vkStr, s:&quot;Hello, World&quot;))
   # # +Hello, World
   echo $encodeValue(RedisValue(kind:vkInt, i:341))
   # # :341
-  echo $encodeValue(RedisValue(kind:vkError, err:"Not found"))
+  echo $encodeValue(RedisValue(kind:vkError, err:&quot;Not found&quot;))
   # # -Not found
-  echo $encodeValue(RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:"Hello World"), RedisValue(kind:vkInt, i:23)]  ))
+  echo $encodeValue(RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:&quot;Hello World&quot;), RedisValue(kind:vkInt, i:23)]  ))
   # #*2
   # #+Hello World
   # #:23
 
-  echo $encodeValue(RedisValue(kind:vkBulkStr, bs:"Hello, World THIS IS REALLY NICE"))
+  echo $encodeValue(RedisValue(kind:vkBulkStr, bs:&quot;Hello, World THIS IS REALLY NICE&quot;))
   # #$32
   # # Hello, World THIS IS REALLY NICE  
 
-```
-
-## Implementation
-
-### Initials
-
-Let's starts with main imports
-</pre></div></div>
-<p>import strformat, strutils, sequtils,
-const CRLF = “”
-const REDISNIL = “”
-</p><div class="code"><div class="highlight"><pre><span></span>- CRLF is really important because lots of the protocol depends on that separator `\r\n`
-- REDISNIL `\0\0` to represent `Nil` values
-
-### Data types
-Again, as in Bencode chapter we will define a variant `RedisValue` that represents All redis datatypes `strings, errors, bulkstrings, ints, arrays`
-
-```nim
-
+</code></pre>
+<a class="header" href="day12_resp.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="day12_resp.html#imports-and-constants" id="imports-and-constants"><h3>Imports and constants</h3></a>
+<p>Let's starts with main imports</p>
+<pre><code>import strformat, strutils, sequtils,
+const CRLF = &quot;\r\n&quot;
+const REDISNIL = &quot;\0\0&quot;
+</code></pre>
+<ul>
+<li>CRLF is really important because lots of the protocol depends on that separator <code>\r\n</code></li>
+<li>REDISNIL <code>\0\0</code> to represent <code>Nil</code> values</li>
+</ul>
+<a class="header" href="day12_resp.html#data-types" id="data-types"><h3>Data types</h3></a>
+<p>Again, as in Bencode chapter we will define a variant <code>RedisValue</code> that represents All redis datatypes <code>strings, errors, bulkstrings, ints, arrays</code></p>
+<pre><code class="language-Nimrod">
   ValueKind = enum
     vkStr, vkError, vkInt, vkBulkStr, vkArray
 
@@ -126,17 +226,16 @@ Again, as in Bencode chapter we will define a variant `RedisValue` that represen
     of vkBulkStr: bs*: string
     of vkArray: l*: seq[RedisValue]
 
-```
-Let's add `$`, `hash`, `==` procedures
-```nim
-
+</code></pre>
+<p>Let's add <code>$</code>, <code>hash</code>, <code>==</code> procedures</p>
+<pre><code class="language-Nimrod">
 proc `$`*(obj: RedisValue): string = 
   case obj.kind
-    of vkStr : return  fmt"{$(obj.s)}"
-    of vkBulkStr: return fmt"{$(obj.bs)}"
-    of vkInt : return fmt"{$(obj.i)}"
-    of vkArray: return fmt"{$(obj.l)}"
-    of vkError: return fmt"{$(obj.err)}"
+    of vkStr : return  fmt&quot;{$(obj.s)}&quot;
+    of vkBulkStr: return fmt&quot;{$(obj.bs)}&quot;
+    of vkInt : return fmt&quot;{$(obj.i)}&quot;
+    of vkArray: return fmt&quot;{$(obj.l)}&quot;
+    of vkError: return fmt&quot;{$(obj.err)}&quot;
 
 proc hash*(obj: RedisValue): Hash = 
   case obj.kind
@@ -168,90 +267,73 @@ proc `==`* (a, b: RedisValue): bool =
           result = a.err == b.err
   return false
 
-```
-
-
-
-
-### Encoder
-Encoding is just converting the variant `RedisValue` to the correct representation according to RESP
-
-#### Encode simple strings
-
-To encode simple strings specs says `OK` should be `+OK\r\n`
-```nim
-
+</code></pre>
+<a class="header" href="day12_resp.html#encoder" id="encoder"><h3>Encoder</h3></a>
+<p>Encoding is just converting the variant <code>RedisValue</code> to the correct representation according to RESP</p>
+<a class="header" href="day12_resp.html#encode-simple-strings" id="encode-simple-strings"><h4>Encode simple strings</h4></a>
+<p>To encode simple strings specs says <code>OK</code> should be <code>+OK\r\n</code></p>
+<pre><code class="language-Nimrod">
 proc encodeStr(v: RedisValue) : string =
-  return fmt"+{v.s}{CRLF}"
-```
+  return fmt&quot;+{v.s}{CRLF}&quot;
+</code></pre>
+<a class="header" href="day12_resp.html#encode-errors" id="encode-errors"><h4>Encode Errors</h4></a>
+<p>To encode errors we should precede it with <code>-</code> and end it with <code>\r\n</code>. So <code>Notfound</code> should be encoded as <code>-Notfound\r\n</code></p>
+<pre><code class="language-Nimrod">proc encodeErr(v: RedisValue) : string =
+  return fmt&quot;-{v.err}{CRLF}&quot;
+</code></pre>
+<a class="header" href="day12_resp.html#encode-ints" id="encode-ints"><h4>Encode Ints</h4></a>
+<p>Ints are encoded <code>:NUM\r\n</code> so 95 is <code>:95\r\n</code></p>
+<pre><code class="language-Nimrod">proc encodeInt(v: RedisValue) : string =
+  return fmt&quot;:{v.i}{CRLF}&quot;
+</code></pre>
+<a class="header" href="day12_resp.html#encode-bulkstrings" id="encode-bulkstrings"><h4>Encode Bulkstrings</h4></a>
+<p>From RESP page</p>
+<pre><code>Bulk Strings are used in order to represent a single binary safe string up to 512 MB in length.
 
+Bulk Strings are encoded in the following way:
 
-#### Encode Errors
+A &quot;$&quot; byte followed by the number of bytes composing the string (a prefixed length), terminated by CRLF.
+The actual string data.
+A final CRLF.
+So the string &quot;foobar&quot; is encoded as follows:
 
-To encode errors we should precede it with `-` and end it with `\r\n`. So `Notfound` should be encoded as `-Notfound\r\n`
-```nim
-proc encodeErr(v: RedisValue) : string =
-  return fmt"-{v.err}{CRLF}"
-```
+&quot;$6\r\nfoobar\r\n&quot;
+When an empty string is just:
 
-#### Encode Ints
-Ints are encoded `:NUM\r\n` so 95 is `:95\r\n`
-```nim
-proc encodeInt(v: RedisValue) : string =
-  return fmt":{v.i}{CRLF}"
-```
+&quot;$0\r\n\r\n&quot;
+RESP Bulk Strings can also be used in order to signal non-existence of a value using a special format that is used to represent a Null value. In this special format the length is -1, and there is no data, so a Null is represented as:
 
+&quot;$-1\r\n&quot;
+</code></pre>
+<pre><code class="language-Nimrod">proc encodeBulkStr(v: RedisValue) : string =
+  return fmt&quot;${v.bs.len}{CRLF}{v.bs}{CRLF}&quot;
 
-#### Encode Bulkstrings
-
-From RESP page
-</pre></div></div>
-<p>Bulk Strings are used in order to represent a single binary safe string up to 512 MB in length.</p>
-<p>Bulk Strings are encoded in the following way:</p>
-<p>A “$” byte followed by the number of bytes composing the string (a prefixed length), terminated by CRLF.
-The actual string data.<span class="intersentencespace"></span> A final CRLF.
-So the string “foobar” is encoded as follows:</p>
-<p>“$6”
-When an empty string is just:</p>
-<p>“$0”
-RESP Bulk Strings can also be used in order to signal non-existence of a value using a special format that is used to represent a Null value.<span class="intersentencespace"></span> In this special format the length is -1, and there is no data, so a Null is represented as:</p>
-<p>”$-1”
-</p><div class="code"><div class="highlight"><pre><span></span>```nim
-proc encodeBulkStr(v: RedisValue) : string =
-  return fmt"${v.bs.len}{CRLF}{v.bs}{CRLF}"
-
-```
-
-#### Encode Arrays
-
-To encode an array we do `*` followed by array length then `\r\n` then encode each element then end the array encoding with `\r\n`
-
-- As we are calling `encode` `we should forward declared it`
-
-
-```nim
-
+</code></pre>
+<a class="header" href="day12_resp.html#encode-arrays" id="encode-arrays"><h4>Encode Arrays</h4></a>
+<p>To encode an array we do <code>*</code> followed by array length then <code>\r\n</code> then encode each element then end the array encoding with <code>\r\n</code></p>
+<ul>
+<li>As we are calling <code>encode</code> <code>we should forward declared it</code></li>
+</ul>
+<pre><code class="language-Nimrod">
 proc encode*(v: RedisValue) : string 
 proc encodeArray(v: RedisValue): string = 
-  var res = "*" &amp; $len(v.l) &amp; CRLF
+  var res = &quot;*&quot; &amp; $len(v.l) &amp; CRLF
   for el in v.l:
     res &amp;= encode(el)
   res &amp;= CRLF
   return res
 
-```
-
-So for instance to encode 
-```nim 
-encodeValue(RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:"Hello World"), RedisValue(kind:vkInt, i:23)]  ))
-```
-The result should be
-</pre></div></div>
-<p><em>2+Hello World:23<div class="code"><div class="highlight"><pre><span></span>#### Encode any data type
-
-Here we switch on the passed variant and dispatch the encoding to the reasonable encoder.
-```nim
-proc encode*(v: RedisValue) : string =
+</code></pre>
+<p>So for instance to encode <code>encodeValue(RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:&quot;Hello World&quot;), RedisValue(kind:vkInt, i:23)] ))</code>
+The result should be</p>
+<pre><code>*2\r\n
++Hello World\r\n
+:23\r\n
+\r\n
+</code></pre>
+<a class="header" href="day12_resp.html#encode-any-data-type" id="encode-any-data-type"><h4>Encode any data type</h4></a>
+<p>Here we switch on the passed variant and dispatch the encoding to the reasonable encoder.</p>
+<pre><code class="language-Nimrod">proc encode*(v: RedisValue) : string =
   case v.kind 
   of vkStr: return encodeStr(v)
   of vkInt:    return encodeInt(v)
@@ -259,55 +341,40 @@ proc encode*(v: RedisValue) : string =
   of vkBulkStr: return encodeBulkStr(v)
   of vkArray: return encodeArray(v)
 
-```
-
-### Decoder
-Decoding is converting RESP representation into the correct Nim structures `RedisValue`, Basically the reverse of what we did in the previous chapter
-
-Please note: Basic strategy is Returning the `RedisValue` and the `length of processed characters`
-
-#### Decode simple string
-
-```nim
-proc decodeStr(s: string): (RedisValue, int) =
+</code></pre>
+<a class="header" href="day12_resp.html#decoder" id="decoder"><h3>Decoder</h3></a>
+<p>Decoding is converting RESP representation into the correct Nim structures <code>RedisValue</code>, Basically the reverse of what we did in the previous chapter</p>
+<p>Please note: Basic strategy is Returning the <code>RedisValue</code> and the <code>length of processed characters</code></p>
+<a class="header" href="day12_resp.html#decode-simple-string" id="decode-simple-string"><h4>Decode simple string</h4></a>
+<pre><code class="language-Nimrod">proc decodeStr(s: string): (RedisValue, int) =
   let crlfpos = s.find(CRLF)
   return (RedisValue(kind:vkStr, s:s[1..crlfpos-1]), crlfpos+len(CRLF))
-```
-So, Here we are creating RedisValue of kind `vkStr` of the string between `+` and `\r\n`
-
-#### Decode errors
-
-```nim
-proc decodeError(s: string): (RedisValue, int) =
+</code></pre>
+<p>So, Here we are creating RedisValue of kind <code>vkStr</code> of the string between <code>+</code> and <code>\r\n</code></p>
+<a class="header" href="day12_resp.html#decode-errors" id="decode-errors"><h4>Decode errors</h4></a>
+<pre><code class="language-Nimrod">proc decodeError(s: string): (RedisValue, int) =
   let crlfpos = s.find(CRLF)
   return (RedisValue(kind:vkError, err:s[1..crlfpos-1]), crlfpos+len(CRLF))
-```
-Here we are creating RedisValue of kind `vkError` of the string between `-` and `\r\n`
-
-#### Decode ints
-
-Nums as we said are the values between `:` and `\r\n` so we `parseInt` of the characters between `:` and `\r\n` and create RedisValue of kind `vkInt` with that parsed int.
-
-```nim
-proc decodeInt(s: string): (RedisValue, int) =
+</code></pre>
+<p>Here we are creating RedisValue of kind <code>vkError</code> of the string between <code>-</code> and <code>\r\n</code></p>
+<a class="header" href="day12_resp.html#decode-ints" id="decode-ints"><h4>Decode ints</h4></a>
+<p>Nums as we said are the values between <code>:</code> and <code>\r\n</code> so we <code>parseInt</code> of the characters between <code>:</code> and <code>\r\n</code> and create RedisValue of kind <code>vkInt</code> with that parsed int.</p>
+<pre><code class="language-Nimrod">proc decodeInt(s: string): (RedisValue, int) =
   var i: int
   let crlfpos = s.find(CRLF)
   let sInt = s[1..crlfpos-1]
   if sInt.isDigit():
     i = parseInt(sInt)
   return (RedisValue(kind:vkInt, i:i), crlfpos+len(CRLF))
-```
-
-#### Decode bulkstrings
-
-Bulkstrings are between `$` followed by the string length and `\r\n`
-
-- string length == 0: empty string
-- string length == -1: nil
-- string length &gt; 0: string with data
-
-```nim
-
+</code></pre>
+<a class="header" href="day12_resp.html#decode-bulkstrings" id="decode-bulkstrings"><h4>Decode bulkstrings</h4></a>
+<p>Bulkstrings are between <code>$</code> followed by the string length and <code>\r\n</code></p>
+<ul>
+<li>string length == 0: empty string</li>
+<li>string length == -1: nil</li>
+<li>string length &gt; 0: string with data</li>
+</ul>
+<pre><code class="language-Nimrod">
 proc decodeBulkStr(s:string): (RedisValue, int) = 
   let crlfpos = s.find(CRLF)
   var bulklen = 0
@@ -321,19 +388,15 @@ proc decodeBulkStr(s:string): (RedisValue, int) =
     let nextcrlf = s.find(CRLF, crlfpos+len(CRLF))
     bulk = s[crlfpos+len(CRLF)..nextcrlf-1] 
     return (RedisValue(kind:vkBulkStr, bs:bulk), nextcrlf+len(CRLF))
-
-```
-
-
-#### Decode arrays
-
-This is the trickiest part is to decode array
-- first we need to get the length between `*` and `\r\n`
-- then decode objects `array length` times, and add them to `arr`
-- As we are calling `decode` `we should forward declared it`
-
-```nim
-proc decode(s: string): (RedisValue, int)
+</code></pre>
+<a class="header" href="day12_resp.html#decode-arrays" id="decode-arrays"><h4>Decode arrays</h4></a>
+<p>This is the trickiest part is to decode array</p>
+<ul>
+<li>first we need to get the length between <code>*</code> and <code>\r\n</code></li>
+<li>then decode objects <code>array length</code> times, and add them to <code>arr</code></li>
+<li>As we are calling <code>decode</code> <code>we should forward declared it</code></li>
+</ul>
+<pre><code class="language-Nimrod">proc decode(s: string): (RedisValue, int)
 proc decodeArray(s: string): (RedisValue, int) =
   var arr = newSeq[RedisValue]()
   var arrlen = 0
@@ -355,69 +418,132 @@ proc decodeArray(s: string): (RedisValue, int) =
     arr.add(obj)
     i += pair[1]
   return (RedisValue(kind:vkArray, l:arr), i+len(CRLF))
-```
-</pre></div></div></em></p>
-<p><em>*2+Hello World:23<div class="code"><div class="highlight"><pre><span></span>Should be decoded to `RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:"Hello World"), RedisValue(kind:vkInt, i:23)]  )`
-
-#### Decode any object
-
-Based on the first character we dispatch to the correct decoder then we skip `the processed count` in the string to decode the next object.
-```nim
-proc decode(s: string): (RedisValue, int) =
+</code></pre>
+<p>So this RESP</p>
+<pre><code>*2\r\n
++Hello World\r\n
+:23\r\n
+\r\n
+</code></pre>
+<p>Should be decoded to <code>RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:&quot;Hello World&quot;), RedisValue(kind:vkInt, i:23)] )</code></p>
+<a class="header" href="day12_resp.html#decode-any-object" id="decode-any-object"><h4>Decode any object</h4></a>
+<p>Based on the first character we dispatch to the correct decoder then we skip <code>the processed count</code> in the string to decode the next object.</p>
+<pre><code class="language-Nimrod">proc decode(s: string): (RedisValue, int) =
   var i = 0 
   while i &lt; len(s):
     var curchar = $s[i]
-    if curchar == "+":
+    if curchar == &quot;+&quot;:
       var pair = decodeStr(s[i..s.find(CRLF, i)+len(CRLF)])
       var obj =  pair[0]
       var count =  pair[1]
       i += count
       return (obj, i)
-    elif curchar == "-":
+    elif curchar == &quot;-&quot;:
       var pair = decodeError(s[i..s.find(CRLF, i)+len(CRLF)])
       var obj =  pair[0]
       var count =  pair[1]
       i += count
       return (obj, i)
-    elif curchar == "$":
+    elif curchar == &quot;$&quot;:
       var pair = decodeBulkStr(s[i..len(s)])
       var obj =  pair[0]
       var count =  pair[1]
       i += count
       return (obj, i)
-    elif curchar == ":":
+    elif curchar == &quot;:&quot;:
       var pair = decodeInt(s[i..s.find(CRLF, i)+len(CRLF)])
       var obj =  pair[0]
       var count =  pair[1]
       i += count
       return (obj, i)
-    elif curchar == "*":
+    elif curchar == &quot;*&quot;:
       var pair = decodeArray(s[i..len(s)])
       let obj = pair[0]
       let count =  pair[1]
       i += count 
       return (obj, i)
     else:
-      echo fmt"Unrecognized char {curchar}"
+      echo fmt&quot;Unrecognized char {curchar}&quot;
       break
-```
+</code></pre>
+<a class="header" href="day12_resp.html#preparing-commands" id="preparing-commands"><h3>Preparing commands</h3></a>
+<p>In redis, commands are sent as List of <code>RedisValues</code></p>
+<p>so <code>GET USER</code> is converted to <code>*2\r\n$3\r\nGET\r\n$4\r\nUSER\r\n\r\n</code></p>
+<pre><code class="language-Nimrod">proc prepareCommand*(this: Redis, command: string, args:seq[string]): string =
+  let cmdArgs = concat(@[command], args)
+  var cmdAsRedisValues = newSeq[RedisValue]()
+  for cmd in cmdArgs:
+    cmdAsRedisValues.add(RedisValue(kind:vkBulkStr, bs:cmd))
+  var arr = RedisValue(kind:vkArray, l: cmdAsRedisValues)
 
-### Preparing commands 
-In redis, commands are sent as List of `RedisValues`
+  return encode(arr)
+</code></pre>
+<a class="header" href="day12_resp.html#nim-resp" id="nim-resp"><h3>nim-resp</h3></a>
+<p>That day is based on <a href="https://github.com/xmonader/nim-resp">nim-resp</a> project, and on-going effort to create a redis client in Nim, it supports pipelining feature and all of the previous code. Feel free to send PRs or open issues </p>
 
-so `GET USER` is converted to `*2\r\n$3\r\nGET\r\n$4\r\nUSER\r\n\r\n`
-</pre></div></div></em></p>
-<p><em>proc prepareCommand</em>(this: Redis, command: string, args:seq[string]): string =
-let cmdArgs = concat(@[command], args)
-var cmdAsRedisValues = newSeq<a href="" target="_blank" rel="noopener">RedisValue</a>
-for cmd in cmdArgs:
-cmdAsRedisValues.add(RedisValue(kind:vkBulkStr, bs:cmd))
-var arr = RedisValue(kind:vkArray, l: cmdAsRedisValues)</p>
-<p>return encode(arr)
-</p><div class="code"><div class="highlight"><pre><span></span>### nim-resp
-That day is based on [nim-resp](https://github.com/xmonader/nim-resp) project, and on-going effort to create a redis client in Nim, it supports pipelining feature and all of the previous code. Feel free to send PRs or open issues 
-</pre></div></div>
-</div>
-    </div>
-  </body>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day11_buildsystem.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day11_buildsystem.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
 </html>

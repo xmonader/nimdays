@@ -1,90 +1,157 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <link href="stylesheets/pygments.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/softcover.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/custom.css" media="screen" rel="stylesheet" type="text/css" />
-    
-    <title>nimdays</title>
-    
-      <script type="text/x-mathjax-config">
-              MathJax.Hub.Config({
-        "HTML-CSS": {
-          availableFonts: ["TeX"],
-        },
-        TeX: {
-          extensions: ["AMSmath.js", "AMSsymbols.js", "color.js"],
-          equationNumbers: {
-            autoNumber: "AMS",
-            formatNumber: function (n) { return "1" + '.' + n }
-          },
-          Macros: {
-            PolyTeX:    "Poly{\\TeX}",
-            PolyTeXnic: "Poly{\\TeX}nic",
-            "softcover": "\\texttt{softcover}",
-"unitvec": ["{\\hat #1}", 1]
-          }
-        },
-        showProcessingMessages: false,
-        messageStyle: "none",
-        imageFont: null,
-        "AssistiveMML": { disabled: true }
-      });
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 1 DMIDecode - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
 
-        if (/PhantomJS/.test(window.navigator.userAgent)) {
-          MathJax.Hub.Queue([alert, 'MathJax Done']);
-        }
-      </script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_SVG"></script>
-    
-  </head>
-  <body>
-    
-    <div id="book">
-      <div id="cid1" data-tralics-id="cid1" class="chapter" data-number="1" data-chapter="day1_dmidecode"><h1><a href="day1_dmidecode.html#cid1" class="heading hyperref"><span class="number">Chapter 1 </span>Day 1: Parsing DMIDecode output</a></h1>
-<p class="noindent">In our first day we will write a <a href="https://man.cx/?page=dmidecode(8)" target="_blank" rel="noopener">dmidecode</a> parser in nim</p>
-</div>
-<div id="cid2" data-tralics-id="cid2" class="section" data-number="1.1"><h2><a href="day1_dmidecode.html#cid2" class="heading hyperref"><span class="number">1.1 </span>What to expect ?</a></h2>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">let</span> <span class="n">sample1</span> <span class="o">=</span> <span class="s">"""</span>
-<span class="s"># dmidecode 3.1</span>
-<span class="s">Getting SMBIOS data from sysfs.</span>
-<span class="s">SMBIOS 2.6 present.</span>
+        <base href="">
 
-<span class="s">Handle 0x0001, DMI type 1, 27 bytes</span>
-<span class="s">System Information</span>
-<span class="s">        Manufacturer: LENOVO</span>
-<span class="s">        Product Name: 20042</span>
-<span class="s">        Version: Lenovo G560</span>
-<span class="s">        Serial Number: 2677240001087</span>
-<span class="s">        UUID: CB3E6A50-A77B-E011-88E9-B870F4165734</span>
-<span class="s">        Wake-up Type: Power Switch</span>
-<span class="s">        SKU Number: Calpella_CRB</span>
-<span class="s">        Family: Intel_Mobile</span>
-<span class="s">"""</span>
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
-<span class="kn">import</span> <span class="n">dmidecode</span><span class="p">,</span> <span class="n">tables</span>
+        <link rel="shortcut icon" href="favicon.png">
 
-<span class="kd">var</span> <span class="n">obj</span> <span class="p">:</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">dmidecode</span><span class="p">.</span><span class="n">Section</span><span class="o">]</span>
-<span class="n">obj</span> <span class="o">=</span> <span class="n">parseDMI</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">secname</span><span class="p">,</span> <span class="n">sec</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
-    <span class="n">echo</span> <span class="n">secname</span> <span class="o">&amp;</span> <span class="s">" with "</span> <span class="o">&amp;</span> <span class="o">$</span><span class="n">len</span><span class="p">(</span><span class="n">sec</span><span class="p">.</span><span class="n">props</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">sec</span><span class="p">.</span><span class="n">props</span><span class="p">:</span>
-        <span class="n">echo</span> <span class="s">"k : "</span> <span class="o">&amp;</span> <span class="n">k</span> <span class="o">&amp;</span> <span class="s">" =&gt; "</span> <span class="o">&amp;</span> <span class="n">p</span><span class="p">.</span><span class="n">val</span> 
-        <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="p">.</span><span class="n">items</span><span class="p">:</span>
-                <span class="n">echo</span> <span class="s">"</span><span class="se">\t\t</span><span class="s"> I: "</span><span class="p">,</span> <span class="n">i</span>
-</pre></div></div>
-</div>
-<div id="cid3" data-tralics-id="cid3" class="section" data-number="1.2"><h2><a href="day1_dmidecode.html#cid3" class="heading hyperref"><span class="number">1.2 </span>Implementation</a></h2>
-<p class="noindent">a while ago at work (https://github.com/zero-os/0-core) we needed to parse some dmidecode output, and it sounds like an good problem with enough concepts to get my feet wet in nim.</p>
-<div id="uid1" data-tralics-id="uid1" class="subsection" data-number="1.2.1"><h3><a href="day1_dmidecode.html#uid1" class="heading hyperref"><span class="number">1.2.1 </span>nimble ready!</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>mkdir dmidecode
-nimble init
-</pre></div></div>
-</div>
-<div id="uid2" data-tralics-id="uid2" class="subsection" data-number="1.2.2"><h3><a href="day1_dmidecode.html#uid2" class="heading hyperref"><span class="number">1.2.2 </span>So how does dmidecode output look like?</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span># dmidecode 3.1
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <noscript>
+            <style type="text/css">
+                .javascript-only {
+                    display: none;
+                }
+            </style>
+        </noscript>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html" class="active">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons javascript-only">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </div>
+                <div id="searchresults-outer" class="searchresults-outer">
+                    <div class="searchresults-header" id="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="day1_dmidecode.html#day-1-parsing-dmidecode-output" id="day-1-parsing-dmidecode-output"><h1>Day 1: Parsing DMIDecode output</h1></a>
+<p>In our first day we will write a <a href="https://man.cx/?page=dmidecode(8)">dmidecode</a> parser in nim</p>
+<a class="header" href="day1_dmidecode.html#what-to-expect-" id="what-to-expect-"><h2>What to expect ?</h2></a>
+<pre><code class="language-Nimrod">let sample1 = &quot;&quot;&quot;
+# dmidecode 3.1
 Getting SMBIOS data from sysfs.
 SMBIOS 2.6 present.
 
@@ -98,9 +165,45 @@ System Information
         Wake-up Type: Power Switch
         SKU Number: Calpella_CRB
         Family: Intel_Mobile
-</pre></div></div>
+&quot;&quot;&quot;
+
+import dmidecode, tables
+
+var obj : Table[string, dmidecode.Section]
+obj = parseDMI(sample)
+for secname, sec in obj:
+    echo secname &amp; &quot; with &quot; &amp; $len(sec.props)
+    for k, p in sec.props:
+        echo &quot;k : &quot; &amp; k &amp; &quot; =&gt; &quot; &amp; p.val 
+        if len(p.items) &gt; 0:
+            for i in p.items:
+                echo &quot;\t\t I: &quot;, i
+
+</code></pre>
+<a class="header" href="day1_dmidecode.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<p>a while ago at work (https://github.com/zero-os/0-core) we needed to parse some dmidecode output, and it sounds like an good problem with enough concepts to get my feet wet in nim.</p>
+<a class="header" href="day1_dmidecode.html#nimble-ready" id="nimble-ready"><h3>nimble ready!</h3></a>
+<pre><code class="language-bash">mkdir dmidecode
+nimble init
+</code></pre>
+<a class="header" href="day1_dmidecode.html#so-how-does-dmidecode-output-look-like" id="so-how-does-dmidecode-output-look-like"><h3>So how does dmidecode output look like?</h3></a>
+<pre><code># dmidecode 3.1
+Getting SMBIOS data from sysfs.
+SMBIOS 2.6 present.
+
+Handle 0x0001, DMI type 1, 27 bytes
+System Information
+        Manufacturer: LENOVO
+        Product Name: 20042
+        Version: Lenovo G560
+        Serial Number: 2677240001087
+        UUID: CB3E6A50-A77B-E011-88E9-B870F4165734
+        Wake-up Type: Power Switch
+        SKU Number: Calpella_CRB
+        Family: Intel_Mobile
+</code></pre>
 <p>or</p>
-<div class="code"><div class="highlight"><pre><span></span>Getting SMBIOS data from sysfs.
+<pre><code>Getting SMBIOS data from sysfs.
 SMBIOS 2.6 present.
 
 Handle 0x0000, DMI type 0, 24 bytes
@@ -118,10 +221,10 @@ BIOS Information
                 EDD is supported
                 Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
                 Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
-                5.25"/360 kB floppy services are supported (int 13h)
-                5.25"/1.2 MB floppy services are supported (int 13h)
-                3.5"/720 kB floppy services are supported (int 13h)
-                3.5"/2.88 MB floppy services are supported (int 13h)
+                5.25&quot;/360 kB floppy services are supported (int 13h)
+                5.25&quot;/1.2 MB floppy services are supported (int 13h)
+                3.5&quot;/720 kB floppy services are supported (int 13h)
+                3.5&quot;/2.88 MB floppy services are supported (int 13h)
                 8042 keyboard services are supported (int 9h)
                 CGA/mono video services are supported (int 10h)
                 ACPI is supported
@@ -129,66 +232,61 @@ BIOS Information
                 BIOS boot specification is supported
                 Targeted content distribution is supported
         BIOS Revision: 1.40
-</pre></div></div>
+</code></pre>
 <ul>
-<li>DMIDecode output is some meta like comments, versions and one or more sections
-</li>
+<li>DMIDecode output is some meta like comments, versions and one or more sections</li>
 <li>Section: consists of a
 <ul>
-<li>handle line
-</li>
-<li>title line
-</li>
-<li>one or more indented properties
-</li></ul>
+<li>handle line</li>
+<li>title line</li>
+<li>one or more indented properties</li>
+</ul>
 </li>
 <li>Property: consists of
 <ul>
-<li>key
+<li>key</li>
+<li>optional value</li>
+<li>optional list of indented items</li>
+</ul>
 </li>
-<li>optional value
-</li>
-<li>optional list of indented items
-</li></ul>
-</li></ul>
-</div>
-<div id="uid12" data-tralics-id="uid12" class="subsection" data-number="1.2.3"><h3><a href="day1_dmidecode.html#uid12" class="heading hyperref"><span class="number">1.2.3 </span>Mapping DMI to nim structures</a></h3>
-<p class="noindent">So ourplan is to have an api like
-</p><div class="code"><div class="highlight"><pre><span></span><span class="n">dmifile</span> <span class="o">=</span> <span class="n">parseDMI</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-<span class="n">dmifile</span><span class="o">[</span><span class="s">"section1"</span><span class="o">][</span><span class="s">"property1].value</span>
-</pre></div></div>
-<p>Let’s describe the document structure we have
-</p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span>  <span class="n">sequtils</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">strutils</span>
+</ul>
+<a class="header" href="day1_dmidecode.html#mapping-dmi-to-nim-structures" id="mapping-dmi-to-nim-structures"><h3>Mapping DMI to nim structures</h3></a>
+<p>So ourplan is to have an api like</p>
+<pre><code class="language-Nimrod">dmifile = parseDMI(source)
+dmifile[&quot;section1&quot;][&quot;property1].value
+</code></pre>
+<p>Let's describe the document structure we have</p>
+<pre><code class="language-Nimrod">import  sequtils, tables, strutils
 
-<span class="k">type</span> 
-    <span class="n">Property</span><span class="o">*</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
-        <span class="n">val</span><span class="o">*</span><span class="p">:</span> <span class="kt">string</span>
-        <span class="n">items</span><span class="o">*</span><span class="p">:</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span>
-<span class="k">type</span>
-    <span class="n">Section</span><span class="o">*</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
-        <span class="n">handleLine</span><span class="o">*</span><span class="p">,</span> <span class="n">title</span><span class="o">*</span><span class="p">:</span> <span class="kt">string</span>
-        <span class="n">props</span><span class="o">*</span> <span class="p">:</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">Property</span><span class="o">]</span>
+type 
+    Property* = ref object
+        val*: string
+        items*: seq[string]
+type
+    Section* = ref object
+        handleLine*, title*: string
+        props* : Table[string, Property]
 
-<span class="k">method</span> <span class="n">addItem</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Property</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="o">=</span>
-    <span class="n">this</span><span class="p">.</span><span class="n">items</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-</pre></div></div>
+method addItem(this: Property, item: string) =
+    this.items.add(item)
+
+</code></pre>
 <p>As our parsing will depend on the indentation level we can use this handy function to get the indentation level of a line (number of spaces before the first asciiLetter)</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">getIndentLevel</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="kt">int</span> <span class="o">=</span> 
-    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="p">.</span><span class="n">isSpaceAscii</span><span class="p">():</span>
-            <span class="k">return</span> <span class="n">i</span>
-    <span class="k">return</span> <span class="mi">0</span>
-</pre></div></div>
-<p>It’d have been nicer to use <code>takewhile</code>, but it’s not available in nim stdlib
-</p><div class="code"><div class="highlight"><pre><span></span>    <span class="n">getindentlevel</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">l</span><span class="p">:</span>  <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">takewhile</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">isspace</span><span class="p">(),</span> <span class="n">l</span><span class="p">)))</span>
-</pre></div></div>
-</div>
-<div id="uid13" data-tralics-id="uid13" class="subsection" data-number="1.2.4"><h3><a href="day1_dmidecode.html#uid13" class="heading hyperref"><span class="number">1.2.4 </span>Parsing DMI source into nim structures</a></h3>
-<p class="noindent">There’re many ways to parse the DMI (e.g using regex which would be fairly simple “feel free to implement it” and kindly send me a PR to update this tutorial)
-</p><div class="code"><div class="highlight"><pre><span></span>proc parseDMI* (source: string) : Table[string, Section]=
-</pre></div></div>
-<p>In plain english for output like this
-</p><div class="code"><div class="highlight"><pre><span></span>Getting SMBIOS data from sysfs.
+<pre><code class="language-Nimrod">proc getIndentLevel(line: string) : int = 
+    for i, c in pairs(line):
+        if not c.isSpaceAscii():
+            return i
+    return 0
+</code></pre>
+<p>It'd have been nicer to use <code>takewhile</code>, but it's not available in nim stdlib</p>
+<pre><code class="language-python">    getindentlevel = lambda l:  len(list(takewhile(lambda c: c.isspace(), l)))
+</code></pre>
+<a class="header" href="day1_dmidecode.html#parsing-dmi-source-into-nim-structures" id="parsing-dmi-source-into-nim-structures"><h3>Parsing DMI source into nim structures</h3></a>
+<p>There're many ways to parse the DMI (e.g using regex which would be fairly simple &quot;feel free to implement it&quot; and kindly send me a PR to update this tutorial)</p>
+<pre><code>proc parseDMI* (source: string) : Table[string, Section]=
+</code></pre>
+<p>In plain english for output like this</p>
+<pre><code>Getting SMBIOS data from sysfs.
 SMBIOS 2.6 present.
 
 Handle 0x0000, DMI type 0, 24 bytes
@@ -206,10 +304,10 @@ BIOS Information
                 EDD is supported
                 Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
                 Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
-                5.25"/360 kB floppy services are supported (int 13h)
-                5.25"/1.2 MB floppy services are supported (int 13h)
-                3.5"/720 kB floppy services are supported (int 13h)
-                3.5"/2.88 MB floppy services are supported (int 13h)
+                5.25&quot;/360 kB floppy services are supported (int 13h)
+                5.25&quot;/1.2 MB floppy services are supported (int 13h)
+                3.5&quot;/720 kB floppy services are supported (int 13h)
+                3.5&quot;/2.88 MB floppy services are supported (int 13h)
                 8042 keyboard services are supported (int 9h)
                 CGA/mono video services are supported (int 10h)
                 ACPI is supported
@@ -217,37 +315,34 @@ BIOS Information
                 BIOS boot specification is supported
                 Targeted content distribution is supported
         BIOS Revision: 1.40
-</pre></div></div>
-<p>we have couple of states
-</p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> 
-    <span class="n">ParserState</span> <span class="o">=</span> <span class="k">enum</span>
-        <span class="n">noOp</span><span class="p">,</span> <span class="n">sectionName</span><span class="p">,</span> <span class="n">readKeyValue</span><span class="p">,</span> <span class="n">readList</span>
-</pre></div></div>
+</code></pre>
+<p>we have couple of states</p>
+<pre><code class="language-Nimrod">type 
+    ParserState = enum
+        noOp, sectionName, readKeyValue, readList
+</code></pre>
 <ul>
-<li>noOp: no action yet
-</li>
-<li>sectionName: read sectionName
-</li>
-<li>readKeyValue: read a line has colon <code>:</code> in it into a key value pair
-</li>
-<li>readList: when the next line has greater indentation level than the property line
-</li></ul>
+<li>noOp: no action yet</li>
+<li>sectionName: read sectionName</li>
+<li>readKeyValue: read a line has colon <code>:</code> in it into a key value pair</li>
+<li>readList: when the next line has greater indentation level than the property line</li>
+</ul>
 <p>so our state is noOp until we reach line
 <code>Handle 0x0000, DMI type 0, 24 bytes</code>
 then moves to sectionName</p>
-<p>for line <code>BIOS Information</code> then state changes to reading properties
-</p><div class="code"><div class="highlight"><pre><span></span>        Vendor: LENOVO
+<p>for line <code>BIOS Information</code> then state changes to reading properties</p>
+<pre><code>        Vendor: LENOVO
         Version: 29CN40WW(V2.17)
         Release Date: 04/13/2011
         ROM Size: 2048 kB
         Characteristics:
-</pre></div></div>
-<p>then we notice the indentation on the next line is greater than the one on the current line
-</p><div class="code"><div class="highlight"><pre><span></span>                PCI is supported
+</code></pre>
+<p>then we notice the indentation on the next line is greater than the one on the current line</p>
+<pre><code>                PCI is supported
         Characteristics:
-</pre></div></div>
-<p>so state moves into readList to read the items related to property <code>Characterstics</code>
-</p><div class="code"><div class="highlight"><pre><span></span>                PCI is supported
+</code></pre>
+<p>so state moves into readList to read the items related to property <code>Characterstics</code></p>
+<pre><code>                PCI is supported
                 BIOS is upgradeable
                 BIOS shadowing is allowed
                 Boot from CD is supported
@@ -255,108 +350,183 @@ then moves to sectionName</p>
                 EDD is supported
                 Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
                 Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
-                5.25"/360 kB floppy services are supported (int 13h)
-                5.25"/1.2 MB floppy services are supported (int 13h)
-                3.5"/720 kB floppy services are supported (int 13h)
-                3.5"/2.88 MB floppy services are supported (int 13h)
+                5.25&quot;/360 kB floppy services are supported (int 13h)
+                5.25&quot;/1.2 MB floppy services are supported (int 13h)
+                3.5&quot;/720 kB floppy services are supported (int 13h)
+                3.5&quot;/2.88 MB floppy services are supported (int 13h)
                 8042 keyboard services are supported (int 9h)
                 CGA/mono video services are supported (int 10h)
                 ACPI is supported
                 USB legacy is supported
                 BIOS boot specification is supported
                 Targeted content distribution is supported
-</pre></div></div>
-<p>and again it notices the indentation is of the next line is less than the current line
-</p><div class="code"><div class="highlight"><pre><span></span>        BIOS Revision: 1.40
+</code></pre>
+<p>and again it notices the indentation is of the next line is less than the current line</p>
+<pre><code>        BIOS Revision: 1.40
                 Targeted content distribution is supported
-</pre></div></div>
+</code></pre>
 <p>so state switches again into <code>readKeyValue</code></p>
 <ul>
 <li>if we encounter an empty line:
 <ul>
-<li>if not in parsing state then it’s a noOp we ignore meta and empty lines
+<li>if not in parsing state then it's a noOp we ignore meta and empty lines</li>
+<li>if in parsing state <code>current Section isn't nil</code> we finish parsing the section object</li>
+</ul>
 </li>
-<li>if in parsing state <code>current Section isn’t nil</code> we finish parsing the section object
-</li></ul>
-</li></ul>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">parseDMI</span><span class="o">*</span> <span class="p">(</span><span class="n">source</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">Section</span><span class="o">]=</span>
+</ul>
+<pre><code class="language-Nimrod">
+proc parseDMI* (source: string) : Table[string, Section]=
     
-    <span class="kd">var</span>
-        <span class="n">state</span> <span class="p">:</span> <span class="n">ParserState</span> <span class="o">=</span> <span class="n">noOp</span>
-        <span class="n">lines</span> <span class="o">=</span> <span class="n">strutils</span><span class="p">.</span><span class="n">splitLines</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-        <span class="n">sects</span> <span class="o">=</span> <span class="n">initTable</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">Section</span><span class="o">]</span><span class="p">()</span>
+    var
+        state : ParserState = noOp
+        lines = strutils.splitLines(source)
+        sects = initTable[string, Section]()
         
-        <span class="n">p</span><span class="p">:</span> <span class="n">Property</span> <span class="o">=</span> <span class="kp">nil</span>
-        <span class="n">s</span><span class="p">:</span> <span class="n">Section</span> <span class="o">=</span> <span class="kp">nil</span> 
-        <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="kt">string</span>
-</pre></div></div>
+        p: Property = nil
+        s: Section = nil 
+        k, v: string
+</code></pre>
 <p>Here we define the current state, code lines, initialize a table <code>sects</code> from <code>sectionName</code> to <code>Section Object</code> and variables p <code>current property</code>, s <code>current section</code>, k, v <code>current property key, value</code></p>
-<div class="code"><div class="highlight"><pre><span></span>    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
-</pre></div></div>
-<p>Start looping on index, line using <code>pairs</code>
-&gt; pairs is kinda like enumerate in python</p>
-<div class="code"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">l</span><span class="p">.</span><span class="n">startsWith</span><span class="p">(</span><span class="s">"Handle"</span><span class="p">):</span>
-            <span class="n">s</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Section</span>
-            <span class="n">s</span><span class="p">.</span><span class="n">props</span> <span class="o">=</span> <span class="n">initTable</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">Property</span><span class="o">]</span><span class="p">()</span>
-            <span class="n">s</span><span class="p">.</span><span class="n">handleline</span> <span class="o">=</span> <span class="n">l</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">sectionName</span>
-            <span class="k">continue</span> 
-</pre></div></div>
-<p>If we encounter the string <code>Handle</code>
-- create new section object and initialize it’s props table
-- keep track of the handle line
-- switch state to reading sectionName
-- continue the loop to move to the title line</p>
-<div class="code"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="s">""</span><span class="p">:</span> <span class="c"># can be just new line before reading any sections. </span>
-            <span class="k">if</span> <span class="n">s</span> <span class="o">!=</span> <span class="kp">nil</span><span class="p">:</span>
-                <span class="n">sects</span><span class="o">[</span><span class="n">s</span><span class="p">.</span><span class="n">title</span><span class="o">]</span> <span class="o">=</span> <span class="n">s</span>
-            <span class="k">continue</span>
-</pre></div></div>
+<pre><code class="language-Nimrod">    for i, l in pairs(lines):
+</code></pre>
+<p>Start looping on index, line using <code>pairs</code></p>
+<blockquote>
+<p>pairs is kinda like enumerate in python</p>
+</blockquote>
+<pre><code class="language-Nimrod">        if l.startsWith(&quot;Handle&quot;):
+            s = new Section
+            s.props = initTable[string, Property]()
+            s.handleline = l
+            state = sectionName
+            continue 
+</code></pre>
+<p>If we encounter the string <code>Handle</code></p>
+<ul>
+<li>create new section object and initialize it's props table</li>
+<li>keep track of the handle line</li>
+<li>switch state to reading sectionName</li>
+<li>continue the loop to move to the title line</li>
+</ul>
+<pre><code class="language-Nimrod">        if l == &quot;&quot;: # can be just new line before reading any sections. 
+            if s != nil:
+                sects[s.title] = s
+            continue
+</code></pre>
 <p>if line is empty and we have a section object <code>not nil</code> we finish the section and continue</p>
-<div class="code"><div class="highlight"><pre><span></span>        <span class="k">if</span> <span class="n">state</span> <span class="o">==</span> <span class="n">sectionName</span><span class="p">:</span>  <span class="c"># current line is the title line</span>
-            <span class="n">s</span><span class="p">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">l</span>
-            <span class="n">state</span> <span class="o">=</span> <span class="n">readKeyValue</span>  <span class="c"># change state into reading key value pairs</span>
-</pre></div></div>
-<p>If state is sectionName:
-- this line is a title line
-- change state for the upcoming to readKeyValue</p>
-<div class="code"><div class="highlight"><pre><span></span>        <span class="k">elif</span> <span class="n">state</span> <span class="o">==</span> <span class="n">readKeyValue</span><span class="p">:</span>
-            <span class="k">let</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">l</span><span class="p">.</span><span class="n">split</span><span class="p">({</span><span class="sc">':'</span><span class="p">})</span>
-            <span class="n">k</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">pair</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">.</span><span class="n">strip</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>                 <span class="c"># value can be empty</span>
-                <span class="n">v</span> <span class="o">=</span> <span class="s">""</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">val</span><span class="p">:</span> <span class="n">v</span><span class="p">)</span>
-            <span class="n">p</span><span class="p">.</span><span class="n">items</span> <span class="o">=</span> <span class="n">newSeq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span><span class="p">()</span>
-            <span class="n">p</span><span class="p">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
-</pre></div></div>
-<p>If state is readKeyValue
-- split the line on colon <code>:</code> to get key, value pair and set v to “” if not present
-- make current Property <code>p</code> and initialize its related fields <code>items</code>, <code>val</code></p>
-<div class="code"><div class="highlight"><pre><span></span>            <span class="c"># current line indentation is &lt;  nextline indentation =&gt; change state to readList</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">getIndentlevel</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">getIndentlevel</span><span class="p">(</span><span class="n">lines</span><span class="o">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">]</span><span class="p">))</span> <span class="p">:</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="n">readList</span>
-</pre></div></div>
-<p>If the next line indentation is greater this means we’re should be reading list of items regarding the current property <code>p</code></p>
-<div class="code"><div class="highlight"><pre><span></span>            <span class="k">else</span><span class="p">:</span>
-                <span class="c"># add key/value pair directly</span>
-                <span class="n">s</span><span class="p">.</span><span class="n">props</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">p</span>
-</pre></div></div>
+<pre><code class="language-Nimrod">        if state == sectionName:  # current line is the title line
+            s.title = l
+            state = readKeyValue  # change state into reading key value pairs
+</code></pre>
+<p>If state is sectionName:</p>
+<ul>
+<li>this line is a title line</li>
+<li>change state for the upcoming to readKeyValue</li>
+</ul>
+<pre><code class="language-Nimrod">        elif state == readKeyValue:
+            let pair = l.split({':'})
+            k = pair[0].strip()
+            if len(pair) == 2:
+                v = pair[1].strip()
+            else:                 # value can be empty
+                v = &quot;&quot;
+            p = Property(val: v)
+            p.items = newSeq[string]()
+            p.val = v
+</code></pre>
+<p>If state is readKeyValue</p>
+<ul>
+<li>split the line on colon <code>:</code> to get key, value pair and set v to &quot;&quot; if not present</li>
+<li>make current Property <code>p</code> and initialize its related fields <code>items</code>, <code>val</code></li>
+</ul>
+<pre><code class="language-Nimrod">            # current line indentation is &lt;  nextline indentation =&gt; change state to readList
+            if i &lt; len(lines) and (getIndentlevel(l) &lt; getIndentlevel(lines[i+1])) :
+                state = readList
+</code></pre>
+<p>If the next line indentation is greater this means we're should be reading list of items regarding the current property <code>p</code></p>
+<pre><code class="language-Nimrod">            else:
+                # add key/value pair directly
+                s.props[k] = p
+</code></pre>
 <p>If not finish the property</p>
-<div class="code"><div class="highlight"><pre><span></span>        <span class="k">elif</span> <span class="n">state</span> <span class="o">==</span> <span class="n">readList</span><span class="p">:</span>
-            <span class="c"># keep adding the current line to current property items and if dedented =&gt; change state to readKeyValue</span>
-            <span class="n">p</span><span class="p">.</span><span class="n">add_item</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">strip</span><span class="p">())</span>
-            <span class="k">if</span> <span class="n">getindentlevel</span><span class="p">(</span><span class="n">l</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">getindentlevel</span><span class="p">(</span><span class="n">lines</span><span class="o">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">]</span><span class="p">):</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="n">readKeyValue</span> 
-                <span class="n">s</span><span class="p">.</span><span class="n">props</span><span class="o">[</span><span class="n">k</span><span class="o">]</span> <span class="o">=</span> <span class="n">p</span>
-</pre></div></div>
-<p>if state is <code>readList</code>
-- keep adding items to current property <code>p</code>
-- if the indentation level decreased change state to <code>readKeyValue</code> and finish property
-</p><div class="code"><div class="highlight"><pre><span></span>    return sects
-</pre></div></div>
-</div></div>
-    </div>
-  </body>
+<pre><code class="language-Nimrod">        elif state == readList:
+            # keep adding the current line to current property items and if dedented =&gt; change state to readKeyValue
+            p.add_item(l.strip())
+            if getindentlevel(l) &gt; getindentlevel(lines[i+1]):
+                state = readKeyValue 
+                s.props[k] = p
+</code></pre>
+<p>if state is <code>readList</code></p>
+<ul>
+<li>keep adding items to current property <code>p</code></li>
+<li>if the indentation level decreased change state to <code>readKeyValue</code> and finish property</li>
+</ul>
+<pre><code>    return sects
+
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+
+                        
+                            <a rel="next" href="day2_bencode.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+
+                
+                    <a href="day2_bencode.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
 </html>

@@ -1,184 +1,290 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <link href="stylesheets/pygments.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/softcover.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/custom.css" media="screen" rel="stylesheet" type="text/css" />
-    
-    <title>nimdays</title>
-    
-      <script type="text/x-mathjax-config">
-              MathJax.Hub.Config({
-        "HTML-CSS": {
-          availableFonts: ["TeX"],
-        },
-        TeX: {
-          extensions: ["AMSmath.js", "AMSsymbols.js", "color.js"],
-          equationNumbers: {
-            autoNumber: "AMS",
-            formatNumber: function (n) { return "11" + '.' + n }
-          },
-          Macros: {
-            PolyTeX:    "Poly{\\TeX}",
-            PolyTeXnic: "Poly{\\TeX}nic",
-            "softcover": "\\texttt{softcover}",
-"unitvec": ["{\\hat #1}", 1]
-          }
-        },
-        showProcessingMessages: false,
-        messageStyle: "none",
-        imageFont: null,
-        "AssistiveMML": { disabled: true }
-      });
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 11: Bake build system - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
 
-        if (/PhantomJS/.test(window.navigator.userAgent)) {
-          MathJax.Hub.Queue([alert, 'MathJax Done']);
-        }
-      </script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_SVG"></script>
-    
-  </head>
-  <body>
-    
-    <div id="book">
-      <div id="cid35" data-tralics-id="cid35" class="chapter" data-number="11" data-chapter="day11_buildsystem"><h1><a href="day11_buildsystem.html#cid35" class="heading hyperref"><span class="number">Chapter 11 </span>Day 11 ( Bake applications)</a></h1>
-<p class="noindent">I used to work on application 2 years ago, and It was a bit like ansible defining recipes to create applications and managng their dependencies.</p>
-</div>
-<div id="cid36" data-tralics-id="cid36" class="section" data-number="11.1"><h2><a href="day11_buildsystem.html#cid36" class="heading hyperref"><span class="number">11.1 </span>What to expect</a></h2>
-<p class="noindent">Today we will be doing something very simple to track our dependencies and print the bash commands for each task like Makefile.</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="nv">HEADERS</span> <span class="o">=</span> program.h headers.h
+        <base href="">
 
-<span class="nf">default</span><span class="o">:</span> <span class="n">program</span>
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
-<span class="nf">program.o</span><span class="o">:</span> <span class="n">program</span>.<span class="n">c</span> <span class="k">$(</span><span class="nv">HEADERS</span><span class="k">)</span>
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <noscript>
+            <style type="text/css">
+                .javascript-only {
+                    display: none;
+                }
+            </style>
+        </noscript>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html" class="active">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons javascript-only">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </div>
+                <div id="searchresults-outer" class="searchresults-outer">
+                    <div class="searchresults-header" id="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="day11_buildsystem.html#day-11--bake-applications" id="day-11--bake-applications"><h1>Day 11 ( Bake applications)</h1></a>
+<p>I used to work on application 2 years ago, and It was a bit like ansible defining recipes to create applications and managng their dependencies.</p>
+<a class="header" href="day11_buildsystem.html#what-to-expect" id="what-to-expect"><h2>What to expect</h2></a>
+<p>Today we will be doing something very simple to track our dependencies and print the bash commands for each task like Makefile.</p>
+<pre><code class="language-makefile">HEADERS = program.h headers.h
+
+default: program
+
+program.o: program.c $(HEADERS)
     gcc -c program.c -o program.o
 
-<span class="nf">program</span><span class="o">:</span> <span class="n">program</span>.<span class="n">o</span>
+program: program.o
     gcc program.o -o program
 
-<span class="nf">clean</span><span class="o">:</span>
+clean:
     -rm -f program.o
     -rm -f program
-</pre></div></div>
+</code></pre>
 <p>Basically, makefile consists of</p>
 <ul>
-<li>Variables
-</li>
-<li>Targets
-</li>
-<li>Dependencies
-</li></ul>
+<li>Variables</li>
+<li>Targets</li>
+<li>Dependencies</li>
+</ul>
 <p><code>variables</code> like <code>HEADERS=...</code>, <code>targets</code> whatever precedes the <code>:</code> like <code>clean</code>, <code>program</code>, <code>program.o</code>, <code>dependencies</code> are what a target depends on, so for instance <code>program</code> target that generates the executable requires <code>program.o</code> dependency to be executed first.</p>
-</div>
-<div id="cid37" data-tralics-id="cid37" class="section" data-number="11.2"><h2><a href="day11_buildsystem.html#cid37" class="heading hyperref"><span class="number">11.2 </span>Example API usage</a></h2>
-<div id="uid126" data-tralics-id="uid126" class="subsection" data-number="11.2.1"><h3><a href="day11_buildsystem.html#uid126" class="heading hyperref"><span class="number">11.2.1 </span>Normal usage</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>  <span class="kd">var</span> <span class="n">b</span> <span class="o">=</span> <span class="n">initBake</span><span class="p">()</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"publish"</span><span class="p">,</span> <span class="o">@[</span><span class="s">"build-release"</span><span class="o">]</span><span class="p">,</span> <span class="s">"print publish"</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"build-release"</span><span class="p">,</span> <span class="o">@[</span><span class="s">"nim-installed"</span><span class="o">]</span><span class="p">,</span> <span class="s">"print exec command to build release mode"</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"nim-installed"</span><span class="p">,</span> <span class="o">@[</span><span class="s">"curl-installed"</span><span class="o">]</span><span class="p">,</span> <span class="s">"print curl LINK | bash"</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"curl-installed"</span><span class="p">,</span> <span class="o">@[</span><span class="s">"apt-installed"</span><span class="o">]</span><span class="p">,</span> <span class="s">"apt-get install curl"</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"apt-installed"</span><span class="p">,</span> <span class="o">@[]</span><span class="p">,</span> <span class="s">"code to install apt..."</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">run_task</span><span class="p">(</span><span class="s">"publish"</span><span class="p">)</span>
-</pre></div></div>
+<a class="header" href="day11_buildsystem.html#example-api-usage" id="example-api-usage"><h2>Example API usage</h2></a>
+<a class="header" href="day11_buildsystem.html#normal-usage" id="normal-usage"><h3>Normal usage</h3></a>
+<pre><code class="language-Nimrod">  var b = initBake()
+  b.add_task(&quot;publish&quot;, @[&quot;build-release&quot;], &quot;print publish&quot;)
+  b.add_task(&quot;build-release&quot;, @[&quot;nim-installed&quot;], &quot;print exec command to build release mode&quot;)
+  b.add_task(&quot;nim-installed&quot;, @[&quot;curl-installed&quot;], &quot;print curl LINK | bash&quot;)
+  b.add_task(&quot;curl-installed&quot;, @[&quot;apt-installed&quot;], &quot;apt-get install curl&quot;)
+  b.add_task(&quot;apt-installed&quot;, @[], &quot;code to install apt...&quot;)
+  b.run_task(&quot;publish&quot;)
+</code></pre>
 <p>OUTPUT:</p>
-<div class="code"><div class="highlight"><pre><span></span>code to install apt...
+<pre><code>code to install apt...
 apt-get install curl
 print curl LINK | bash
 print exec command to build release mode
 print publish
-</pre></div></div>
-</div>
-<div id="uid127" data-tralics-id="uid127" class="subsection" data-number="11.2.2"><h3><a href="day11_buildsystem.html#uid127" class="heading hyperref"><span class="number">11.2.2 </span>Circular dependencies</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>  <span class="kd">var</span> <span class="n">b</span> <span class="o">=</span> <span class="n">initBake</span><span class="p">()</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"publish"</span><span class="p">,</span> <span class="o">@[</span><span class="s">"build-release"</span><span class="o">]</span><span class="p">,</span> <span class="s">"print publish"</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"build-release"</span><span class="p">,</span> <span class="o">@[</span><span class="s">"nim-installed"</span><span class="o">]</span><span class="p">,</span> <span class="s">"print exec command to build release mode"</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"nim-installed"</span><span class="p">,</span> <span class="o">@[</span><span class="s">"curl-installed"</span><span class="o">]</span><span class="p">,</span> <span class="s">"print curl LINK | bash"</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"curl-installed"</span><span class="p">,</span> <span class="o">@[</span><span class="s">"publish"</span><span class="p">,</span> <span class="s">"apt-installed"</span><span class="o">]</span><span class="p">,</span> <span class="s">"apt-get install curl"</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">add_task</span><span class="p">(</span><span class="s">"apt-installed"</span><span class="p">,</span> <span class="o">@[]</span><span class="p">,</span> <span class="s">"code to install apt..."</span><span class="p">)</span>
-  <span class="n">b</span><span class="p">.</span><span class="n">run_task</span><span class="p">(</span><span class="s">"publish"</span><span class="p">)</span>
-</pre></div></div>
-<p>Output:
-</p><div class="code"><div class="highlight"><pre><span></span>Found cycle please fix:@["build-release", "nim-installed", "curl-installed", "publish", "build-release"]
-</pre></div></div>
-</div>
-<div id="uid128" data-tralics-id="uid128" class="subsection" data-number="11.2.3"><h3><a href="day11_buildsystem.html#uid128" class="heading hyperref"><span class="number">11.2.3 </span>Implementation</a></h3>
-<div id="uid129" data-tralics-id="uid129" class="subsubsection" data-number="11.2.3.1"><h4><a href="#uid129" class="heading">Imports</a></h4>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="n">strformat</span><span class="p">,</span> <span class="n">strutils</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">sequtils</span><span class="p">,</span> <span class="n">algorithm</span>
-</pre></div></div>
-</div>
-<div id="uid130" data-tralics-id="uid130" class="subsubsection" data-number="11.2.3.2"><h4><a href="#uid130" class="heading">Graphs</a></h4>
-<p class="noindent">Graphs are very powerful data structure and used to solve lots of problems, like getting the shortest route and detecting circular dependencies in our code today :)</p>
-<p>So How to represent graph?<span class="intersentencespace"></span> Well, we will use <a href="https://en.wikipedia.org/wiki/Adjacency_list" target="_blank" rel="noopener">Adjaceny list</a></p>
-</div>
-<div id="uid131" data-tralics-id="uid131" class="subsubsection" data-number="11.2.3.3"><h4><a href="#uid131" class="heading">Objects</a></h4>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">Task</span> <span class="o">=</span> <span class="k">object</span>
-  <span class="n">requires</span><span class="o">*</span><span class="p">:</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span>
-  <span class="n">actions</span><span class="o">*</span><span class="p">:</span> <span class="kt">string</span>
-  <span class="n">name</span><span class="o">*</span><span class="p">:</span> <span class="kt">string</span>
+</code></pre>
+<a class="header" href="day11_buildsystem.html#circular-dependencies" id="circular-dependencies"><h3>Circular dependencies</h3></a>
+<pre><code class="language-Nimrod">  var b = initBake()
+  b.add_task(&quot;publish&quot;, @[&quot;build-release&quot;], &quot;print publish&quot;)
+  b.add_task(&quot;build-release&quot;, @[&quot;nim-installed&quot;], &quot;print exec command to build release mode&quot;)
+  b.add_task(&quot;nim-installed&quot;, @[&quot;curl-installed&quot;], &quot;print curl LINK | bash&quot;)
+  b.add_task(&quot;curl-installed&quot;, @[&quot;publish&quot;, &quot;apt-installed&quot;], &quot;apt-get install curl&quot;)
+  b.add_task(&quot;apt-installed&quot;, @[], &quot;code to install apt...&quot;)
+  b.run_task(&quot;publish&quot;)
 
-<span class="k">proc </span><span class="nf">`$`</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Task</span><span class="p">):</span> <span class="kt">string</span> <span class="o">=</span> 
-  <span class="k">return</span> <span class="n">fmt</span><span class="p">(</span><span class="s">"Task {this.name} Requirements: {this.requires} , actions {this.actions}"</span><span class="p">)</span>
-</pre></div></div>
+</code></pre>
+<p>Output:</p>
+<pre><code>Found cycle please fix:@[&quot;build-release&quot;, &quot;nim-installed&quot;, &quot;curl-installed&quot;, &quot;publish&quot;, &quot;build-release&quot;]
+</code></pre>
+<a class="header" href="day11_buildsystem.html#implementation" id="implementation"><h3>Implementation</h3></a>
+<a class="header" href="day11_buildsystem.html#imports" id="imports"><h4>Imports</h4></a>
+<pre><code class="language-Nimrod">import strformat, strutils, tables, sequtils, algorithm
+</code></pre>
+<a class="header" href="day11_buildsystem.html#graphs" id="graphs"><h4>Graphs</h4></a>
+<p>Graphs are very powerful data structure and used to solve lots of problems, like getting the shortest route and detecting circular dependencies in our code today :)</p>
+<p>So How to represent graph?
+Well, we will use <a href="https://en.wikipedia.org/wiki/Adjacency_list">Adjaceny list</a></p>
+<a class="header" href="day11_buildsystem.html#objects" id="objects"><h4>Objects</h4></a>
+<pre><code class="language-Nimrod">
+type Task = object
+  requires*: seq[string]
+  actions*: string
+  name*: string
+
+proc `$`(this: Task): string = 
+  return fmt(&quot;Task {this.name} Requirements: {this.requires} , actions {this.actions}&quot;)
+
+</code></pre>
 <p>Task object represnts a <code>target</code> in makefile language, and it has a name, actions code and list of dependencies</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">Bake</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
-  <span class="n">tasksgraph</span><span class="o">*</span> <span class="p">:</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]]</span>
-  <span class="n">tasks</span><span class="o">*</span>      <span class="p">:</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">Task</span><span class="o">]</span>
-</pre></div></div>
+<pre><code class="language-Nimrod">type Bake = ref object
+  tasksgraph* : Table[string, seq[string]]
+  tasks*      : Table[string, Task]
+</code></pre>
 <p>Bake object has <code>tasksgraph</code> adjaceny list representing the tasks and their dependencies and tasks table that maps taskname to task object</p>
-</div>
-<div id="uid132" data-tralics-id="uid132" class="subsubsection" data-number="11.2.3.4"><h4><a href="#uid132" class="heading">Adding a task</a></h4>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">addTask</span><span class="o">*</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Bake</span><span class="p">,</span> <span class="n">taskname</span><span class="p">:</span> <span class="kt">string</span><span class="p">,</span> <span class="n">deps</span><span class="p">:</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span><span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="n">void</span> <span class="o">=</span> 
-  <span class="kd">var</span> <span class="n">t</span> <span class="o">=</span>  <span class="n">Task</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="n">taskname</span><span class="p">,</span> <span class="n">requires</span><span class="p">:</span><span class="n">deps</span><span class="p">,</span> <span class="n">actions</span><span class="p">:</span><span class="n">actions</span><span class="p">)</span>
-  <span class="n">this</span><span class="p">.</span><span class="n">tasksgraph</span><span class="o">[</span><span class="n">taskname</span><span class="o">]</span> <span class="o">=</span> <span class="n">deps</span>
-  <span class="n">this</span><span class="p">.</span><span class="n">tasks</span><span class="o">[</span><span class="n">taskname</span><span class="o">]</span> <span class="o">=</span> <span class="n">t</span>
-</pre></div></div>
-<p>- We update the adjacency list with (taskname and its dependencies)
-- Add task object to tasks Table with key task name</p>
-</div>
-<div id="uid133" data-tralics-id="uid133" class="subsubsection" data-number="11.2.3.5"><h4><a href="#uid133" class="heading">Running tasks</a></h4>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">runTask</span><span class="o">*</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Bake</span><span class="p">,</span> <span class="n">taskname</span><span class="p">:</span> <span class="kt">string</span><span class="p">):</span> <span class="n">void</span> <span class="o">=</span>
-  <span class="c"># CODE OMITTED FOR FINIDNG CYCLES..</span>
+<a class="header" href="day11_buildsystem.html#adding-a-task" id="adding-a-task"><h4>Adding a task</h4></a>
+<pre><code class="language-Nimrod">
+proc addTask*(this: Bake, taskname: string, deps: seq[string], actions:string) : void = 
+  var t =  Task(name:taskname, requires:deps, actions:actions)
+  this.tasksgraph[taskname] = deps
+  this.tasks[taskname] = t
+</code></pre>
+<ul>
+<li>We update the adjacency list with (taskname and its dependencies)</li>
+<li>Add task object to tasks Table with key task name</li>
+</ul>
+<a class="header" href="day11_buildsystem.html#running-tasks" id="running-tasks"><h4>Running tasks</h4></a>
+<pre><code class="language-Nimrod">
+proc runTask*(this: Bake, taskname: string): void =
+  # CODE OMITTED FOR FINIDNG CYCLES..
 
-  <span class="kd">var</span> <span class="n">deps</span> <span class="o">=</span> <span class="n">newSeq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span><span class="p">()</span>
-  <span class="kd">var</span> <span class="n">seen</span> <span class="o">=</span> <span class="n">newSeq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span><span class="p">()</span>
+  var deps = newSeq[string]()
+  var seen = newSeq[string]()
 
-  <span class="n">this</span><span class="p">.</span><span class="n">runTaskHelper</span><span class="p">(</span><span class="n">taskname</span><span class="p">,</span> <span class="n">deps</span><span class="p">,</span> <span class="n">seen</span><span class="p">)</span>      
+  this.runTaskHelper(taskname, deps, seen)      
 
-  <span class="k">for</span> <span class="n">tsk</span> <span class="ow">in</span> <span class="n">deps</span><span class="p">:</span>
-      <span class="k">let</span> <span class="n">t</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">tasks</span><span class="p">.</span><span class="n">getOrDefault</span><span class="p">(</span><span class="n">tsk</span><span class="p">)</span>
-      <span class="n">echo</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">actions</span><span class="p">)</span>
-</pre></div></div>
-<p>- Before running a task we should check if it has a cycle first.<span class="intersentencespace"></span> - Keep track of dependencies and the seen tasks so far so we don’t <code>run seen tasks</code> again.<span class="intersentencespace"></span> (for instance if we have target install-wget and target install-curl and both require target <code>apt-get update</code>, so we want to run <code>apt-get update</code> only once )</p>
-<p>for example
-</p><div class="code"><div class="highlight"><pre><span></span>code to install apt...
+  for tsk in deps:
+      let t = this.tasks.getOrDefault(tsk)
+      echo(t.actions)
+
+</code></pre>
+<ul>
+<li>Before running a task we should check if it has a cycle first.</li>
+<li>Keep track of dependencies and the seen tasks so far so we don't <code>run seen tasks</code> again. (for instance if we have target install-wget and target install-curl and both require target <code>apt-get update</code>, so we want to run <code>apt-get update</code> only once )</li>
+</ul>
+<p>for example</p>
+<pre><code>code to install apt...
 apt-get install curl
 print curl LINK | bash
 print exec command to build release mode
 print publish
-</pre></div></div>
+</code></pre>
 <ul>
-<li>Call <code>runTaskHelper</code> procedure to walk through all the <code>tasks</code> and their <code>dependencies</code> and get us a list of deps <code>each will update deps variable as we will be sending it by reference</code>
-</li>
-<li>After getting correct dependencies tasks sorted we execute <code>in our case we will just echo actions property</code>
-</li></ul>
+<li>Call <code>runTaskHelper</code> procedure to walk through all the <code>tasks</code> and their <code>dependencies</code> and get us a list of deps <code>each will update deps variable as we will be sending it by reference</code></li>
+<li>After getting correct dependencies tasks sorted we execute <code>in our case we will just echo actions property</code></li>
+</ul>
 <p>and now to <code>runTaskHelper</code> that basically updates our dependencies list and put the task execution in order</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">runTaskHelper</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Bake</span><span class="p">,</span> <span class="n">taskname</span><span class="p">:</span> <span class="kt">string</span><span class="p">,</span> <span class="n">deps</span><span class="p">:</span> <span class="kd">var</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span><span class="p">,</span> <span class="n">seen</span><span class="p">:</span> <span class="kd">var</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]</span><span class="p">)</span> <span class="p">:</span> <span class="n">void</span> <span class="o">=</span> 
-  <span class="k">if</span> <span class="n">taskname</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
-    <span class="n">echo</span> <span class="s">"[+] Solved {taskname} before no need to repeat action"</span>
-  <span class="kd">var</span> <span class="n">tsk</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">tasks</span><span class="p">.</span><span class="n">getOrDefault</span><span class="p">(</span><span class="n">taskname</span><span class="p">)</span>
+<pre><code class="language-Nimrod">
+proc runTaskHelper(this: Bake, taskname: string, deps: var seq[string], seen: var seq[string]) : void = 
+  if taskname in seen:
+    echo &quot;[+] Solved {taskname} before no need to repeat action&quot;
+  var tsk = this.tasks.getOrDefault(taskname)
 
-  <span class="n">seen</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">taskname</span><span class="p">)</span>
-  <span class="k">if</span> <span class="n">len</span><span class="p">(</span><span class="n">tsk</span><span class="p">.</span><span class="n">requires</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">this</span><span class="p">.</span><span class="n">tasksgraph</span><span class="o">[</span><span class="n">tsk</span><span class="p">.</span><span class="n">name</span><span class="o">]</span><span class="p">:</span>
-      <span class="n">this</span><span class="p">.</span><span class="n">runTaskHelper</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">deps</span><span class="p">,</span> <span class="n">seen</span><span class="p">)</span>
-  <span class="n">deps</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">taskname</span><span class="p">)</span>
-</pre></div></div>
-</div>
-<div id="uid136" data-tralics-id="uid136" class="subsubsection" data-number="11.2.3.6"><h4><a href="#uid136" class="heading">Detecting cycles</a></h4>
-<p class="noindent">To detect a cycle we use <code>DFS</code> depth first search algorithm basically going from one node as deep as we can go for each of its neigbours and <code>Graph coloring</code>.<span class="intersentencespace"></span> <a href="https://www.youtube.com/watch?v=rKQaZuoUR4M" target="_blank" rel="noopener">Youtube Lecture</a></p>
-<p>Explanation from geeksforgeeks
-</p><div class="code"><div class="highlight"><pre><span></span>    WHITE : Vertex is not processed yet.  Initially
+  seen.add(taskname)
+  if len(tsk.requires) &gt; 0:
+    for c in this.tasksgraph[tsk.name]:
+      this.runTaskHelper(c, deps, seen)
+  deps.add(taskname)
+</code></pre>
+<a class="header" href="day11_buildsystem.html#detecting-cycles" id="detecting-cycles"><h4>Detecting cycles</h4></a>
+<p>To detect a cycle we use <code>DFS</code> depth first search algorithm basically going from one node as deep as we can go for each of its neigbours and <code>Graph coloring</code>. <a href="https://www.youtube.com/watch?v=rKQaZuoUR4M">Youtube Lecture</a></p>
+<p>Explanation from geeksforgeeks</p>
+<pre><code>    WHITE : Vertex is not processed yet.  Initially
             all vertices are WHITE.
 
     GRAY : Vertex is being processed (DFS for this 
@@ -193,54 +299,123 @@ print publish
     While doing DFS, if we encounter an edge from current 
     vertex to a GRAY vertex, then this edge is back edge 
     and hence there is a cycle.
-</pre></div></div>
+</code></pre>
 <p>OK, back to nim</p>
 <p>1- Defining colors</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> <span class="n">NodeColor</span> <span class="o">=</span> <span class="k">enum</span>
-  <span class="n">ncWhite</span><span class="p">,</span> <span class="n">ncGray</span><span class="p">,</span> <span class="n">ncBlack</span>
-</pre></div></div>
-<p>2- Graph has Cycle
-</p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">graphHasCycle</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]]</span><span class="p">):</span> <span class="p">(</span><span class="kt">bool</span><span class="p">,</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="o">]</span><span class="p">)</span> <span class="o">=</span>
-  <span class="kd">var</span> <span class="n">colors</span> <span class="o">=</span> <span class="n">initTable</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">NodeColor</span><span class="o">]</span><span class="p">()</span>
-  <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="n">deps</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>
-    <span class="n">colors</span><span class="o">[</span><span class="n">node</span><span class="o">]</span> <span class="o">=</span> <span class="n">ncWhite</span>
+<pre><code class="language-Nimrod">type NodeColor = enum
+  ncWhite, ncGray, ncBlack
+</code></pre>
+<p>2- Graph has Cycle</p>
+<pre><code class="language-Nimrod">proc graphHasCycle(graph: Table[string, seq[string]]): (bool, Table[string, string]) =
+  var colors = initTable[string, NodeColor]()
+  for node, deps in graph:
+    colors[node] = ncWhite
   
-  <span class="kd">var</span> <span class="n">parentMap</span> <span class="o">=</span> <span class="n">initTable</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="o">]</span><span class="p">()</span>
-  <span class="kd">var</span> <span class="n">hasCycle</span> <span class="o">=</span> <span class="kp">false</span> 
-  <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="n">deps</span> <span class="ow">in</span> <span class="n">graph</span><span class="p">:</span>
-    <span class="n">parentMap</span><span class="o">[</span><span class="n">node</span><span class="o">]</span> <span class="o">=</span> <span class="s">"null"</span>
-    <span class="k">if</span> <span class="n">colors</span><span class="o">[</span><span class="n">node</span><span class="o">]</span> <span class="o">==</span> <span class="n">ncWhite</span><span class="p">:</span>
-      <span class="n">hasCycleDFS</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">hasCycle</span><span class="p">,</span> <span class="n">parentMap</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">hasCycle</span><span class="p">:</span>
-      <span class="k">return</span> <span class="p">(</span><span class="kp">true</span><span class="p">,</span> <span class="n">parentMap</span><span class="p">)</span>
-  <span class="k">return</span> <span class="p">(</span><span class="kp">false</span><span class="p">,</span> <span class="n">parentMap</span><span class="p">)</span>
-</pre></div></div>
+  var parentMap = initTable[string, string]()
+  var hasCycle = false 
+  for node, deps in graph:
+    parentMap[node] = &quot;null&quot;
+    if colors[node] == ncWhite:
+      hasCycleDFS(graph, node, colors, hasCycle, parentMap)
+    if hasCycle:
+      return (true, parentMap)
+  return (false, parentMap)
+</code></pre>
 <p>3- Depth First Function</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">hasCycleDFS</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span><span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="kt">seq</span><span class="o">[</span><span class="kt">string</span><span class="o">]]</span> <span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="kt">string</span><span class="p">,</span> <span class="n">colors</span><span class="p">:</span> <span class="kd">var</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="n">NodeColor</span><span class="o">]</span><span class="p">,</span> <span class="n">has_cycle</span><span class="p">:</span> <span class="kd">var</span> <span class="kt">bool</span><span class="p">,</span> <span class="n">parentMap</span><span class="p">:</span> <span class="kd">var</span> <span class="n">Table</span><span class="o">[</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="o">]</span><span class="p">)</span> <span class="o">=</span>
-  <span class="k">if</span> <span class="n">hasCycle</span><span class="p">:</span>
-      <span class="k">return</span>
-  <span class="n">colors</span><span class="o">[</span><span class="n">node</span><span class="o">]</span> <span class="o">=</span> <span class="n">ncGray</span> 
+<pre><code class="language-Nimrod">proc hasCycleDFS(graph:Table[string, seq[string]] , node: string, colors: var Table[string, NodeColor], has_cycle: var bool, parentMap: var Table[string, string]) =
+  if hasCycle:
+      return
+  colors[node] = ncGray 
 
-  <span class="k">for</span> <span class="n">dep</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">[</span><span class="n">node</span><span class="o">]</span><span class="p">:</span>
-    <span class="n">parentMap</span><span class="o">[</span><span class="n">dep</span><span class="o">]</span> <span class="o">=</span> <span class="n">node</span>
-    <span class="k">if</span> <span class="n">colors</span><span class="o">[</span><span class="n">dep</span><span class="o">]</span> <span class="o">==</span> <span class="n">ncGray</span><span class="p">:</span>
-      <span class="n">hasCycle</span> <span class="o">=</span> <span class="kp">true</span>   
-      <span class="n">parentMap</span><span class="o">[</span><span class="s">"__CYCLESTART__"</span><span class="o">]</span> <span class="o">=</span> <span class="n">dep</span>
-      <span class="k">return</span>
-    <span class="k">if</span> <span class="n">colors</span><span class="o">[</span><span class="n">dep</span><span class="o">]</span> <span class="o">==</span> <span class="n">ncWhite</span><span class="p">:</span>  
-      <span class="n">hasCycleDFS</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">dep</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">hasCycle</span><span class="p">,</span> <span class="n">parentMap</span><span class="p">)</span>
-  <span class="n">colors</span><span class="o">[</span><span class="n">node</span><span class="o">]</span> <span class="o">=</span> <span class="n">ncBlack</span>  
-</pre></div></div>
-</div></div>
-<div id="uid137" data-tralics-id="uid137" class="subsection" data-number="11.2.4"><h3><a href="day11_buildsystem.html#uid137" class="heading hyperref"><span class="number">11.2.4 </span>What’s next?</a></h3>
+  for dep in graph[node]:
+    parentMap[dep] = node
+    if colors[dep] == ncGray:
+      hasCycle = true   
+      parentMap[&quot;__CYCLESTART__&quot;] = dep
+      return
+    if colors[dep] == ncWhite:  
+      hasCycleDFS(graph, dep, colors, hasCycle, parentMap)
+  colors[node] = ncBlack  
+
+</code></pre>
+<a class="header" href="day11_buildsystem.html#whats-next" id="whats-next"><h3>What's next?</h3></a>
 <ul>
-<li>support for variables
-</li>
-<li>recipes maybe using yaml file
-</li>
-<li>modules like ansible?<span class="intersentencespace"></span>
-</li></ul>
-</div></div>
-    </div>
-  </body>
+<li>support for variables</li>
+<li>recipes maybe using yaml file</li>
+<li>modules like ansible?</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day10_tictactoe_gui.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="day12_resp.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day10_tictactoe_gui.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="day12_resp.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
 </html>

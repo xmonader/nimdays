@@ -1,228 +1,430 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <link href="stylesheets/pygments.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/softcover.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/custom.css" media="screen" rel="stylesheet" type="text/css" />
-    
-    <title>nimdays</title>
-    
-      <script type="text/x-mathjax-config">
-              MathJax.Hub.Config({
-        "HTML-CSS": {
-          availableFonts: ["TeX"],
-        },
-        TeX: {
-          extensions: ["AMSmath.js", "AMSsymbols.js", "color.js"],
-          equationNumbers: {
-            autoNumber: "AMS",
-            formatNumber: function (n) { return "7" + '.' + n }
-          },
-          Macros: {
-            PolyTeX:    "Poly{\\TeX}",
-            PolyTeXnic: "Poly{\\TeX}nic",
-            "softcover": "\\texttt{softcover}",
-"unitvec": ["{\\hat #1}", 1]
-          }
-        },
-        showProcessingMessages: false,
-        messageStyle: "none",
-        imageFont: null,
-        "AssistiveMML": { disabled: true }
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 7: URL Shortening Service - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <noscript>
+            <style type="text/css">
+                .javascript-only {
+                    display: none;
+                }
+            </style>
+        </noscript>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html" class="active">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons javascript-only">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </div>
+                <div id="searchresults-outer" class="searchresults-outer">
+                    <div class="searchresults-header" id="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="day7_shorturl.html#day-7-shorturl-service" id="day-7-shorturl-service"><h1>Day 7: Shorturl service</h1></a>
+<p>Today, we will develop a url shortening service like <code>bit.ly</code> or something</p>
+<a class="header" href="day7_shorturl.html#imports" id="imports"><h2>imports</h2></a>
+<pre><code class="language-Nimrod">import jester, asyncdispatch, htmlgen, json, os, strutils, strformat, db_sqlite
+</code></pre>
+<ul>
+<li>
+<p>jester: is sinatra like framework</p>
+</li>
+<li>
+<p>asyncdispatch: for async/await instructions</p>
+</li>
+<li>
+<p>htmlgen: to generate html pages</p>
+</li>
+<li>
+<p>json: to parse json string into nim structures and dump json structures to strings</p>
+</li>
+<li>
+<p>db_sqlite: to work on sqlite databse behind our application</p>
+</li>
+</ul>
+<a class="header" href="day7_shorturl.html#database-connection" id="database-connection"><h2>Database connection</h2></a>
+<pre><code class="language-Nimrod"># hostname can be something configurable &quot;http://ni.m:5000&quot;
+let hostname = &quot;localhost:5000&quot;
+var theDb : DbConn
+</code></pre>
+<ul>
+<li>
+<p><code>hostname</code> is the basepath for our site to access it, and can be configurable using <code>/etc/hosts</code> file or using even <code>reverse proxy</code> like <code>caddy</code>, or in real world case you will have a dns record for your site.</p>
+</li>
+<li>
+<p><code>theDb</code> is the connection object to work with <code>sqlite</code> database.</p>
+</li>
+</ul>
+<pre><code class="language-Nimrod">if not fileExists(&quot;/tmp/mytest.db&quot;):
+  theDb = open(&quot;/tmp/mytest.db&quot;, nil, nil, nil)
+  theDb.exec(sql(&quot;&quot;&quot;create table urls (
+      id   INTEGER PRIMARY KEY,
+      url  VARCHAR(255) NOT NULL
+     )&quot;&quot;&quot;
+  ))
+else:
+  theDb = open(&quot;/tmp/mytest.db&quot;, nil, nil, nil)
+</code></pre>
+<ul>
+<li>We check if the database file doesn't exist <code>/tmp/mytest.db</code> we create a <code>urls</code> table  otherwise we just get the connection and do nothing</li>
+</ul>
+<a class="header" href="day7_shorturl.html#jester-and-http-endpoints" id="jester-and-http-endpoints"><h2>Jester and http endpoints</h2></a>
+<pre><code class="language-Nimrod">routes:
+</code></pre>
+<ul>
+<li>jester defines a DSL to work on routes</li>
+</ul>
+<pre><code class="language-Nimrod">METHOD ROUTE_PATH:
+    ##codeblock
+</code></pre>
+<ul>
+<li>
+<p>METHOD can be <code>get</code> <code>post</code> or any <code>http</code> verb</p>
+</li>
+<li>
+<p>ROUTE_PATH is the path accessed on the server for instance <code>/users</code>, <code>/user/52</code>, here <code>52</code> is a query parameter when route is defined  like this<code>/user/@id</code></p>
+</li>
+</ul>
+<a class="header" href="day7_shorturl.html#home-page" id="home-page"><h3>HOME page</h3></a>
+<p>Here we handle <code>GET</code> requests on <code>/home</code> path on our server:</p>
+<pre><code class="language-Nimrod"> get &quot;/home&quot;:
+  var htmlout = &quot;&quot;&quot;
+    &lt;html&gt;
+      &lt;title&gt;NIM SHORT&lt;/title&gt;
+      &lt;head&gt;
+        &lt;script
+      src=&quot;https://code.jquery.com/jquery-3.3.1.min.js&quot;
+      integrity=&quot;sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=&quot;
+      crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+
+      &lt;script&gt;
+        function postData(url, data) {
+          // Default options are marked with *
+          return fetch(url, {
+            body: JSON.stringify(data), // must match 'Content-Type' header
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, same-origin, *omit
+            headers: {
+              'user-agent': 'Mozilla/4.0 MDN Example',
+              'content-type': 'application/json'
+            },
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, cors, *same-origin
+            redirect: 'follow', // manual, *follow, error
+            referrer: 'no-referrer', // *client, no-referrer
+          })
+          .then(resp =&gt; resp.json())
+      }
+
+      $(document).ready(function() {
+        $('#btnsubmit').on('click', function(e){
+          e.preventDefault();
+          postData('/shorten', {url: $(&quot;#url&quot;).val()})
+          .then( data =&gt; {
+            let id = data[&quot;id&quot;]
+            $(&quot;#output&quot;).html(`&lt;a href=&quot;%%hostname/${id}&quot;&gt;Shortlink: ${id}&lt;/a&gt;`);
+           });
       });
+    });
+      &lt;/script&gt;
+      &lt;/head&gt;
+      &lt;body&gt;
+          &lt;div&gt;
+            &lt;form&gt;
+              &lt;label&gt;URL&lt;/label&gt;
+              &lt;input type=&quot;url&quot; name=&quot;url&quot; id=&quot;url&quot; /&gt;
+              &lt;button id=&quot;btnsubmit&quot; type=&quot;button&quot;&gt;SHORT!&lt;/button
+            &lt;/form&gt;
+          &lt;/div&gt;
 
-        if (/PhantomJS/.test(window.navigator.userAgent)) {
-          MathJax.Hub.Queue([alert, 'MathJax Done']);
-        }
-      </script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_SVG"></script>
-    
-  </head>
-  <body>
-    
-    <div id="book">
-      <div id="cid20" data-tralics-id="cid20" class="chapter" data-number="7" data-chapter="day7_shorturl"><h1><a href="day7_shorturl.html#cid20" class="heading hyperref"><span class="number">Chapter 7 </span>Day 7: Shorturl service</a></h1>
-<p class="noindent">Today, we will develop a url shortening service like <code>bit.ly</code> or something</p>
-</div>
-<div id="cid21" data-tralics-id="cid21" class="section" data-number="7.1"><h2><a href="day7_shorturl.html#cid21" class="heading hyperref"><span class="number">7.1 </span>imports</a></h2>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="n">jester</span><span class="p">,</span> <span class="n">asyncdispatch</span><span class="p">,</span> <span class="n">htmlgen</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">os</span><span class="p">,</span> <span class="n">strutils</span><span class="p">,</span> <span class="n">strformat</span><span class="p">,</span> <span class="n">db_sqlite</span>
-</pre></div></div>
-<ul>
-<li>jester: is sinatra like framework
-</li>
-<li>asyncdispatch: for async/await instructions
-</li>
-<li>htmlgen: to generate html pages
-</li>
-<li>json: to parse json string into nim structures and dump json structures to strings
-</li>
-<li>db_sqlite: to work on sqlite databse behind our application
-</li></ul>
-</div>
-<div id="cid22" data-tralics-id="cid22" class="section" data-number="7.2"><h2><a href="day7_shorturl.html#cid22" class="heading hyperref"><span class="number">7.2 </span>Database connection</a></h2>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="c"># hostname can be something configurable "http://ni.m:5000"</span>
-<span class="k">let</span> <span class="n">hostname</span> <span class="o">=</span> <span class="s">"localhost:5000"</span>
-<span class="kd">var</span> <span class="n">theDb</span> <span class="p">:</span> <span class="n">DbConn</span>
-</pre></div></div>
-<ul>
-<li><code>hostname</code> is the basepath for our site to access it, and can be configurable using <code>/etc/hosts</code> file or using even <code>reverse proxy</code> like <code>caddy</code>, or in real world case you will have a dns record for your site.<span class="intersentencespace"></span>
-</li>
-<li><code>theDb</code> is the connection object to work with <code>sqlite</code> database.<span class="intersentencespace"></span>
-</li></ul>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">fileExists</span><span class="p">(</span><span class="s">"/tmp/mytest.db"</span><span class="p">):</span>
-  <span class="n">theDb</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">"/tmp/mytest.db"</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span>
-  <span class="n">theDb</span><span class="p">.</span><span class="n">exec</span><span class="p">(</span><span class="n">sql</span><span class="p">(</span><span class="s">"""create table urls (</span>
-<span class="s">      id   INTEGER PRIMARY KEY,</span>
-<span class="s">      url  VARCHAR(255) NOT NULL</span>
-<span class="s">     )"""</span>
-  <span class="p">))</span>
-<span class="k">else</span><span class="p">:</span>
-  <span class="n">theDb</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">"/tmp/mytest.db"</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span>
-</pre></div></div>
-<ul>
-<li>We check if the database file doesn’t exist <code>/tmp/mytest.db</code> we create a <code>urls</code> table otherwise we just get the connection and do nothing
-</li></ul>
-</div>
-<div id="cid23" data-tralics-id="cid23" class="section" data-number="7.3"><h2><a href="day7_shorturl.html#cid23" class="heading hyperref"><span class="number">7.3 </span>Jester and http endpoints</a></h2>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="n">routes</span><span class="p">:</span>
-</pre></div></div>
-<ul>
-<li>jester defines a DSL to work on routes
-</li></ul>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">METHOD</span> <span class="n">ROUTE_PATH</span><span class="p">:</span>
-    <span class="sd">##codeblock</span>
-</pre></div></div>
-<ul>
-<li>METHOD can be <code>get</code> <code>post</code> or any <code>http</code> verb
-</li>
-<li>ROUTE_PATH is the path accessed on the server for instance <code>/users</code>, <code>/user/52</code>, here <code>52</code> is a query parameter when route is defined like this<code>/user/@id</code>
-</li></ul>
-<div id="uid70" data-tralics-id="uid70" class="subsection" data-number="7.3.1"><h3><a href="day7_shorturl.html#uid70" class="heading hyperref"><span class="number">7.3.1 </span>HOME page</a></h3>
-<p class="noindent">Here we handle <code>GET</code> requests on <code>/home</code> path on our server:
-</p><div class="code"><div class="highlight"><pre><span></span> <span class="n">get</span> <span class="s">"/home"</span><span class="p">:</span>
-  <span class="kd">var</span> <span class="n">htmlout</span> <span class="o">=</span> <span class="s">"""</span>
-<span class="s">    &lt;html&gt;</span>
-<span class="s">      &lt;title&gt;NIM SHORT&lt;/title&gt;</span>
-<span class="s">      &lt;head&gt;</span>
-<span class="s">        &lt;script</span>
-<span class="s">      src="https://code.jquery.com/jquery-3.3.1.min.js"</span>
-<span class="s">      integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="</span>
-<span class="s">      crossorigin="anonymous"&gt;&lt;/script&gt;</span>
+          &lt;div id=&quot;output&quot;&gt;
 
-<span class="s">      &lt;script&gt;</span>
-<span class="s">        function postData(url, data) {</span>
-<span class="s">          // Default options are marked with *</span>
-<span class="s">          return fetch(url, {</span>
-<span class="s">            body: JSON.stringify(data), // must match 'Content-Type' header</span>
-<span class="s">            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached</span>
-<span class="s">            credentials: 'same-origin', // include, same-origin, *omit</span>
-<span class="s">            headers: {</span>
-<span class="s">              'user-agent': 'Mozilla/4.0 MDN Example',</span>
-<span class="s">              'content-type': 'application/json'</span>
-<span class="s">            },</span>
-<span class="s">            method: 'POST', // *GET, POST, PUT, DELETE, etc.</span>
-<span class="s">            mode: 'cors', // no-cors, cors, *same-origin</span>
-<span class="s">            redirect: 'follow', // manual, *follow, error</span>
-<span class="s">            referrer: 'no-referrer', // *client, no-referrer</span>
-<span class="s">          })</span>
-<span class="s">          .then(resp =&gt; resp.json())</span>
-<span class="s">      }</span>
-
-<span class="s">      $(document).ready(function() {</span>
-<span class="s">        $('#btnsubmit').on('click', function(e){</span>
-<span class="s">          e.preventDefault();</span>
-<span class="s">          postData('/shorten', {url: $("#url").val()})</span>
-<span class="s">          .then( data =&gt; {</span>
-<span class="s">            let id = data["id"]</span>
-<span class="s">            $("#output").html(`&lt;a href="%%hostname/${id}"&gt;Shortlink: ${id}&lt;/a&gt;`);</span>
-<span class="s">           });</span>
-<span class="s">      });</span>
-<span class="s">    });</span>
-<span class="s">      &lt;/script&gt;</span>
-<span class="s">      &lt;/head&gt;</span>
-<span class="s">      &lt;body&gt;</span>
-<span class="s">          &lt;div&gt;</span>
-<span class="s">            &lt;form&gt;</span>
-<span class="s">              &lt;label&gt;URL&lt;/label&gt;</span>
-<span class="s">              &lt;input type="url" name="url" id="url" /&gt;</span>
-<span class="s">              &lt;button id="btnsubmit" type="button"&gt;SHORT!&lt;/button</span>
-<span class="s">            &lt;/form&gt;</span>
-<span class="s">          &lt;/div&gt;</span>
-
-<span class="s">          &lt;div id="output"&gt;</span>
-
-<span class="s">          &lt;/div&gt;</span>
-<span class="s">      &lt;/body&gt;</span>
-<span class="s">    &lt;/html&gt;</span>
-<span class="s">    """</span>
-    <span class="n">htmlout</span> <span class="o">=</span> <span class="n">htmlout</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">"%%hostname"</span><span class="p">,</span> <span class="n">hostname</span><span class="p">)</span>
-    <span class="n">resp</span>  <span class="n">htmlout</span>
-</pre></div></div>
+          &lt;/div&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+    &quot;&quot;&quot;
+    htmlout = htmlout.replace(&quot;%%hostname&quot;, hostname)
+    resp  htmlout
+</code></pre>
 <ul>
-<li>Include jquery framework
+<li>
+<p>Include jquery framework</p>
 </li>
-<li>Create a form with in <code>div tag with 1 textinput to allow user to enter a url</code>
+<li>
+<p>Create a form with in <code>div tag with 1 textinput to allow user to enter a url</code></p>
 </li>
-<li>override form submission to do an ajax request
+<li>
+<p>override form submission to do an ajax request</p>
 </li>
-<li>on the button shorturl click event we send a post request to <code>/shorten</code> endpoint in the background using <code>fetch</code> api and whenever we get a result we parse the json data and extract the <code>id</code> from it and put the new url in the <code>output</code> div
+<li>
+<p>on the button shorturl click event we send a post request to <code>/shorten</code> endpoint in the background using <code>fetch</code> api and whenever we get a result we parse the json data and extract the <code>id</code> from it and put the new url in the <code>output</code> div</p>
 </li>
-<li><code>resp</code> to return a response to the user and it can return a <code>http status</code> too
-</li></ul>
-</div>
-<div id="uid76" data-tralics-id="uid76" class="subsection" data-number="7.3.2"><h3><a href="day7_shorturl.html#uid76" class="heading hyperref"><span class="number">7.3.2 </span>Shorten endpoint</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>  <span class="n">post</span> <span class="s">"/shorten"</span><span class="p">:</span>
-    <span class="k">let</span> <span class="n">url</span> <span class="o">=</span> <span class="n">parseJson</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">body</span><span class="p">).</span><span class="n">getOrDefault</span><span class="p">(</span><span class="s">"url"</span><span class="p">).</span><span class="n">getStr</span><span class="p">()</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">url</span><span class="p">.</span><span class="n">isNilOrEmpty</span><span class="p">():</span>
-      <span class="kd">var</span> <span class="n">id</span> <span class="o">=</span> <span class="n">theDb</span><span class="p">.</span><span class="n">getValue</span><span class="p">(</span><span class="s">sql"SELECT id FROM urls WHERE url=?"</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
-      <span class="k">if</span> <span class="n">id</span><span class="p">.</span><span class="n">isNilOrEmpty</span><span class="p">():</span>
-        <span class="n">id</span> <span class="o">=</span> <span class="o">$</span><span class="n">theDb</span><span class="p">.</span><span class="n">tryInsertId</span><span class="p">(</span><span class="s">sql"INSERT INTO urls (url) VALUES (?)"</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
-      <span class="kd">var</span> <span class="n">jsonResp</span> <span class="o">=</span> <span class="o">$</span><span class="p">(</span><span class="o">%*</span><span class="p">{</span><span class="s">"id"</span><span class="p">:</span> <span class="n">id</span><span class="p">})</span>
-      <span class="n">resp</span> <span class="n">Http200</span><span class="p">,</span> <span class="n">jsonResp</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="n">resp</span> <span class="n">Http400</span><span class="p">,</span> <span class="s">"please specify url in the posted data."</span>
-</pre></div></div>
-<p>Here we handle <code>POST</code> requests on <code>/shorten</code> endpoint
-- get the url from parsed json post data.<span class="intersentencespace"></span> please note that POST data is <code>available under request.body</code> <code>explained in the previous section</code></p>
+<li>
+<p><code>resp</code> to return a response to the user and it can return a <code>http status</code> too</p>
+</li>
+</ul>
+<a class="header" href="day7_shorturl.html#shorten-endpoint" id="shorten-endpoint"><h3>Shorten endpoint</h3></a>
+<pre><code class="language-Nimrod">  post &quot;/shorten&quot;:
+    let url = parseJson(request.body).getOrDefault(&quot;url&quot;).getStr()
+    if not url.isNilOrEmpty():
+      var id = theDb.getValue(sql&quot;SELECT id FROM urls WHERE url=?&quot;, url)
+      if id.isNilOrEmpty():
+        id = $theDb.tryInsertId(sql&quot;INSERT INTO urls (url) VALUES (?)&quot;, url)
+      var jsonResp = $(%*{&quot;id&quot;: id})
+      resp Http200, jsonResp
+    else:
+      resp Http400, &quot;please specify url in the posted data.&quot;
+</code></pre>
+<p>Here we handle <code>POST</code> requests on <code>/shorten</code> endpoint</p>
 <ul>
-<li>if url is passed we try to check if it’s there in our <code>urls</code> table, if it’s there we return it, otherwise we insert it in the table.<span class="intersentencespace"></span>
+<li>
+<p>get the url from parsed json post data. please note that POST data is <code>available under request.body</code> <code>explained in the previous section</code></p>
 </li>
-<li>if the url isn’t passed we return a badrequest <code>400</code> status code.<span class="intersentencespace"></span>
+<li>
+<p>if url is passed we try to check if it's there in our <code>urls</code> table, if it's there we return it, otherwise we insert it in the table.</p>
 </li>
-<li><code>parseJson</code>: loads json from a string and you can get value using <code>getOrDefault</code> and <code>getStr</code> to get string value, there’s getBool, and so on.<span class="intersentencespace"></span>
+<li>
+<p>if the url isn't passed we return a badrequest <code>400</code> status code.</p>
 </li>
-<li><code>getValue</code> to get the id from the result of the select statement <code>returns the first column from the first row in the result set</code>
+<li>
+<p><code>parseJson</code>: loads json from a string and you can get value using <code>getOrDefault</code> and <code>getStr</code> to get string value, there's getBool, and so on.</p>
 </li>
-<li><code>tryInsertId</code> executes insert statement and returns the id of the new row
+<li>
+<p><code>getValue</code> to get the id from the result of the select statement <code>returns the first column from the first row in the result set</code></p>
 </li>
-<li>after successfull insertion we would like to return <code>json</code> serialized string to the user <code>$(%*{"id": id})</code>
+<li>
+<p><code>tryInsertId</code> executes insert statement and returns the id of the new row</p>
 </li>
-<li><code>%*</code> is a macro to convert nim struct into json node and to convert it to string we wrap <code>$</code> around it
-</li></ul>
-</div>
-<div id="uid84" data-tralics-id="uid84" class="subsection" data-number="7.3.3"><h3><a href="day7_shorturl.html#uid84" class="heading hyperref"><span class="number">7.3.3 </span>Shorturls redirect</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span>  <span class="n">get</span> <span class="s">"/@Id"</span><span class="p">:</span>
-    <span class="k">let</span> <span class="n">url</span> <span class="o">=</span> <span class="n">theDb</span><span class="p">.</span><span class="n">getValue</span><span class="p">(</span><span class="s">sql"SELECT url FROM urls WHERE id=?"</span><span class="p">,</span> <span class="o">@</span><span class="s">"Id"</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">url</span><span class="p">.</span><span class="n">isNilOrEmpty</span><span class="p">():</span>
-      <span class="n">resp</span> <span class="n">Http404</span><span class="p">,</span> <span class="s">"Don't know that url"</span>
-    <span class="k">else</span><span class="p">:</span>
-      <span class="n">redirect</span> <span class="n">url</span>
-</pre></div></div>
+<li>
+<p>after successfull insertion we would like to return <code>json</code> serialized string to the user <code>$(%*{&quot;id&quot;: id})</code></p>
+</li>
+<li>
+<p><code>%*</code> is a macro to convert nim struct into json node and to convert it to string we wrap <code>$</code> around it</p>
+</li>
+</ul>
+<a class="header" href="day7_shorturl.html#shorturls-redirect" id="shorturls-redirect"><h3>Shorturls redirect</h3></a>
+<pre><code class="language-Nimrod">  get &quot;/@Id&quot;:
+    let url = theDb.getValue(sql&quot;SELECT url FROM urls WHERE id=?&quot;, @&quot;Id&quot;)
+    if url.isNilOrEmpty():
+      resp Http404, &quot;Don't know that url&quot;
+    else:
+      redirect url
+</code></pre>
 <ul>
-<li>Here we fetch whatever path <code>@Id</code> the user trying to access <code>except for /home and /shorten</code> and we try to get the long url for that path
+<li>
+<p>Here we fetch whatever path <code>@Id</code> the user trying to access <code>except for /home and /shorten</code> and we try to get the long url for that path</p>
 </li>
-<li>If the path is resolved to a url we <code>redirect</code> the user to to or we show an error message
+<li>
+<p>If the path is resolved to a url we <code>redirect</code> the user to to or we show an error message</p>
 </li>
-<li><code>@"Id"</code> gets the value of <code>@Id</code> query parameter : notice the <code>@</code> position in both situation
-</li></ul>
-</div></div>
-<div id="cid24" data-tralics-id="cid24" class="section" data-number="7.4"><h2><a href="day7_shorturl.html#cid24" class="heading hyperref"><span class="number">7.4 </span>RUN</a></h2>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="n">runForever</span><span class="p">()</span>
-</pre></div></div>
+<li>
+<p><code>@&quot;Id&quot;</code> gets the value of <code>@Id</code> query parameter : notice the <code>@</code> position in both situation</p>
+</li>
+</ul>
+<a class="header" href="day7_shorturl.html#run" id="run"><h2>RUN</h2></a>
+<pre><code class="language-Nimrod">runForever()
+</code></pre>
 <p>start jester webserver</p>
-<p>Code is available here <a href="https://gist.github.com/xmonader/d41a5c9f917eadb90d3025e7b7e748dd" target="_blank" rel="noopener">https://gist.github.com/xmonader/d41a5c9f917eadb90d3025e7b7e748dd</a></p>
-</div>
-    </div>
-  </body>
+<p>Code is available here <a href="https://gist.github.com/xmonader/d41a5c9f917eadb90d3025e7b7e748dd">https://gist.github.com/xmonader/d41a5c9f917eadb90d3025e7b7e748dd</a></p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day6_nistow.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="day8_minitest.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day6_nistow.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="day8_minitest.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
 </html>

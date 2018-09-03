@@ -1,0 +1,5 @@
+[book]
+authors = ["xmonader"]
+multilingual = false
+src = "src"
+title = "Nim Days"

@@ -1,0 +1,2873 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <noscript>
+            <style type="text/css">
+                .javascript-only {
+                    display: none;
+                }
+            </style>
+        </noscript>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons javascript-only">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </div>
+                <div id="searchresults-outer" class="searchresults-outer">
+                    <div class="searchresults-header" id="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="print.html#day-1-parsing-dmidecode-output" id="day-1-parsing-dmidecode-output"><h1>Day 1: Parsing DMIDecode output</h1></a>
+<p>In our first day we will write a <a href="https://man.cx/?page=dmidecode(8)">dmidecode</a> parser in nim</p>
+<a class="header" href="print.html#what-to-expect-" id="what-to-expect-"><h2>What to expect ?</h2></a>
+<pre><code class="language-Nimrod">let sample1 = &quot;&quot;&quot;
+# dmidecode 3.1
+Getting SMBIOS data from sysfs.
+SMBIOS 2.6 present.
+
+Handle 0x0001, DMI type 1, 27 bytes
+System Information
+        Manufacturer: LENOVO
+        Product Name: 20042
+        Version: Lenovo G560
+        Serial Number: 2677240001087
+        UUID: CB3E6A50-A77B-E011-88E9-B870F4165734
+        Wake-up Type: Power Switch
+        SKU Number: Calpella_CRB
+        Family: Intel_Mobile
+&quot;&quot;&quot;
+
+import dmidecode, tables
+
+var obj : Table[string, dmidecode.Section]
+obj = parseDMI(sample)
+for secname, sec in obj:
+    echo secname &amp; &quot; with &quot; &amp; $len(sec.props)
+    for k, p in sec.props:
+        echo &quot;k : &quot; &amp; k &amp; &quot; =&gt; &quot; &amp; p.val 
+        if len(p.items) &gt; 0:
+            for i in p.items:
+                echo &quot;\t\t I: &quot;, i
+
+</code></pre>
+<a class="header" href="print.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<p>a while ago at work (https://github.com/zero-os/0-core) we needed to parse some dmidecode output, and it sounds like an good problem with enough concepts to get my feet wet in nim.</p>
+<a class="header" href="print.html#nimble-ready" id="nimble-ready"><h3>nimble ready!</h3></a>
+<pre><code class="language-bash">mkdir dmidecode
+nimble init
+</code></pre>
+<a class="header" href="print.html#so-how-does-dmidecode-output-look-like" id="so-how-does-dmidecode-output-look-like"><h3>So how does dmidecode output look like?</h3></a>
+<pre><code># dmidecode 3.1
+Getting SMBIOS data from sysfs.
+SMBIOS 2.6 present.
+
+Handle 0x0001, DMI type 1, 27 bytes
+System Information
+        Manufacturer: LENOVO
+        Product Name: 20042
+        Version: Lenovo G560
+        Serial Number: 2677240001087
+        UUID: CB3E6A50-A77B-E011-88E9-B870F4165734
+        Wake-up Type: Power Switch
+        SKU Number: Calpella_CRB
+        Family: Intel_Mobile
+</code></pre>
+<p>or</p>
+<pre><code>Getting SMBIOS data from sysfs.
+SMBIOS 2.6 present.
+
+Handle 0x0000, DMI type 0, 24 bytes
+BIOS Information
+        Vendor: LENOVO
+        Version: 29CN40WW(V2.17)
+        Release Date: 04/13/2011
+        ROM Size: 2048 kB
+        Characteristics:
+                PCI is supported
+                BIOS is upgradeable
+                BIOS shadowing is allowed
+                Boot from CD is supported
+                Selectable boot is supported
+                EDD is supported
+                Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
+                Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
+                5.25&quot;/360 kB floppy services are supported (int 13h)
+                5.25&quot;/1.2 MB floppy services are supported (int 13h)
+                3.5&quot;/720 kB floppy services are supported (int 13h)
+                3.5&quot;/2.88 MB floppy services are supported (int 13h)
+                8042 keyboard services are supported (int 9h)
+                CGA/mono video services are supported (int 10h)
+                ACPI is supported
+                USB legacy is supported
+                BIOS boot specification is supported
+                Targeted content distribution is supported
+        BIOS Revision: 1.40
+</code></pre>
+<ul>
+<li>DMIDecode output is some meta like comments, versions and one or more sections</li>
+<li>Section: consists of a
+<ul>
+<li>handle line</li>
+<li>title line</li>
+<li>one or more indented properties</li>
+</ul>
+</li>
+<li>Property: consists of
+<ul>
+<li>key</li>
+<li>optional value</li>
+<li>optional list of indented items</li>
+</ul>
+</li>
+</ul>
+<a class="header" href="print.html#mapping-dmi-to-nim-structures" id="mapping-dmi-to-nim-structures"><h3>Mapping DMI to nim structures</h3></a>
+<p>So ourplan is to have an api like</p>
+<pre><code class="language-Nimrod">dmifile = parseDMI(source)
+dmifile[&quot;section1&quot;][&quot;property1].value
+</code></pre>
+<p>Let's describe the document structure we have</p>
+<pre><code class="language-Nimrod">import  sequtils, tables, strutils
+
+type 
+    Property* = ref object
+        val*: string
+        items*: seq[string]
+type
+    Section* = ref object
+        handleLine*, title*: string
+        props* : Table[string, Property]
+
+method addItem(this: Property, item: string) =
+    this.items.add(item)
+
+</code></pre>
+<p>As our parsing will depend on the indentation level we can use this handy function to get the indentation level of a line (number of spaces before the first asciiLetter)</p>
+<pre><code class="language-Nimrod">proc getIndentLevel(line: string) : int = 
+    for i, c in pairs(line):
+        if not c.isSpaceAscii():
+            return i
+    return 0
+</code></pre>
+<p>It'd have been nicer to use <code>takewhile</code>, but it's not available in nim stdlib</p>
+<pre><code class="language-python">    getindentlevel = lambda l:  len(list(takewhile(lambda c: c.isspace(), l)))
+</code></pre>
+<a class="header" href="print.html#parsing-dmi-source-into-nim-structures" id="parsing-dmi-source-into-nim-structures"><h3>Parsing DMI source into nim structures</h3></a>
+<p>There're many ways to parse the DMI (e.g using regex which would be fairly simple &quot;feel free to implement it&quot; and kindly send me a PR to update this tutorial)</p>
+<pre><code>proc parseDMI* (source: string) : Table[string, Section]=
+</code></pre>
+<p>In plain english for output like this</p>
+<pre><code>Getting SMBIOS data from sysfs.
+SMBIOS 2.6 present.
+
+Handle 0x0000, DMI type 0, 24 bytes
+BIOS Information
+        Vendor: LENOVO
+        Version: 29CN40WW(V2.17)
+        Release Date: 04/13/2011
+        ROM Size: 2048 kB
+        Characteristics:
+                PCI is supported
+                BIOS is upgradeable
+                BIOS shadowing is allowed
+                Boot from CD is supported
+                Selectable boot is supported
+                EDD is supported
+                Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
+                Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
+                5.25&quot;/360 kB floppy services are supported (int 13h)
+                5.25&quot;/1.2 MB floppy services are supported (int 13h)
+                3.5&quot;/720 kB floppy services are supported (int 13h)
+                3.5&quot;/2.88 MB floppy services are supported (int 13h)
+                8042 keyboard services are supported (int 9h)
+                CGA/mono video services are supported (int 10h)
+                ACPI is supported
+                USB legacy is supported
+                BIOS boot specification is supported
+                Targeted content distribution is supported
+        BIOS Revision: 1.40
+</code></pre>
+<p>we have couple of states</p>
+<pre><code class="language-Nimrod">type 
+    ParserState = enum
+        noOp, sectionName, readKeyValue, readList
+</code></pre>
+<ul>
+<li>noOp: no action yet</li>
+<li>sectionName: read sectionName</li>
+<li>readKeyValue: read a line has colon <code>:</code> in it into a key value pair</li>
+<li>readList: when the next line has greater indentation level than the property line</li>
+</ul>
+<p>so our state is noOp until we reach line
+<code>Handle 0x0000, DMI type 0, 24 bytes</code>
+then moves to sectionName</p>
+<p>for line <code>BIOS Information</code> then state changes to reading properties</p>
+<pre><code>        Vendor: LENOVO
+        Version: 29CN40WW(V2.17)
+        Release Date: 04/13/2011
+        ROM Size: 2048 kB
+        Characteristics:
+</code></pre>
+<p>then we notice the indentation on the next line is greater than the one on the current line</p>
+<pre><code>                PCI is supported
+        Characteristics:
+</code></pre>
+<p>so state moves into readList to read the items related to property <code>Characterstics</code></p>
+<pre><code>                PCI is supported
+                BIOS is upgradeable
+                BIOS shadowing is allowed
+                Boot from CD is supported
+                Selectable boot is supported
+                EDD is supported
+                Japanese floppy for NEC 9800 1.2 MB is supported (int 13h)
+                Japanese floppy for Toshiba 1.2 MB is supported (int 13h)
+                5.25&quot;/360 kB floppy services are supported (int 13h)
+                5.25&quot;/1.2 MB floppy services are supported (int 13h)
+                3.5&quot;/720 kB floppy services are supported (int 13h)
+                3.5&quot;/2.88 MB floppy services are supported (int 13h)
+                8042 keyboard services are supported (int 9h)
+                CGA/mono video services are supported (int 10h)
+                ACPI is supported
+                USB legacy is supported
+                BIOS boot specification is supported
+                Targeted content distribution is supported
+</code></pre>
+<p>and again it notices the indentation is of the next line is less than the current line</p>
+<pre><code>        BIOS Revision: 1.40
+                Targeted content distribution is supported
+</code></pre>
+<p>so state switches again into <code>readKeyValue</code></p>
+<ul>
+<li>if we encounter an empty line:
+<ul>
+<li>if not in parsing state then it's a noOp we ignore meta and empty lines</li>
+<li>if in parsing state <code>current Section isn't nil</code> we finish parsing the section object</li>
+</ul>
+</li>
+</ul>
+<pre><code class="language-Nimrod">
+proc parseDMI* (source: string) : Table[string, Section]=
+    
+    var
+        state : ParserState = noOp
+        lines = strutils.splitLines(source)
+        sects = initTable[string, Section]()
+        
+        p: Property = nil
+        s: Section = nil 
+        k, v: string
+</code></pre>
+<p>Here we define the current state, code lines, initialize a table <code>sects</code> from <code>sectionName</code> to <code>Section Object</code> and variables p <code>current property</code>, s <code>current section</code>, k, v <code>current property key, value</code></p>
+<pre><code class="language-Nimrod">    for i, l in pairs(lines):
+</code></pre>
+<p>Start looping on index, line using <code>pairs</code></p>
+<blockquote>
+<p>pairs is kinda like enumerate in python</p>
+</blockquote>
+<pre><code class="language-Nimrod">        if l.startsWith(&quot;Handle&quot;):
+            s = new Section
+            s.props = initTable[string, Property]()
+            s.handleline = l
+            state = sectionName
+            continue 
+</code></pre>
+<p>If we encounter the string <code>Handle</code></p>
+<ul>
+<li>create new section object and initialize it's props table</li>
+<li>keep track of the handle line</li>
+<li>switch state to reading sectionName</li>
+<li>continue the loop to move to the title line</li>
+</ul>
+<pre><code class="language-Nimrod">        if l == &quot;&quot;: # can be just new line before reading any sections. 
+            if s != nil:
+                sects[s.title] = s
+            continue
+</code></pre>
+<p>if line is empty and we have a section object <code>not nil</code> we finish the section and continue</p>
+<pre><code class="language-Nimrod">        if state == sectionName:  # current line is the title line
+            s.title = l
+            state = readKeyValue  # change state into reading key value pairs
+</code></pre>
+<p>If state is sectionName:</p>
+<ul>
+<li>this line is a title line</li>
+<li>change state for the upcoming to readKeyValue</li>
+</ul>
+<pre><code class="language-Nimrod">        elif state == readKeyValue:
+            let pair = l.split({':'})
+            k = pair[0].strip()
+            if len(pair) == 2:
+                v = pair[1].strip()
+            else:                 # value can be empty
+                v = &quot;&quot;
+            p = Property(val: v)
+            p.items = newSeq[string]()
+            p.val = v
+</code></pre>
+<p>If state is readKeyValue</p>
+<ul>
+<li>split the line on colon <code>:</code> to get key, value pair and set v to &quot;&quot; if not present</li>
+<li>make current Property <code>p</code> and initialize its related fields <code>items</code>, <code>val</code></li>
+</ul>
+<pre><code class="language-Nimrod">            # current line indentation is &lt;  nextline indentation =&gt; change state to readList
+            if i &lt; len(lines) and (getIndentlevel(l) &lt; getIndentlevel(lines[i+1])) :
+                state = readList
+</code></pre>
+<p>If the next line indentation is greater this means we're should be reading list of items regarding the current property <code>p</code></p>
+<pre><code class="language-Nimrod">            else:
+                # add key/value pair directly
+                s.props[k] = p
+</code></pre>
+<p>If not finish the property</p>
+<pre><code class="language-Nimrod">        elif state == readList:
+            # keep adding the current line to current property items and if dedented =&gt; change state to readKeyValue
+            p.add_item(l.strip())
+            if getindentlevel(l) &gt; getindentlevel(lines[i+1]):
+                state = readKeyValue 
+                s.props[k] = p
+</code></pre>
+<p>if state is <code>readList</code></p>
+<ul>
+<li>keep adding items to current property <code>p</code></li>
+<li>if the indentation level decreased change state to <code>readKeyValue</code> and finish property</li>
+</ul>
+<pre><code>    return sects
+
+</code></pre>
+<a class="header" href="print.html#day-2-parsing-bencode" id="day-2-parsing-bencode"><h1>Day 2: Parsing Bencode</h1></a>
+<p>nim-bencode is a library to encode/decode torrent files <a href="https://en.wikipedia.org/wiki/Bencode">Bencode</a></p>
+<a class="header" href="print.html#what-to-expect" id="what-to-expect"><h2>What to expect?</h2></a>
+<pre><code class="language-Nimrod">import bencode, tables, strformat
+
+let encoder = newEncoder()
+let decoder = newDecoder()
+
+let btListSample1 = @[BencodeType(kind:btInt, i:1), BencodeType(kind:btString, s:&quot;hi&quot;) ]
+var btDictSample1 = initOrderedTable[BencodeType, BencodeType]()
+btDictSample1[BencodeType(kind:btString, s:&quot;name&quot;)] = BencodeType(kind:btString, s:&quot;dmdm&quot;)
+btDictSample1[BencodeType(kind:btString, s:&quot;lang&quot;)] = BencodeType(kind:btString, s:&quot;nim&quot;)
+btDictSample1[BencodeType(kind:btString, s:&quot;age&quot;)] = BencodeType(kind:btInt, i:50)
+btDictSample1[BencodeType(kind:btString, s:&quot;alist&quot;)] = BencodeType(kind:btList, l:btListSample1)
+
+var testObjects = initOrderedTable[BencodeType, string]()
+testObjects[BencodeType(kind: btString, s:&quot;hello&quot;)] = &quot;5:hello&quot;
+testObjects[BencodeType(kind: btString, s:&quot;yes&quot;)] = &quot;3:yes&quot;
+testObjects[BencodeType(kind: btInt, i:55)] = &quot;i55e&quot;
+
+testObjects[BencodeType(kind: btInt, i:12345)] = &quot;i12345e&quot;
+testObjects[BencodeType(kind: btList, l:btListSample1)] = &quot;li1e2:hie&quot;
+testObjects[BencodeType(kind:btDict, d:btDictSample1)] = &quot;d4:name4:dmdm4:lang3:nim3:agei50e5:alistli1e2:hiee&quot;
+
+
+for k, v in testObjects.pairs():
+    echo $k &amp; &quot; =&gt; &quot; &amp; $v
+    doAssert(encoder.encodeObject(k) == v)
+    doAssert(decoder.decodeObject(v) == k)
+
+</code></pre>
+<a class="header" href="print.html#implementation-1" id="implementation-1"><h2>Implementation</h2></a>
+<p>So according to Bencode we have some datatypes</p>
+<ul>
+<li>strings and those are encoded with the string length followed by a colon and the string itself <code>length:string</code>, e.g yes will be encoded into <code>3:yes</code></li>
+<li>ints those are encoded between <code>i</code>, <code>e</code> letters, e.g 59 will be encoded into <code>i59e</code></li>
+<li>lists can contain any of the bencode types and it's encoded with <code>l</code>, <code>e</code>,  e.g list of 1, 2 numbers is encoded into <code>li1ei2e</code> or with spaces for verbosity <code>l i1e i2e e</code></li>
+<li>dicts are mapping from strings to any type and encoded between letters <code>d</code>, <code>e</code>, e.g name =&gt; hi and num =&gt; 3 is encoded into <code>d4:name2:hi3:numi3ee</code> or with spaces for verbosity <code>d 4:name 2:hi 3:num i3e e</code></li>
+</ul>
+<a class="header" href="print.html#imports" id="imports"><h3>Imports</h3></a>
+<pre><code class="language-Nimrod">import strformat, tables, json, strutils, hashes
+</code></pre>
+<p>As we will be dealing a lot with strings, tables</p>
+<a class="header" href="print.html#types" id="types"><h3>Types</h3></a>
+<pre><code class="language-Nimrod">type 
+    BencodeKind* = enum
+        btString, btInt, btList, btDict
+</code></pre>
+<p>So as we mentioned about bencode data types we can define an enum to represents the kinds</p>
+<pre><code class="language-Nimrod">    BencodeType* = ref object
+        case kind*: BencodeKind 
+        of BencodeKind.btString: s* : string 
+        of BencodeKind.btInt: i*    : int
+        of BencodeKind.btList: l*   : seq[BencodeType]
+        of BencodeKind.btDict: d*  : OrderedTable[BencodeType, BencodeType]
+
+    Encoder* = ref object
+    Decoder* = ref object 
+</code></pre>
+<ul>
+<li><code>Encoder</code> a simple class to represent encoding operations</li>
+<li><code>Decoder</code> a simple class to represent decoding operations</li>
+<li>For <code>BencodeType</code> we make use of variant objects <code>case classes</code> in other languages. worth noticing variant objects are the same technique used for <code>json</code> module.</li>
+</ul>
+<p>So we can use it like this</p>
+<pre><code class="language-Nimrod">BencodeType(kind: btString, s:&quot;hello&quot;)
+BencodeType(kind: btInt, i:55)
+let btListSample1 = @[BencodeType(kind:btInt, i:1), BencodeType(kind:btString, s:&quot;hi&quot;) ]
+BencodeType(kind: btList, l:btListSample1)
+</code></pre>
+<p>So general rule for the case classes is you have a kind defined in an enum and a constructor value u create the object with.</p>
+<p>If you're coming from Haskell or a similar language</p>
+<pre><code class="language-haskell">data BValue = BInt Integer
+            | BStr B.ByteString
+            | BList [BValue]
+            | BDict (M.Map BValue BValue)
+            deriving (Show, Eq, Ord)
+</code></pre>
+<p>Please, note if you define your own variant you should define <code>hash</code>, <code>==</code> procs to be able to compare or hash the values.</p>
+<pre><code class="language-Nimrod">proc hash*(obj: BencodeType): Hash = 
+    case obj.kind
+    of btString : !$(hash(obj.s))
+    of btInt : !$(hash(obj.i))
+    of btList: !$(hash(obj.l))
+    of btDict: 
+        var h = 0
+        for k, v in obj.d.pairs:
+            h = hash(k) !&amp; hash(v)
+        !$(h)
+</code></pre>
+<ul>
+<li><code>hash</code> proc returns <code>Hash</code>  and depending on the <code>kind</code> we return the hash of the underlying stored objects, strings, ints, lists or calculate a new hash if needed</li>
+<li><code>!&amp;</code> consider it like merging the two hashes together</li>
+<li><code>!$</code> is used to finalize the Hash object</li>
+</ul>
+<pre><code class="language-Nimrod">proc `==`* (a, b: BencodeType): bool =
+    ## Check two nodes for equality
+    if a.isNil:
+        if b.isNil: return true
+        return false
+    elif b.isNil or a.kind != b.kind:
+        return false
+    else:
+        case a.kind
+        of btString:
+            result = a.s == b.s
+        of btInt:
+            result = a.i == b.i
+        of btList:
+            result = a.l == b.l
+        of btDict:
+            if a.d.len != b.d.len: return false
+            for key, val in a.d:
+                if not b.d.hasKey(key): return false
+                if b.d[key] != val: return false
+            result = true
+</code></pre>
+<p>define equality operator on BencodeTypes to determine when they're equal by defining proc for operator <code>==</code></p>
+<pre><code class="language-Nimrod">proc `$`* (a: BencodeType): string = 
+    case a.kind
+    of btString:  fmt(&quot;&lt;Bencode {a.s}&gt;&quot;)
+    of btInt: fmt(&quot;&lt;Bencode {a.i}&gt;&quot;)
+    of btList: fmt(&quot;&lt;Bencode {a.l}&gt;&quot;)
+    of btDict: fmt(&quot;&lt;Bencode {a.d}&quot;)
+</code></pre>
+<p>Define a simple <code>toString</code> proc using the <code>$</code> operator.</p>
+<a class="header" href="print.html#encoding" id="encoding"><h3>Encoding</h3></a>
+<pre><code class="language-Nimrod">proc encode(this: Encoder,  obj: BencodeType) : string
+</code></pre>
+<p>we add forward declarating to encode proc because to encode a list we might encode another values <code>strings</code>, or even <code>lists</code> so we will recursively call encode if needed, feel free to skip to the next part.</p>
+<pre><code class="language-Nimrod">proc encode_s(this: Encoder, s: string) : string=
+    # TODO: check len
+    return $s.len &amp; &quot;:&quot; &amp; s
+</code></pre>
+<p>To encode a string we said we will put encoded with its length + <code>:</code> + string itself</p>
+<pre><code class="language-Nimrod">proc encode_i(this: Encoder, i: int) : string=
+    # TODO: check len
+    return fmt(&quot;i{i}e&quot;) 
+</code></pre>
+<p>To encode an int we put it between <code>i</code>, <code>e</code> chars</p>
+<pre><code class="language-Nimrod">proc encode_l(this: Encoder, l: seq[BencodeType]): string =
+    var encoded = &quot;l&quot;
+    for el in l:
+        encoded &amp;= this.encode(el)
+    encoded &amp;= &quot;e&quot;
+    return encoded
+</code></pre>
+<ul>
+<li>To encode a list of elements of type <code>BencodeType</code> we put their encoded values between <code>l</code>, <code>e</code> chars</li>
+<li>Notice the call to <code>this.encode</code> that's why we needed the forward declaration.</li>
+</ul>
+<pre><code class="language-Nimrod">proc encode_d(this: Encoder, d: OrderedTable[BencodeType, BencodeType]): string =
+    var encoded = &quot;d&quot;
+    for k, v in d.pairs():
+        assert k.kind == BencodeKind.btString
+        encoded &amp;= this.encode(k) &amp; this.encode(v)
+
+    encoded &amp;= &quot;e&quot;
+    return encoded
+</code></pre>
+<ul>
+<li>To encode a dict we enclose the encoded value of the pairs between <code>d</code>, <code>e</code></li>
+<li>Notice the recursive call to <code>this.encode</code> to the keys and values</li>
+<li>Notice the assertion the kind of the keys <code>must</code> be a <code>btString</code> according to <code>Bencode</code> specs.</li>
+</ul>
+<pre><code class="language-Nimrod">proc encode(this: Encoder,  obj: BencodeType) :  string =
+    case obj.kind
+    of BencodeKind.btString:  result =this.encode_s(obj.s)
+    of BencodeKind.btInt :  result = this.encode_i(obj.i)
+    of BencodeKind.btList : result = this.encode_l(obj.l)
+    of BencodeKind.btDict : result = this.encode_d(obj.d)
+</code></pre>
+<p>Simple proxy to encode <code>obj</code> of <code>BencodeType</code></p>
+<a class="header" href="print.html#decoding" id="decoding"><h3>Decoding</h3></a>
+<pre><code class="language-Nimrod">proc decode(this: Decoder,  source: string) : (BencodeType, int)
+</code></pre>
+<p>Forward declaration for <code>decode</code> same as <code>decode</code></p>
+<pre><code class="language-Nimrod">proc decode_s(this: Decoder, s: string) : (BencodeType, int) =
+    let lengthpart = s.split(&quot;:&quot;)[0]
+    let sizelength = lengthpart.len
+    let strlen = parseInt(lengthpart)
+    return (BencodeType(kind:btString, s: s[sizelength+1..strlen+1]), sizelength+1+strlen)
+</code></pre>
+<p>Create a BencodeType of after decoding a string <code>reverse operation of encode_s</code>
+Basically and read string of length <code>sizelength</code> after the <code>colon</code> and construct a <code>BencodeType</code> of kind <code>btString</code> out of it</p>
+<pre><code class="language-Nimrod">proc decode_i(this: Decoder, s: string) : (BencodeType, int) =
+    let epos = s.find('e')
+    let i = parseInt(s[1..&lt;epos])
+    return (BencodeType(kind:btInt, i:i), epos+1)
+
+</code></pre>
+<p>Extract the number between <code>i</code>, <code>e</code> chars and construct <code>BencodeType</code> of kind <code>btInt</code> out of it</p>
+<pre><code class="language-Nimrod">proc decode_l(this: Decoder, s: string): (BencodeType, int) =
+    # l ... e
+    var els = newSeq[BencodeType]()
+    var curchar = s[1]
+    var idx = 1
+    while idx &lt; s.len:
+        curchar = s[idx]
+        if curchar == 'e':
+            idx += 1
+            break
+    
+        let pair = this.decode(s[idx..&lt;s.len])
+        let obj = pair[0]
+        let nextobjpos = pair[1] 
+        els.add(obj)
+        idx += nextobjpos
+    return (BencodeType(kind:btList, l:els), idx)
+</code></pre>
+<p>Decoding the list can be bit tricky</p>
+<ul>
+<li>Its elements are between <code>l</code>, <code>e</code> chars</li>
+<li>So we start trying to decode objects starting from the first letter <code>after</code> the <code>l</code> until we reach the final <code>e</code>
+e.g</li>
+</ul>
+<pre><code>li1ei2ee
+</code></pre>
+<p>will be parsed like the following</p>
+<pre><code>li120ei492ee
+ $   $
+</code></pre>
+<ul>
+<li>will consume the object <code>i120e</code> and set the cursor to the beginning of the second object <code>i492e</code></li>
+<li>after all the objects are consumed we consume the end character <code>e</code> and we are done</li>
+<li>That's why all decode procs return <code>int</code> value to let us now how much characters to skip</li>
+</ul>
+<pre><code class="language-Nimrod">proc decode_d(this: Decoder, s: string): (BencodeType, int) =
+    var d = initOrderedTable[BencodeType, BencodeType]()
+    var curchar = s[1]
+    var idx = 1
+    var readingKey = true
+    var curKey: BencodeType
+    while idx &lt; s.len:
+        curchar = s[idx]
+        if curchar == 'e':
+            break
+        let pair = this.decode(s[idx..&lt;s.len])
+        let obj = pair[0]
+        let nextobjpos = pair[1]
+        if readingKey == true:
+            curKey = obj
+            readingKey = false
+        else:
+            d[curKey] = obj
+            readingKey = true
+        idx += nextobjpos
+    return (BencodeType(kind:btDict, d: d), idx)
+</code></pre>
+<ul>
+<li>Same technique as above</li>
+<li>Basically we read one object if we don't have a current key then we set it as the current key</li>
+<li>If we have a current key object then the object we read is the value, so we set the currentKey to that value and <code>change</code> mode to readingKey again.</li>
+</ul>
+<pre><code class="language-Nimrod">proc decode(this: Decoder,  source: string) : (BencodeType, int) =
+    var curchar = source[0]
+    var idx = 0
+    while idx &lt; source.len:
+        curchar = source[idx]
+        case curchar
+        of 'i':
+            let pair = this.decode_i(source[idx..source.len])
+            let obj = pair[0]
+            let nextobjpos = pair[1] 
+            idx += nextobjpos
+            return (obj, idx)
+        of 'l':
+            let pair = this.decode_l(source[idx..source.len])
+            let obj = pair[0]
+            let nextobjpos = pair[1] 
+            idx += nextobjpos
+            return (obj, idx)
+        of 'd':
+            let pair = this.decode_d(source[idx..source.len])
+            let obj = pair[0]
+            let nextobjpos = pair[1] 
+            idx += nextobjpos
+            return (obj, idx)
+        else: 
+            let pair = this.decode_s(source[idx..source.len])
+            let obj = pair[0]
+            let nextobjpos = pair[1] 
+            idx += nextobjpos
+            return (obj, idx)
+</code></pre>
+<p>Starts decoding based on the beginning of character encoding object <code>i</code> for int, <code>l</code> for lists, <code>d</code> for dicts and otherwise tries to parse string</p>
+<pre><code class="language-Nimrod">proc newEncoder*(): Encoder =
+    new Encoder
+
+proc newDecoder*(): Decoder = 
+    new Decoder
+</code></pre>
+<p>Simple constructor procs for newEncoder, newDecoder</p>
+<pre><code class="language-Nimrod">proc encodeObject*(this: Encoder, obj: BencodeType) : string =
+    return this.encode(obj)
+</code></pre>
+<p><code>encodeObject</code> dispatch the call to <code>encode</code> proc.</p>
+<pre><code class="language-Nimrod">proc decodeObject*(this: Decoder, source:string) : BencodeType =
+    let p = this.decode(source)
+    return p[0]
+</code></pre>
+<p><code>decodeObject</code> provides a friendlier API to return the BencodeType from decode instead of <code>BencodeType</code>, <code>how many to read</code> int</p>
+<a class="header" href="print.html#day-3-talking-to-c-ffi-and-libmagic" id="day-3-talking-to-c-ffi-and-libmagic"><h1>Day 3: Talking to C (FFI and libmagic)</h1></a>
+<p>Libmagic is a magic number recognition library, remember everytime you called <code>file</code> utility on a file to know its type?</p>
+<pre><code>➜  file /usr/bin/rm
+/usr/bin/rm: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=cbae26b2a032b1ce3129d56aee2bcf70dd8deeb0, stripped
+➜  nim-magic file /
+/: directory
+➜  file /usr/include/stdio.h
+/usr/include/stdio.h: C source, ASCII text
+</code></pre>
+<a class="header" href="print.html#what-to-expect-1" id="what-to-expect-1"><h2>What to expect?</h2></a>
+<pre><code class="language-Nimrod">import magic
+
+echo magic.guessFile(&quot;/usr/bin/rm&quot;)
+</code></pre>
+<p>The output should be something like</p>
+<pre><code>ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=cbae26b2a032b1ce3129d56aee2bcf70dd8deeb0, stripped
+</code></pre>
+<a class="header" href="print.html#implementation-2" id="implementation-2"><h2>Implementation</h2></a>
+<p><a href="https://livebook.manning.com/#!/book/nim-in-action/chapter-8/1">FFI Chapter</a> of <a href="https://www.manning.com/books/nim-in-action">Nim in Action</a> is freely available.</p>
+<a class="header" href="print.html#step-1-get-the-library-info" id="step-1-get-the-library-info"><h3>Step 1: Get the library info</h3></a>
+<p>Well, libmagic has <code>libmagic.so</code> in your library path <code>/usr/lib/libmagic.so</code> and a header file <code>magic.h</code> in <code>/usr/include/magic.h</code>.
+create a constant for the libmagic library name.</p>
+<pre><code class="language-Nimrod">const libName* = &quot;libmagic.so&quot;
+</code></pre>
+<a class="header" href="print.html#step-2-extract-constants" id="step-2-extract-constants"><h3>Step 2: Extract constants</h3></a>
+<p>We should extract the constants from the header</p>
+<pre><code class="language-c">#define MAGIC_NONE              0x0000000 /* No flags */
+#define MAGIC_DEBUG             0x0000001 /* Turn on debugging */
+#define MAGIC_SYMLINK           0x0000002 /* Follow symlinks */
+#define MAGIC_COMPRESS          0x0000004 /* Check inside compressed files */
+#define MAGIC_DEVICES           0x0000008 /* Look at the contents of devices */
+#define MAGIC_MIME_TYPE         0x0000010 /* Return the MIME type */
+#define MAGIC_CONTINUE          0x0000020 /* Return all matches */
+#define MAGIC_CHECK             0x0000040 /* Print warnings to stderr */
+....
+
+</code></pre>
+<p>So in nim It'd be something like this</p>
+<pre><code class="language-Nimrod">const  MAGIC_NONE*  = 0x000000                 # No flags 
+const  MAGIC_DEBUG* = 0x000001                 # Turn on debugging 
+const  MAGIC_SYMLINK* = 0x000002                 # Follow symlinks 
+const  MAGIC_COMPRESS* = 0x000004                # Check inside compressed files 
+const  MAGIC_DEVICES* = 0x000008                 # Look at the contents of devices 
+const  MAGIC_MIME_TYPE* = 0x000010            # Return only the MIME type 
+const  MAGIC_CONTINUE* = 0x000020             # Return all matches 
+const  MAGIC_CHECK* = 0x000040                 # Print warnings to stderr 
+const  MAGIC_PRESERVE_ATIME* = 0x000080        # Restore access time on exit 
+const  MAGIC_RAW* = 0x000100                    # Don't translate unprint chars 
+const  MAGIC_ERROR* = 0x000200                 # Handle ENOENT etc as real errors 
+const  MAGIC_MIME_ENCODING* = 0x000400         # Return only the MIME encoding 
+const  MAGIC_NO_CHECK_COMPRESS* = 0x001000     # Don't check for compressed files 
+const  MAGIC_NO_CHECK_TAR* = 0x002000         # Don't check for tar files 
+const  MAGIC_NO_CHECK_SOFT* = 0x004000         # Don't check magic entries 
+const  MAGIC_NO_CHECK_APPTYPE* = 0x008000        # Don't check application type 
+const  MAGIC_NO_CHECK_ELF* = 0x010000            # Don't check for elf details 
+const  MAGIC_NO_CHECK_ASCII* = 0x020000         # Don't check for ascii files 
+const  MAGIC_NO_CHECK_TOKENS* = 0x100000         # Don't check ascii/tokens 
+</code></pre>
+<a class="header" href="print.html#step-3-extract-the-types" id="step-3-extract-the-types"><h3>Step 3: Extract the types</h3></a>
+<p><code>typedef struct magic_set *magic_t;</code>
+so the only type we have is a pointer to some struct (object)</p>
+<pre><code class="language-Nimrod">type Magic = object
+type MagicPtr* = ptr Magic 
+</code></pre>
+<a class="header" href="print.html#step-4-extract-procedures" id="step-4-extract-procedures"><h3>Step 4: Extract procedures</h3></a>
+<pre><code class="language-c">magic_t magic_open(int);
+void magic_close(magic_t);
+
+const char *magic_getpath(const char *, int);
+const char *magic_file(magic_t, const char *);
+const char *magic_descriptor(magic_t, int);
+const char *magic_buffer(magic_t, const void *, size_t);
+
+const char *magic_error(magic_t);
+int magic_getflags(magic_t);
+int magic_setflags(magic_t, int);
+
+int magic_version(void);
+int magic_load(magic_t, const char *);
+int magic_load_buffers(magic_t, void **, size_t *, size_t);
+
+int magic_compile(magic_t, const char *);
+int magic_check(magic_t, const char *);
+int magic_list(magic_t, const char *);
+int magic_errno(magic_t);
+</code></pre>
+<p>we only care about <code>magic_open</code>, <code>magic_load</code>, <code>magic_close</code>, <code>magic_file</code>, <code>magic_error</code></p>
+<pre><code class="language-Nimrod"># magic_t magic_open(int);
+proc magic_open(i:cint) : MagicPtr {.importc, dynlib:libName.}
+</code></pre>
+<p><code>magic_open</code> is a proc declared in dynamic lib <code>libmagic.so</code>, that is takes a cint &quot;compatible c int&quot; <code>i</code> and returns a <code>MagicPtr</code>.</p>
+<p>From the manpage</p>
+<blockquote>
+<p>The function magic_open() creates a magic cookie pointer and returns it.  It returns NULL if there was an error allocating the magic cookie.  The flags argument specifies how the other magic functions should behave</p>
+</blockquote>
+<pre><code class="language-Nimrod"># void magic_close(magic_t);
+proc magic_close(p:MagicPtr): void {.importc,  dynlib:libName.}
+</code></pre>
+<p><code>magic_close</code> is a proc declared in dynlib <code>libmagic.so</code> and takes an argumnet p of type <code>MagicPtr</code> and returns <code>void</code></p>
+<p>From the manpage</p>
+<blockquote>
+<p>The magic_close() function closes the magic(5) database and deallocates any resources used.</p>
+</blockquote>
+<pre><code class="language-Nimrod">#int magic_load(magic_t, const char *);
+proc magic_load(p:MagicPtr, s:cstring) : cint {.importc, dynlib: libName.}
+</code></pre>
+<p><code>magic_load</code> is a proc declared in dynlib <code>libmagic.so</code> takes argument p of type <code>MagicPtr</code> and a <code>cstring</code> &quot;compatible c string&quot; <code>s</code> and returns a <code>cint</code></p>
+<p>From manpage:</p>
+<blockquote>
+<p>The magic_load() function must be used to load the colon separated list of database files passed in as filename, or NULL for the default database
+file before any magic queries can performed.</p>
+</blockquote>
+<pre><code class="language-Nimrod">#int magic_errno(magic_t);
+proc magic_error(p: MagicPtr) : cstring  {.importc, dynlib:libName.}
+</code></pre>
+<p><code>magic_errno</code> is a proc declared in dynlib <code>libmagic.so</code> and takes argument p of type <code>MagicPtr</code> and returns a <code>cstring</code></p>
+<p>From manpage</p>
+<blockquote>
+<p>The magic_error() function returns a textual explanation of the last error, or NULL if there was no error.</p>
+</blockquote>
+<pre><code class="language-Nimrod">#const char *magic_file(magic_t, const char *);
+proc magic_file(p:MagicPtr, filepath: cstring): cstring {.importc, dynlib: libName.} 
+</code></pre>
+<p><code>magic_file</code> is proc declared in dynlib <code>libmagic.so</code> takes argument p of type <code>MagicPtr</code> and a filepath of type <code>cstring</code> and returns a <code>cstring</code></p>
+<p>From manpage:</p>
+<blockquote>
+<p>The magic_file() function returns a textual description of the contents of the filename argument, or NULL if an error occurred.  If the filename is NULL, then stdin is used.</p>
+</blockquote>
+<a class="header" href="print.html#step-5-friendly-api" id="step-5-friendly-api"><h3>Step 5: Friendly API</h3></a>
+<p>It'd be annoying for people to write C code and take care of pointers and such in a higher level language like nim</p>
+<p>So let's expose a proc <code>guessFile</code> takes a filepath and flags and internally use the functions we exposed through the FFI in the previous step.</p>
+<pre><code class="language-Nimrod">proc guessFile*(filepath: string, flags: cint = MAGIC_NONE): string =
+    var mt : MagicPtr
+    mt = magic_open(flags)
+    discard magic_load(mt, nil)
+
+    if fileExists(expandFilename(filepath)):
+        result = $magic_file(mt, cstring(filepath))
+    magic_close(mt)
+</code></pre>
+<p>Only one note here to convert from <code>cstring</code> to <code>string</code> we use the <code>toString</code> operator <code>$</code></p>
+<pre><code>        result = $magic_file(mt, cstring(filepath))
+</code></pre>
+<a class="header" href="print.html#day-4-linkschecker" id="day-4-linkschecker"><h1>Day 4: LinksChecker</h1></a>
+<a class="header" href="print.html#what-to-expect--1" id="what-to-expect--1"><h2>What to expect ?</h2></a>
+<p>We will be writing a simple linkschecker in both <code>sequential</code> and <code>asynchronous</code> style in nim</p>
+<a class="header" href="print.html#implementation-3" id="implementation-3"><h2>Implementation</h2></a>
+<a class="header" href="print.html#step-0-imports" id="step-0-imports"><h3>Step 0: Imports</h3></a>
+<pre><code class="language-Nimrod">import  os, httpclient
+import strutils
+import times
+import asyncdispatch
+</code></pre>
+<a class="header" href="print.html#step-1-data-types" id="step-1-data-types"><h3>Step 1: Data types</h3></a>
+<pre><code class="language-Nimrod">type
+    LinkCheckResult = ref object 
+        link: string
+        state: bool
+</code></pre>
+<p>LinkCheckResult is a simple representation for a link and its state</p>
+<a class="header" href="print.html#step-2-go-sequential" id="step-2-go-sequential"><h3>Step 2: GO Sequential!</h3></a>
+<pre><code class="language-Nimrod">proc checkLink(link: string) : LinkCheckResult  =
+    var client = newHttpClient()
+    try:
+        return LinkCheckResult(link:link, state:client.get(link).code == Http200)
+    except:
+        return LinkCheckResult(link:link, state:false)
+</code></pre>
+<p>Here, we have a proc <code>checkLink</code> takes a link and returns <code>LinkCheckResult</code></p>
+<ul>
+<li><code>newHttpClient()</code> to create a new client</li>
+<li><code>client.get</code> to send a get request to a link and it returns a response</li>
+<li><code>response.code</code> gives us the HTTP status code, and we consider a link is valid if its status == 200</li>
+<li><code>client.get</code> raises error for invalid structured links that's why we wrapped it a <code>try/except</code> block</li>
+</ul>
+<pre><code class="language-Nimrod">proc sequentialLinksChecker(links: seq[string]): void = 
+    for index, link in links:
+        if link.strip() != &quot;&quot;:
+            let result = checkLink(link)
+            echo result.link, &quot; is &quot;, result.state
+</code></pre>
+<p>Here, <code>sequentialLinksChecker</code> proc takes sequence of <code>links</code> and executes <code>checkLink</code> on them <code>sequentially</code></p>
+<pre><code>LINKS: @[&quot;https://www.google.com.eg&quot;, &quot;https://yahoo.com&quot;, &quot;https://reddit.com&quot;, &quot;https://none.nonadasdet&quot;, &quot;https://github.com&quot;, &quot;&quot;]
+SEQUENTIAL::
+https://www.google.com.eg is true
+https://yahoo.com is true
+https://reddit.com is true
+https://none.nonadasdet is false
+https://github.com is true
+7.716497898101807
+</code></pre>
+<p>On my lousy internet it took 7.7 seconds to finish :(</p>
+<a class="header" href="print.html#step-3-go-async" id="step-3-go-async"><h3>Step 3: GO ASYNC!</h3></a>
+<p>We can do better than waiting on IO requests to finish</p>
+<pre><code class="language-Nimrod">proc checkLinkAsync(link: string): Future[LinkCheckResult] {.async.} =
+    var client = newAsyncHttpClient()
+
+    let future = client.get(link)
+    yield future
+    if future.failed:
+        return LinkCheckResult(link:link, state:false)
+    else:
+        let resp = future.read()
+        return LinkCheckResult(link:link, state: resp.code == Http200) 
+</code></pre>
+<p>Here, we define a <code>checkLinkAsync</code> proc</p>
+<ul>
+<li>to declare a proc as async we use <code>async</code> pragma</li>
+<li>notice the client is of type <code>newAsyncHttpClient</code> that doesn't block on <code>.get</code> calls</li>
+<li><code>client.get</code> returns immediately a future that can either fail, and we can infer know that from <code>future.failed</code> or succeed</li>
+<li><code>yield future</code> means okay i'm done for now dear <code>event loop</code> you can schedule other tasks and continue my execution when you have more update on my fancy <code>future</code>
+when the eventloop comes back because the future now has some updates</li>
+<li>clearly, if the <code>future</code> failed we return the link with a <code>false</code> state</li>
+<li>otherwise, we get the <code>response</code> object that's enclosed in the future by calling <code>read</code></li>
+</ul>
+<pre><code class="language-Nimrod">
+proc asyncLinksChecker(links: seq[string]) {.async.} = 
+    # client.maxRedirects = 0
+    var futures = newSeq[Future[LinkCheckResult]]()
+    for index, link in links:
+        if link.strip() != &quot;&quot;:
+            futures.add(checkLinkAsync(link))
+    
+    # waitFor -&gt; call async proc from sync proc, await -&gt; call async proc from async proc
+    let done = await all(futures)
+    for x in done:
+        echo x.link, &quot; is &quot;, x.state
+</code></pre>
+<p>Here, we have another async procedure <code>asyncLinksChecker</code> that will take a sequence of <code>links</code> and create futures for all of them and wait when they finish and give us some results</p>
+<ul>
+<li><code>futures</code> is a sequence for the future results of all the <code>LinkCheckResults</code> for all the links passed to <code>asyncLinksChecker</code> proc</li>
+<li>we loop on the links and get <code>future</code> for the  execution of <code>checkLinkAsync</code> and add it to the <code>futures</code> sequence.</li>
+<li>we now ask to force to block until we get all of the results out of the futures into <code>done</code> variable</li>
+<li>then we print all the results</li>
+<li>Please notice <code>await</code> is used only to call <code>async</code> proc from another <code>async</code> proc, and <code>waitFor</code> is used to call <code>async</code> proc from <code>sync</code> proc</li>
+</ul>
+<pre><code>ASYNC::
+https://www.google.com.eg is true
+https://yahoo.com is true
+https://reddit.com is true
+https://none.nonadasdet is false
+https://github.com is true
+ is false
+3.601503849029541
+</code></pre>
+<a class="header" href="print.html#step-4-simple-cli" id="step-4-simple-cli"><h3>Step 4 simple cli</h3></a>
+<pre><code class="language-Nimrod">proc main()=
+    echo &quot;Param count: &quot;, paramCount()
+    if paramCount() == 1:
+        let linksfile = paramStr(1)
+        var f = open(linksfile, fmRead)
+        let links = readAll(f).splitLines()
+        echo &quot;LINKS: &quot; &amp; $links
+        echo &quot;SEQUENTIAL:: &quot;
+        var t = epochTime()
+        sequentialLinksChecker(links)
+        echo epochTime()-t
+        echo &quot;ASYNC:: &quot;
+        t = epochTime()
+        waitFor asyncLinksChecker(links)
+        echo epochTime()-t
+
+    else:
+        echo &quot;Please provide linksfile&quot;
+main()
+</code></pre>
+<p>the only interesting part is <code>waitFor asyncLinksChecker(links)</code> as we said to call <code>async</code> proc from <code>sync</code> proc like this main proc you will need to use <code>waitFor</code></p>
+<a class="header" href="print.html#extra-threading" id="extra-threading"><h3>Extra, threading</h3></a>
+<pre><code class="language-Nimrod">import threadpool
+proc checkLinkParallel(link: string) : LinkCheckResult {.thread.} =
+    var client = newHttpClient()
+    try:
+        return LinkCheckResult(link:link, state:client.get(link).code == Http200)
+    except:
+        return LinkCheckResult(link:link, state:false)
+</code></pre>
+<p>Same as before, only <code>thread</code> pragma i used to note that proc will be executed within a thread</p>
+<pre><code class="language-Nimrod">proc threadsLinksChecker(links: seq[string]): void = 
+    var LinkCheckResults = newSeq[FlowVar[LinkCheckResult]]()
+    for index, link in links:
+        LinkCheckResults.add(spawn checkLinkParallel(link))  
+    
+    for x in LinkCheckResults:
+        let res = ^x
+        echo res.link, &quot; is &quot;, res.state
+</code></pre>
+<ul>
+<li>spawned <code>tasks</code> or <code>threads</code> returns a value of type <code>FlowVar[T]</code>, where <code>T</code> is the return value of the spawned <code>proc</code></li>
+<li>To get the value of a <code>FlowVar</code> we use <code>^</code> operator.</li>
+</ul>
+<blockquote>
+<p>Note: you should use <code>nim.cfg</code> with flags <code>-d:ssl</code> to allow working with https</p>
+</blockquote>
+<a class="header" href="print.html#day-5-creating-ini-parser" id="day-5-creating-ini-parser"><h1>Day 5: Creating INI Parser</h1></a>
+<p>this is a pure <a href="https://en.wikipedia.org/wiki/Ini_file">Ini</a> parser for nim</p>
+<blockquote>
+<p>Nim has advanced <a href="https://nim-lang.org/docs/parsecfg.html">parsecfg</a></p>
+</blockquote>
+<a class="header" href="print.html#what-to-expect--2" id="what-to-expect--2"><h2>What to expect ?</h2></a>
+<pre><code class="language-Nimrod">let sample1 = &quot;&quot;&quot;
+
+[general]
+appname = configparser
+version = 0.1
+
+[author]
+name = xmonader
+email = notxmonader@gmail.com
+
+
+&quot;&quot;&quot;
+
+var d = parseIni(sample1)
+
+# doAssert(d.sectionsCount() == 2)
+doAssert(d.getProperty(&quot;general&quot;, &quot;appname&quot;) == &quot;configparser&quot;)
+doAssert(d.getProperty(&quot;general&quot;,&quot;version&quot;) == &quot;0.1&quot;)
+doAssert(d.getProperty(&quot;author&quot;,&quot;name&quot;) == &quot;xmonader&quot;)
+doAssert(d.getProperty(&quot;author&quot;,&quot;email&quot;) == &quot;notxmonader@gmail.com&quot;)
+
+d.setProperty(&quot;author&quot;, &quot;email&quot;, &quot;alsonotxmonader@gmail.com&quot;)
+doAssert(d.getProperty(&quot;author&quot;,&quot;email&quot;) == &quot;alsonotxmonader@gmail.com&quot;)
+doAssert(d.hasSection(&quot;general&quot;) == true)
+doAssert(d.hasSection(&quot;author&quot;) == true)
+doAssert(d.hasProperty(&quot;author&quot;, &quot;name&quot;) == true)
+d.deleteProperty(&quot;author&quot;, &quot;name&quot;)
+doAssert(d.hasProperty(&quot;author&quot;, &quot;name&quot;) == false)
+
+echo d.toIniString()
+let s = d.getSection(&quot;author&quot;)
+echo $s
+</code></pre>
+<a class="header" href="print.html#implementation-4" id="implementation-4"><h2>Implementation</h2></a>
+<p>You can certainly use regular expressions, like pythons configparser, but we will go for a simpler approach here, also we want to keep it pure so we don't depend on <code>pcre</code></p>
+<a class="header" href="print.html#ini-sample" id="ini-sample"><h3>Ini sample</h3></a>
+<pre><code class="language-ini">
+[general]
+appname = configparser
+version = 0.1
+
+[author]
+name = xmonader
+email = notxmonader@gmail.com
+</code></pre>
+<p>Ini file consists of one or more sections and each section consists of one or more key value pairs separated by <code>=</code></p>
+<a class="header" href="print.html#define-your-data-types" id="define-your-data-types"><h3>Define your data types</h3></a>
+<pre><code class="language-Nimrod">import tables, strutils
+
+</code></pre>
+<p>We will use tables extensively</p>
+<pre><code class="language-Nimrod">type Section = ref object
+    properties: Table[string, string]
+</code></pre>
+<p><code>Section</code> type contains <code>properties</code> table represents key value pairs</p>
+<pre><code class="language-Nimrod">proc setProperty*(this: Section, name: string, value: string) =
+    this.properties[name] = value
+</code></pre>
+<p>To set property in the underlying <code>properties</code> table</p>
+<pre><code class="language-Nimrod">proc newSection*() : Section =
+    var s = Section()
+    s.properties = initTable[string, string]()
+    return s
+</code></pre>
+<p>To create new Section object</p>
+<pre><code class="language-Nimrod">proc `$`*(this: Section) : string =
+    return &quot;&lt;Section&quot; &amp; $this.properties &amp; &quot; &gt;&quot;
+</code></pre>
+<p>Simple <code>toString</code> proc using <code>$</code> operator</p>
+<pre><code class="language-Nimrod">type Ini = ref object
+    sections: Table[string, Section]
+</code></pre>
+<p><code>Ini</code> type represents the whole document and contains a table <code>section</code> from <code>sectionName</code> to <code>Section</code> object.</p>
+<pre><code>proc newIni*() : Ini = 
+    var ini = Ini()
+    ini.sections = initTable[string, Section]()
+    return ini
+</code></pre>
+<p>To create new Ini object</p>
+<pre><code class="language-Nimrod">proc `$`*(this: Ini) : string = 
+    return &quot;&lt;Ini &quot; &amp; $this.sections &amp; &quot; &gt;&quot;
+</code></pre>
+<p>define friendly <code>toString</code> proc using <code>$</code> operator</p>
+<a class="header" href="print.html#define-api" id="define-api"><h3>Define API</h3></a>
+<pre><code>proc setSection*(this: Ini, name: string, section: Section) =
+    this.sections[name] = section
+
+proc getSection*(this: Ini, name: string): Section =
+    return this.sections.getOrDefault(name)
+
+proc hasSection*(this: Ini, name: string): bool =
+    return this.sections.contains(name)
+
+proc deleteSection*(this: Ini, name:string) =
+    this.sections.del(name)
+
+proc sectionsCount*(this: Ini) : int = 
+    echo $this.sections
+    return len(this.sections)
+</code></pre>
+<p>Some helper procs around Ini objects for manipulating sections.</p>
+<pre><code class="language-Nimrod">
+proc hasProperty*(this: Ini, sectionName: string, key: string): bool=
+    return this.sections.contains(sectionName) and this.sections[sectionName].properties.contains(key)
+
+proc setProperty*(this: Ini, sectionName: string, key: string, value:string) =
+    echo $this.sections
+    if this.sections.contains(sectionName):
+        this.sections[sectionName].setProperty(key, value)
+    else:
+        raise newException(ValueError, &quot;Ini doesn't have section &quot; &amp; sectionName)
+
+proc getProperty*(this: Ini, sectionName: string, key: string) : string =
+    if this.sections.contains(sectionName):
+        return this.sections[sectionName].properties.getOrDefault(key)
+    else:
+        raise newException(ValueError, &quot;Ini doesn't have section &quot; &amp; sectionName)
+
+
+proc deleteProperty*(this: Ini, sectionName: string, key: string) =
+    if this.sections.contains(sectionName) and this.sections[sectionName].properties.contains(key):
+        this.sections[sectionName].properties.del(key)
+    else:
+        raise newException(ValueError, &quot;Ini doesn't have section &quot; &amp; sectionName)
+</code></pre>
+<p>More helpers around properties in the section objects managed by <code>Ini</code> object</p>
+<pre><code class="language-Nimrod">proc toIniString*(this: Ini, sep:char='=') : string =
+    var output = &quot;&quot;
+    for sectName, section in this.sections:
+        output &amp;= &quot;[&quot; &amp; sectName &amp; &quot;]&quot; &amp; &quot;\n&quot;
+        for k, v in section.properties:
+            output &amp;= k &amp; sep &amp; v &amp; &quot;\n&quot; 
+        output &amp;= &quot;\n&quot;
+    return output
+</code></pre>
+<p>Simple proc <code>toIniString</code> to convert the nim structures into Ini text string</p>
+<a class="header" href="print.html#parse" id="parse"><h3>Parse!</h3></a>
+<p>OK, here comes the cool part</p>
+<a class="header" href="print.html#parser-states" id="parser-states"><h4>Parser states</h4></a>
+<pre><code class="language-Nimrod">type ParserState = enum
+    readSection, readKV
+</code></pre>
+<p>Here we have two states</p>
+<ul>
+<li>readSection: when we are supposed to extract section name from the current line</li>
+<li>readKV: when we are supposed to read the line in key value pair mode</li>
+</ul>
+<a class="header" href="print.html#parseini-proc" id="parseini-proc"><h4>ParseIni proc</h4></a>
+<pre><code class="language-Nimrod">proc parseIni*(s: string) : Ini = 
+</code></pre>
+<p>Here we define a proc <code>parseIni</code> that takes a string <code>s</code> and creates an <code>Ini</code> object</p>
+<pre><code class="language-Nimrod">    var ini = newIni()
+    var state: ParserState = readSection
+    let lines = s.splitLines
+    
+    var currentSectionName: string = &quot;&quot;
+    var currentSection = newSection()
+</code></pre>
+<ul>
+<li><code>ini</code> is the object to be returned after parsing</li>
+<li><code>state</code> the current parser state (weather it's <code>readSection</code> or <code>readKV</code>)</li>
+<li><code>lines</code> input string splitted into lines <code>as we are a lines based parser</code></li>
+<li><code>currentSectionName</code> to keep track of what section we are currently in</li>
+<li><code>currentSection</code> to populate <code>ini.sections</code> with <code>Section</code> object using <code>setSection</code> proc</li>
+</ul>
+<pre><code class="language-Nimrod">   for line in lines:
+</code></pre>
+<p>for each line</p>
+<pre><code class="language-Nimrod">         if line.strip() == &quot;&quot; or line.startsWith(&quot;;&quot;) or line.startsWith(&quot;#&quot;):
+            continue
+</code></pre>
+<p>We continue if line is safe to igore <code>empty line</code> or starts with <code>;</code> or <code>#</code></p>
+<pre><code class="language-Nimrod">        if line.startsWith(&quot;[&quot;) and line.endsWith(&quot;]&quot;):
+            state = readSection
+</code></pre>
+<p>if line startswith <code>[</code> and ends with <code>]</code> then we set parser state to <code>readSection</code></p>
+<pre><code class="language-Nimrod">        if state == readSection:
+            currentSectionName = line[1..&lt;line.len-1]
+            ini.setSection(currentSectionName, currentSection)
+            state = readKV
+            continue
+</code></pre>
+<p>if parser <code>state</code> is <code>readSection</code></p>
+<ul>
+<li>extract section name <code>between [ and ]</code></li>
+<li>add section object to the ini under the current section name</li>
+<li>change <code>state</code> to <code>readKV</code> to read key value pairs</li>
+<li>continue the loop on the nextline as we're done processing the section name.</li>
+</ul>
+<pre><code class="language-Nimrod">        if state == readKV:
+            let parts = line.split({'='})
+            if len(parts) == 2:
+                let key = parts[0].strip()
+                let val = parts[1].strip()
+                ini.setProperty(currentSectionName, key, val)
+</code></pre>
+<p>if <code>state</code> is <code>readKV</code></p>
+<ul>
+<li>extract <code>key</code> and <code>val</code> by splitting the line on <code>=</code></li>
+<li><code>setProperty</code> under the <code>currentSectionName</code> using <code>key</code> and <code>val</code></li>
+</ul>
+<pre><code class="language-Nimrod">    return ini
+</code></pre>
+<p>Here we return the populated <code>ini</code> object.</p>
+<a class="header" href="print.html#day-6-manage-your-dotfiles-easily-with-nistow" id="day-6-manage-your-dotfiles-easily-with-nistow"><h1>Day 6: Manage your dotfiles easily with nistow</h1></a>
+<p>Today we will create a tool to manage our dotfiles easily.</p>
+<a class="header" href="print.html#dotfiles-layout" id="dotfiles-layout"><h2>Dotfiles layout</h2></a>
+<pre><code>        i3
+        `-- .config
+            `-- i3
+                `-- config
+</code></pre>
+<p>So we have here a directory named i3 in the very top <code>indicates APP_NAME</code> and under it a tree of config paths. Here it means <code>config</code> file is supposed to be linked under <code>.config/i3/config</code> relative to <code>destination directory</code></p>
+<blockquote>
+<p>Home directory is the default destination.</p>
+</blockquote>
+<a class="header" href="print.html#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
+<pre><code>➜  ~ nistow --help
+    Stow 0.1.0
+        -h | --help     : show help
+        -v | --version  : show version
+        --verbose       : verbose messages
+        -s | --simulate : simulate stow operation
+        -f | --force    : override old links
+        -a | --app      : application path to stow
+        -d | --dest     : destination to stow to
+</code></pre>
+<ul>
+<li><code>--simulate</code> flag used to simulate on the filesystem without actual linking</li>
+<li><code>--app</code> application directory that's compatible with the dotfiles layoud described above.</li>
+<li><code>--dest</code> destination to symlink files under, defaults to home dir.</li>
+</ul>
+<pre><code>nistow --app=/home/striky/wspace/dotfiles/localdir --dest=/tmp/tmpconf --verbose
+</code></pre>
+<a class="header" href="print.html#implementation-5" id="implementation-5"><h2>Implementation</h2></a>
+<pre><code class="language-Nimrod">proc writeHelp() = 
+    echo &quot;&quot;&quot;
+Stow 0.1.0 (Manage your dotfiles easily)
+
+Allowed arguments:
+    -h | --help     : show help
+    -v | --version  : show version
+    --verbose       : verbose messages
+    -s | --simulate : simulate stow operation
+    -f | --force    : override old links
+    -a | --app      : application path to stow
+    -d | --dest     : destination to stow to
+
+    &quot;&quot;&quot;
+</code></pre>
+<p><code>writeHelp</code> is a simple proc to write help string to the stdout</p>
+<pre><code class="language-Nimrod">proc writeVersion() =
+    echo &quot;Stow version 0.1.0&quot;
+</code></pre>
+<p>To write version</p>
+<pre><code class="language-Nimrod">proc cli*() =
+</code></pre>
+<p>Entry point for out commandline application</p>
+<pre><code class="language-Nimrod">  var 
+    simulate, verbose, force: bool = false
+    app, dest: string = &quot;&quot;
+</code></pre>
+<p>Variables represents various options we allow in the application.</p>
+<pre><code class="language-Nimrod">  if paramCount() == 0:
+    writeHelp()
+    quit(0)
+</code></pre>
+<p>If no arguments passed we will write the help string and <code>exit</code> or <code>quit</code> according to nim with <code>exit status</code> 0</p>
+<pre><code class="language-Nimrod">  for kind, key, val in getopt():
+    case kind
+    of cmdLongOption, cmdShortOption:
+        case key
+        of &quot;help&quot;, &quot;h&quot;: 
+            writeHelp()
+            quit()
+        of &quot;version&quot;, &quot;v&quot;:
+            writeVersion()
+            quit()
+        of &quot;simulate&quot;, &quot;s&quot;: simulate = true
+        of &quot;verbose&quot;: verbose = true
+        of &quot;force&quot;, &quot;f&quot;: force = true
+        of &quot;app&quot;, &quot;a&quot;: app = val
+        of &quot;dest&quot;, &quot;d&quot;: dest = val 
+        else:
+          discard
+    else:
+      discard 
+</code></pre>
+<p>Here we parse the commandline string using <code>getopt</code>.</p>
+<pre><code class="language-Nimrod">  for kind, key, val in getopt():
+    case kind
+    of cmdLongOption, cmdShortOption:
+</code></pre>
+<p>So for <code>--app=/home/striky/dotfiles/i3 -f</code>
+kind for <code>--app</code> is <code>cmdLongOption</code> and for <code>-f</code> is <code>cmdShortOption</code>
+key for <code>--app</code> is <code>app</code> and for <code>-f</code> is <code>f</code>
+val for <code>--app</code> is <code>/home/striky/dotfiles/i3</code>
+val for <code>-f</code> we set to <code>true</code> in our parsing, because it's mainly like a switch <code>boolean</code> if it exists it means we want it set to true.</p>
+<pre><code class="language-Nimrod">  if dest.isNilOrEmpty():
+    dest = getHomeDir()
+</code></pre>
+<p>Here we set default <code>dest</code> to homeDir</p>
+<pre><code class="language-Nimrod">  if app.isNilOrEmpty():
+    echo &quot;Make sure to provide --app flags&quot;
+    quit(1)
+</code></pre>
+<p>Here we exit with error <code>exit status</code> 1 if app isn't set.</p>
+<pre><code class="language-Nimrod">  try:
+    stow(getLinkableFiles(appPath=app, dest=dest), simulate=simulate, verbose=verbose, force=force)
+  except ValueError:
+    echo &quot;Error happened: &quot; &amp; getCurrentExceptionMsg()
+</code></pre>
+<p>Here we try to stow all the linkable files in <code>app</code> dir to <code>dest</code> dir and pass all the options we collected from the command line arguments <code>simulate</code>, <code>verbose</code>, <code>force</code>, and wrapped around <code>try/except</code> to show error to the user</p>
+<pre><code class="language-Nimrod">when isMainModule:
+  cli()
+</code></pre>
+<p>invoke our entry point <code>cli</code> if this module is the main module.</p>
+<p>OK! back to stow and getLinkableFiles</p>
+<p>We start with <code>getLinkableFiles</code>. Remember the dotfiles hierarchy?</p>
+<pre><code>    # appPath: application's dotfiles directory
+    #     we expect dir to have the hierarchy.
+    #     i3
+    #     `-- .config
+    #         `-- i3
+    #         `-- config
+</code></pre>
+<p>We want to get all the files in there with full path and the link file to each one will be exactly the same except for the <code>appPath</code> name will be changed to <code>dest</code> path</p>
+<pre><code>[/home/striky/wspace/dotfiles/i3]/.config/i3/config -&gt; [/home/striky]/.config/i3/config
+__________________appPath________                      _____dest____
+</code></pre>
+<pre><code class="language-Nimrod">type
+  LinkInfo = tuple[original:string, dest:string] 
+</code></pre>
+<p>Simple type to represent the original path and where to symlink to</p>
+<pre><code class="language-Nimrod">proc getLinkableFiles*(appPath: string, dest: string=expandTilde(&quot;~&quot;)): seq[LinkInfo] =
+
+    # collects the linkable files in a certain app.
+
+    # appPath: application's dotfiles directory
+    #     we expect dir to have the hierarchy.
+    #     i3
+    #     `-- .config
+    #         `-- i3
+    #         `-- config
+
+    # dest: destination of the link files : default is the home of user.
+</code></pre>
+<p><code>getLinkableFiles</code> is a proc takes <code>appPath</code> and <code>dest</code> and returns a <code>seq</code> of LinkInfo contains this transformation for each file.</p>
+<pre><code>[/home/striky/wspace/dotfiles/i3]/A_FILE_PATH -&gt; [/home/striky]A_FILE_PATH
+__________________apppath________                _____dest____
+</code></pre>
+<pre><code class="language-Nimrod">  var appPath = expandTilde(appPath)
+  if not dirExists(appPath):
+    raise newException(ValueError, fmt(&quot;App path {appPath} doesn't exist.&quot;))
+  var linkables = newSeq[LinkInfo]()
+  for filepath in walkDirRec(appPath, yieldFilter={pcFile}):
+    let linkpath = filepath.replace(appPath, dest)
+    var linkInfo : LinkInfo = (original:filepath, dest:linkpath)
+    linkables.add(linkInfo)
+  return linkables
+</code></pre>
+<p>Here, we walk over the <code>appPath</code> dir using <code>walkDirRec</code> and specify in <code>yieldFilter</code> argument that we're interested in <code>pcFile</code> &quot;file path component&quot;, just call it entries of type regular file.</p>
+<pre><code class="language-Nimrod">proc stow(linkables: seq[LinkInfo], simulate: bool=true, verbose: bool=true, force: bool=false) = 
+    # Creates symoblic links and related directories
+
+    # linkables is a list of tuples (filepath, linkpath) : List[Tuple[file_path, link_path]]
+    # simulate does simulation with no effect on the filesystem: bool
+    # verbose shows log messages: bool
+
+  for linkinfo in linkables:
+    let (filepath, linkpath) = linkinfo
+    if verbose:
+      echo(fmt(&quot;Will link {filepath} -&gt; {linkpath}&quot;))
+
+    if not simulate:
+      createDir(parentDir(linkpath))
+      if not fileExists(linkpath):
+        createSymlink(filepath, linkpath)
+      else:
+        if force:
+          removeFile(linkpath)
+          createSymlink(filepath, linkpath)
+        else:
+          if verbose:
+            echo(fmt(&quot;Skipping linking {filepath} -&gt; {linkpath}&quot;))
+</code></pre>
+<p>Stow is pretty easy procedure, it takes in a list of <code>LinksInfo</code> that has all the information (original filename and destination symlink) and does the symlinking based on if it's not a simulation and prints the messages if verbose is set to true</p>
+<p>Feel free to send improvements to this tutorial or nistow :)</p>
+<a class="header" href="print.html#day-7-shorturl-service" id="day-7-shorturl-service"><h1>Day 7: Shorturl service</h1></a>
+<p>Today, we will develop a url shortening service like <code>bit.ly</code> or something</p>
+<a class="header" href="print.html#imports-1" id="imports-1"><h2>imports</h2></a>
+<pre><code class="language-Nimrod">import jester, asyncdispatch, htmlgen, json, os, strutils, strformat, db_sqlite
+</code></pre>
+<ul>
+<li>
+<p>jester: is sinatra like framework</p>
+</li>
+<li>
+<p>asyncdispatch: for async/await instructions</p>
+</li>
+<li>
+<p>htmlgen: to generate html pages</p>
+</li>
+<li>
+<p>json: to parse json string into nim structures and dump json structures to strings</p>
+</li>
+<li>
+<p>db_sqlite: to work on sqlite databse behind our application</p>
+</li>
+</ul>
+<a class="header" href="print.html#database-connection" id="database-connection"><h2>Database connection</h2></a>
+<pre><code class="language-Nimrod"># hostname can be something configurable &quot;http://ni.m:5000&quot;
+let hostname = &quot;localhost:5000&quot;
+var theDb : DbConn
+</code></pre>
+<ul>
+<li>
+<p><code>hostname</code> is the basepath for our site to access it, and can be configurable using <code>/etc/hosts</code> file or using even <code>reverse proxy</code> like <code>caddy</code>, or in real world case you will have a dns record for your site.</p>
+</li>
+<li>
+<p><code>theDb</code> is the connection object to work with <code>sqlite</code> database.</p>
+</li>
+</ul>
+<pre><code class="language-Nimrod">if not fileExists(&quot;/tmp/mytest.db&quot;):
+  theDb = open(&quot;/tmp/mytest.db&quot;, nil, nil, nil)
+  theDb.exec(sql(&quot;&quot;&quot;create table urls (
+      id   INTEGER PRIMARY KEY,
+      url  VARCHAR(255) NOT NULL
+     )&quot;&quot;&quot;
+  ))
+else:
+  theDb = open(&quot;/tmp/mytest.db&quot;, nil, nil, nil)
+</code></pre>
+<ul>
+<li>We check if the database file doesn't exist <code>/tmp/mytest.db</code> we create a <code>urls</code> table  otherwise we just get the connection and do nothing</li>
+</ul>
+<a class="header" href="print.html#jester-and-http-endpoints" id="jester-and-http-endpoints"><h2>Jester and http endpoints</h2></a>
+<pre><code class="language-Nimrod">routes:
+</code></pre>
+<ul>
+<li>jester defines a DSL to work on routes</li>
+</ul>
+<pre><code class="language-Nimrod">METHOD ROUTE_PATH:
+    ##codeblock
+</code></pre>
+<ul>
+<li>
+<p>METHOD can be <code>get</code> <code>post</code> or any <code>http</code> verb</p>
+</li>
+<li>
+<p>ROUTE_PATH is the path accessed on the server for instance <code>/users</code>, <code>/user/52</code>, here <code>52</code> is a query parameter when route is defined  like this<code>/user/@id</code></p>
+</li>
+</ul>
+<a class="header" href="print.html#home-page" id="home-page"><h3>HOME page</h3></a>
+<p>Here we handle <code>GET</code> requests on <code>/home</code> path on our server:</p>
+<pre><code class="language-Nimrod"> get &quot;/home&quot;:
+  var htmlout = &quot;&quot;&quot;
+    &lt;html&gt;
+      &lt;title&gt;NIM SHORT&lt;/title&gt;
+      &lt;head&gt;
+        &lt;script
+      src=&quot;https://code.jquery.com/jquery-3.3.1.min.js&quot;
+      integrity=&quot;sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=&quot;
+      crossorigin=&quot;anonymous&quot;&gt;&lt;/script&gt;
+
+      &lt;script&gt;
+        function postData(url, data) {
+          // Default options are marked with *
+          return fetch(url, {
+            body: JSON.stringify(data), // must match 'Content-Type' header
+            cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+            credentials: 'same-origin', // include, same-origin, *omit
+            headers: {
+              'user-agent': 'Mozilla/4.0 MDN Example',
+              'content-type': 'application/json'
+            },
+            method: 'POST', // *GET, POST, PUT, DELETE, etc.
+            mode: 'cors', // no-cors, cors, *same-origin
+            redirect: 'follow', // manual, *follow, error
+            referrer: 'no-referrer', // *client, no-referrer
+          })
+          .then(resp =&gt; resp.json())
+      }
+
+      $(document).ready(function() {
+        $('#btnsubmit').on('click', function(e){
+          e.preventDefault();
+          postData('/shorten', {url: $(&quot;#url&quot;).val()})
+          .then( data =&gt; {
+            let id = data[&quot;id&quot;]
+            $(&quot;#output&quot;).html(`&lt;a href=&quot;%%hostname/${id}&quot;&gt;Shortlink: ${id}&lt;/a&gt;`);
+           });
+      });
+    });
+      &lt;/script&gt;
+      &lt;/head&gt;
+      &lt;body&gt;
+          &lt;div&gt;
+            &lt;form&gt;
+              &lt;label&gt;URL&lt;/label&gt;
+              &lt;input type=&quot;url&quot; name=&quot;url&quot; id=&quot;url&quot; /&gt;
+              &lt;button id=&quot;btnsubmit&quot; type=&quot;button&quot;&gt;SHORT!&lt;/button
+            &lt;/form&gt;
+          &lt;/div&gt;
+
+          &lt;div id=&quot;output&quot;&gt;
+
+          &lt;/div&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+    &quot;&quot;&quot;
+    htmlout = htmlout.replace(&quot;%%hostname&quot;, hostname)
+    resp  htmlout
+</code></pre>
+<ul>
+<li>
+<p>Include jquery framework</p>
+</li>
+<li>
+<p>Create a form with in <code>div tag with 1 textinput to allow user to enter a url</code></p>
+</li>
+<li>
+<p>override form submission to do an ajax request</p>
+</li>
+<li>
+<p>on the button shorturl click event we send a post request to <code>/shorten</code> endpoint in the background using <code>fetch</code> api and whenever we get a result we parse the json data and extract the <code>id</code> from it and put the new url in the <code>output</code> div</p>
+</li>
+<li>
+<p><code>resp</code> to return a response to the user and it can return a <code>http status</code> too</p>
+</li>
+</ul>
+<a class="header" href="print.html#shorten-endpoint" id="shorten-endpoint"><h3>Shorten endpoint</h3></a>
+<pre><code class="language-Nimrod">  post &quot;/shorten&quot;:
+    let url = parseJson(request.body).getOrDefault(&quot;url&quot;).getStr()
+    if not url.isNilOrEmpty():
+      var id = theDb.getValue(sql&quot;SELECT id FROM urls WHERE url=?&quot;, url)
+      if id.isNilOrEmpty():
+        id = $theDb.tryInsertId(sql&quot;INSERT INTO urls (url) VALUES (?)&quot;, url)
+      var jsonResp = $(%*{&quot;id&quot;: id})
+      resp Http200, jsonResp
+    else:
+      resp Http400, &quot;please specify url in the posted data.&quot;
+</code></pre>
+<p>Here we handle <code>POST</code> requests on <code>/shorten</code> endpoint</p>
+<ul>
+<li>
+<p>get the url from parsed json post data. please note that POST data is <code>available under request.body</code> <code>explained in the previous section</code></p>
+</li>
+<li>
+<p>if url is passed we try to check if it's there in our <code>urls</code> table, if it's there we return it, otherwise we insert it in the table.</p>
+</li>
+<li>
+<p>if the url isn't passed we return a badrequest <code>400</code> status code.</p>
+</li>
+<li>
+<p><code>parseJson</code>: loads json from a string and you can get value using <code>getOrDefault</code> and <code>getStr</code> to get string value, there's getBool, and so on.</p>
+</li>
+<li>
+<p><code>getValue</code> to get the id from the result of the select statement <code>returns the first column from the first row in the result set</code></p>
+</li>
+<li>
+<p><code>tryInsertId</code> executes insert statement and returns the id of the new row</p>
+</li>
+<li>
+<p>after successfull insertion we would like to return <code>json</code> serialized string to the user <code>$(%*{&quot;id&quot;: id})</code></p>
+</li>
+<li>
+<p><code>%*</code> is a macro to convert nim struct into json node and to convert it to string we wrap <code>$</code> around it</p>
+</li>
+</ul>
+<a class="header" href="print.html#shorturls-redirect" id="shorturls-redirect"><h3>Shorturls redirect</h3></a>
+<pre><code class="language-Nimrod">  get &quot;/@Id&quot;:
+    let url = theDb.getValue(sql&quot;SELECT url FROM urls WHERE id=?&quot;, @&quot;Id&quot;)
+    if url.isNilOrEmpty():
+      resp Http404, &quot;Don't know that url&quot;
+    else:
+      redirect url
+</code></pre>
+<ul>
+<li>
+<p>Here we fetch whatever path <code>@Id</code> the user trying to access <code>except for /home and /shorten</code> and we try to get the long url for that path</p>
+</li>
+<li>
+<p>If the path is resolved to a url we <code>redirect</code> the user to to or we show an error message</p>
+</li>
+<li>
+<p><code>@&quot;Id&quot;</code> gets the value of <code>@Id</code> query parameter : notice the <code>@</code> position in both situation</p>
+</li>
+</ul>
+<a class="header" href="print.html#run" id="run"><h2>RUN</h2></a>
+<pre><code class="language-Nimrod">runForever()
+</code></pre>
+<p>start jester webserver</p>
+<p>Code is available here <a href="https://gist.github.com/xmonader/d41a5c9f917eadb90d3025e7b7e748dd">https://gist.github.com/xmonader/d41a5c9f917eadb90d3025e7b7e748dd</a></p>
+<a class="header" href="print.html#day-8-minitest" id="day-8-minitest"><h1>Day 8: minitest</h1></a>
+<p>I'm a big fan of <a href="http://www.gigamonkeys.com/book/">Practical Common Lisp</a> and It has a chapter on <a href="http://www.gigamonkeys.com/book/practical-building-a-unit-test-framework.html">building a unittest framework using macros</a> and I didn't get the chance to tinker with nim macros just yet, So today we will be building almost the same thing in nim.</p>
+<a class="header" href="print.html#so-whats-up" id="so-whats-up"><h2>So what's up?</h2></a>
+<p>Imagine you want to check for some expression and print a specific message donating the expression</p>
+<pre><code class="language-Nimrod">  doAssert(1==2, &quot;1 == 2 failed&quot;)
+</code></pre>
+<p>Here we want to assure that 1==2 or show a message with <code>1==2 failed</code> and it goes on for whatever we want to check for</p>
+<pre><code class="language-Nimrod">  doAssert(1+2==3, &quot;1+2 == 3 failed&quot;)
+  doAssert(5*2==10, &quot;5*2 == 10 failed&quot;)
+
+</code></pre>
+<p>We can already see the boilerplate here, repeating the expression twice one for the check and one for the message itself.</p>
+<a class="header" href="print.html#what-to-expect-2" id="what-to-expect-2"><h2>What to expect?</h2></a>
+<p>We expect having a DSL to remove the boilerplate we're suffering from in the prev. section.</p>
+<pre><code class="language-Nimrod">  check(3==1+2)
+  check(6+5*2 == 16)
+</code></pre>
+<p>And this will print</p>
+<pre><code>3 == 1 + 2 .. passed
+6 + 5 * 2 == 16 .. passed
+</code></pre>
+<p>And it should evolve to allow grouping of test checks</p>
+<pre><code class="language-Nimrod">  check(3==1+2)
+  check(6+5*2 == 16)
+  
+  suite &quot;Arith&quot;:
+    check(1+2==3)
+    check(3+2==5)
+
+  suite &quot;Strs&quot;:
+    check(&quot;HELLO&quot;.toLowerAscii() == &quot;hello&quot;)
+    check(&quot;&quot;.isNilOrEmpty() == true)
+
+</code></pre>
+<p>Resulting something like this</p>
+<pre><code>3 == 1 + 2 .. passed
+6 + 5 * 2 == 16 .. passed
+==================================================
+Arith
+==================================================
+ 1 + 2 == 3 .. passed
+ 3 + 2 == 5 .. passed
+==================================================
+Strs
+==================================================
+ &quot;HELLO&quot;.toLowerAscii() == &quot;hello&quot; .. passed
+ &quot;&quot;.isNilOrEmpty() == true .. passed
+
+</code></pre>
+<a class="header" href="print.html#implementation-6" id="implementation-6"><h2>Implementation</h2></a>
+<p>So nim has two way to do macros</p>
+<a class="header" href="print.html#templates" id="templates"><h3>templates</h3></a>
+<p>Which are like functions that called in compilation time like <code>preprocessor</code></p>
+<p>From the nim manual</p>
+<pre><code class="language-Nimrod">template `!=` (a, b: untyped): untyped =
+  # this definition exists in the System module
+  not (a == b)
+
+assert(5 != 6) # the compiler rewrites that to: assert(not (5 == 6))
+</code></pre>
+<p>so in compile time <code>5 != 6</code> will be converted into <code>not ( 5 == 6)</code> and the whole expression will be <code>assert(not ( 5== 6))</code></p>
+<p>So what're we gonna do is check for the passed expression to convert it to a string to be printed in the terminal output and if the expression fails we append <code>failed</code> message or any other custom failure message</p>
+<pre><code class="language-Nimrod">template check*(exp:untyped, failureMsg:string=&quot;failed&quot;, indent:uint=0): void =
+  let indentationStr = repeat(' ', indent) 
+  let expStr: string = astToStr(exp)
+  var msg: string
+  if not exp:
+    if msg.isNilOrEmpty():
+      msg = indentationStr &amp; expStr &amp; &quot; .. &quot; &amp; failureMsg
+  else:
+    msg = indentationStr &amp; expStr &amp; &quot; .. passed&quot;
+      
+  echo(msg)
+</code></pre>
+<ul>
+<li>
+<p><code>untyped</code> means the expression doesn't have to have a type yet, imagine passing variable name that doesn't exist yet <code>defineVar(myVar, 5)</code> so here <code>myVar</code> needs to be untyped or the compiler will complain. check the manual for more info https://nim-lang.org/docs/manual.html#templates</p>
+</li>
+<li>
+<p><code>astToStr</code> converts the AST <code>exp</code> to a string</p>
+</li>
+<li>
+<p><code>indent</code> amount of spaces prefixing the message.</p>
+</li>
+</ul>
+<a class="header" href="print.html#macros" id="macros"><h3>Macros</h3></a>
+<p>Nim provides us with a way to access the AST in a very low level when we templates don't cut it.</p>
+<p>What we expected is having a <code>suite</code> macro</p>
+<pre><code>  suite &quot;Strs&quot;:
+    check(&quot;HELLO&quot;.toLowerAscii() == &quot;hello&quot;)
+    check(&quot;&quot;.isNilOrEmpty() == true)
+</code></pre>
+<p>that takes a <code>name</code> for the suite and bunch of <code>statements</code></p>
+<ul>
+<li>Please note there're two kind of macros and we're interested in the <code>statements macro</code> here</li>
+<li>Statments macro is a macro that has <code>colon</code> <code>:</code> operator followed by bunch of statements</li>
+</ul>
+<a class="header" href="print.html#dumptree" id="dumptree"><h4>dumpTree</h4></a>
+<p>dumpTree is amazing to debug the ast and print them in a good visual way</p>
+<pre><code class="language-Nimrod">
+  dumpTree:
+    suite &quot;Strs&quot;:
+      check(&quot;HELLO&quot;.toLowerAscii() == &quot;hello&quot;)
+
+</code></pre>
+<pre><code>Ident ident&quot;suite&quot;
+    StrLit Strs
+    StmtList
+      Call
+        Ident ident&quot;check&quot;
+        Infix
+          Ident ident&quot;==&quot;
+          Call
+            DotExpr
+              StrLit HELLO
+              Ident ident&quot;toLowerAscii&quot;
+          StrLit hello
+
+</code></pre>
+<ul>
+<li><code>dumpTree</code> says it got <code>Identifier Ident</code> named <code>suite</code></li>
+<li><code>suite</code> contains <code>StringLiteral</code> node with value <code>Strs</code></li>
+<li><code>suite</code> contains <code>StmtList</code> node</li>
+<li>first statement in <code>StmtList</code> is a <code>call</code> statement</li>
+<li><code>call</code> statement consist of <code>procedure</code> name <code>check</code> in this case and args list and so on..</li>
+</ul>
+<pre><code class="language-Nimrod">macro suite*(name:string, exprs: untyped) : typed = 
+</code></pre>
+<p>Here, we define a macro <code>suite</code> takes <code>name</code> and bunch of statements <code>exprs</code></p>
+<ul>
+<li>Macro must return an AST in our case will be list of statements of <code>check</code> call statemenets</li>
+<li>Need the messages to be indented</li>
+</ul>
+<p>To achieve the indentation we can either print tab before calling <code>check</code> or overwrite check to pass <code>indent</code> option, we will go with overwrite the <code>check</code> call ASTs</p>
+<pre><code class="language-Nimrod">  var result = newStmtList()
+</code></pre>
+<p>We will be returning a list of statments right?</p>
+<pre><code>  let equline = newCall(&quot;repeat&quot;, newStrLitNode(&quot;=&quot;), newIntLitNode(50))
+</code></pre>
+<p>statement node that equals <code>repeat(&quot;=&quot;, 50)</code></p>
+<pre><code class="language-Nimrod">  let writeEquline = newCall(&quot;echo&quot;, equline)
+</code></pre>
+<p>statement node the equals <code>echo repeat(&quot;=&quot;, 50)</code></p>
+<pre><code class="language-Nimrod">  add(result, writeEquline, newCall(&quot;echo&quot;, name))
+  add(result, writeEquline)
+</code></pre>
+<p>this will generate</p>
+<pre><code>================
+$name
+================
+</code></pre>
+<p>Now we iterate over the passed statements to <code>suite</code> macro and check for its kind</p>
+<pre><code class="language-Nimrod">  for i in 0..&lt;exprs.len:
+    var exp = exprs[i]
+    let expKind = exp.kind
+    case expKind
+    of nnkCall:
+      case exp[0].kind
+      of nnkIdent:
+        let identName = $exp[0].ident
+        if identName == &quot;check&quot;:
+</code></pre>
+<ul>
+<li>If we're in a <code>check</code> call we will convert it from <code>check(expr)</code> =&gt; <code>check(expr, &quot;&quot;, 1)</code></li>
+</ul>
+<pre><code class="language-Nimrod">          var checkWithIndent = exp
+          checkWithIndent.add(newStrLitNode(&quot;&quot;))
+          checkWithIndent.add(newIntLitNode(1))
+          add(result, checkWithIndent)
+</code></pre>
+<p>otherwise we add any other statement as is unprocessesed.</p>
+<pre><code class="language-Nimrod">      else:
+        add(result, exp) 
+    else:
+      discard
+        
+  return result
+</code></pre>
+<p>Code is available on https://github.com/xmonader/nim-minitest</p>
+<a class="header" href="print.html#day-9-tic-tac-toe" id="day-9-tic-tac-toe"><h1>Day 9: Tic tac toe</h1></a>
+<p>Who didn't play <a href="https://en.wikipedia.org/wiki/Tic-tac-toe">Tic tac toe</a> with his friends? :)</p>
+<a class="header" href="print.html#what-to-expect-3" id="what-to-expect-3"><h2>What to expect</h2></a>
+<p>Today we will implement tic tac toe game in Nim, with 2 modes</p>
+<ul>
+<li>Human vs Human</li>
+<li>Human vs AI</li>
+</ul>
+<a class="header" href="print.html#implementation-7" id="implementation-7"><h2>Implementation</h2></a>
+<p>So, let's get it. The winner in the game is the first one who manages to get 3 cells on the board to be the same in the same column or row or diagonally first.</p>
+<a class="header" href="print.html#imports-2" id="imports-2"><h3>imports</h3></a>
+<pre><code class="language-Nimrod">import sequtils, tables, strutils, strformat, random, os, parseopt2
+
+randomize()
+</code></pre>
+<a class="header" href="print.html#constraints-and-objects" id="constraints-and-objects"><h3>Constraints and objects</h3></a>
+<p>As the game allow turns we should have a way to keep track of the next player</p>
+<pre><code>let NEXT_PLAYER = {&quot;X&quot;:&quot;O&quot;, &quot;O&quot;:&quot;X&quot;}.toTable
+</code></pre>
+<p>Here we use a table to tell us the next player</p>
+<a class="header" href="print.html#board" id="board"><h4>Board</h4></a>
+<pre><code class="language-Nimrod">type 
+  Board = ref object of RootObj
+    list: seq[string]
+</code></pre>
+<p>Here we define a simple class representing the board</p>
+<ul>
+<li>list is a sequence representing the cells <code>maybe cells is a better name</code></li>
+<li>please note list is just a sequenece of elements <code>0 1 2 3 4 5 6 7 8</code> but we visualize it as</li>
+</ul>
+<pre><code>0 1 2
+3 4 5
+6 7 9
+</code></pre>
+<p>instead of using a 2d array for the sake of simplicity</p>
+<pre><code class="language-Nimrod">let WINS = @[ @[0,1,2], @[3,4,5], @[6,7,8], @[0, 3, 6], @[1,4,7], @[2,5,8], @[0,4,8], @[2,4,6] ]
+</code></pre>
+<p>We talked <code>WIN</code> patterns cells in the same row or the same column or in same diagonal</p>
+<pre><code class="language-Nimrod">proc newBoard(): Board =
+  var b = Board()
+  b.list = @[&quot;0&quot;, &quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;, &quot;6&quot;, &quot;7&quot;, &quot;8&quot;]
+  return b
+</code></pre>
+<p>this is the initializer of the board and sets the cell value to the string represention  of its index</p>
+<a class="header" href="print.html#winning" id="winning"><h5>Winning</h5></a>
+<pre><code class="language-Nimrod">proc done(this: Board): (bool, string) =
+    for w in WINS:
+        if this.list[w[0]] == this.list[w[1]] and this.list[w[1]]  == this.list[w[2]]:
+          if this.list[w[0]] == &quot;X&quot;:
+            return (true, &quot;X&quot;)
+          elif this.list[w[0]] == &quot;O&quot;:
+            return (true, &quot;O&quot;)
+    if all(this.list, proc(x:string):bool = x in @[&quot;O&quot;, &quot;X&quot;]) == true:
+        return (true, &quot;tie&quot;)
+    else:
+        return (false, &quot;going&quot;)
+</code></pre>
+<p>Here we check for the state of the game and the winner if all of the item in <code>WIN</code> patterns are the same</p>
+<pre><code class="language-Nimrod">proc `$`(this:Board): string =
+  let rows: seq[seq[string]] = @[this.list[0..2], this.list[3..5], this.list[6..8]]
+  for row  in rows:
+    for cell in row:
+      stdout.write(cell &amp; &quot; | &quot;)
+    echo(&quot;\n--------------&quot;)
+</code></pre>
+<p>Here we have the string representation of the board so we can show it as 3x3 grid in a lovely way</p>
+<pre><code class="language-Nimrod">proc emptySpots(this:Board):seq[int] =
+    var emptyindices = newSeq[int]()
+    for i in this.list:
+      if i.isDigit():
+        emptyindices.add(parseInt(i))
+    return emptyindices
+</code></pre>
+<p>Here we have a simple helper function that returns the empty spots indices <code>the spots that doesn't have X or O in it</code>, remember all the cells are initialized to the string representation of their indices.</p>
+<a class="header" href="print.html#game" id="game"><h4>Game</h4></a>
+<pre><code class="language-Nimrod">type
+  Game = ref object of RootObj
+    currentPlayer*: string
+    board*: Board
+    aiPlayer*: string
+    difficulty*: int
+
+
+proc newGame(aiPlayer:string=&quot;&quot;, difficulty:int=9): Game =
+  var
+    game = new Game
+
+  game.board = newBoard()
+  game.currentPlayer = &quot;X&quot;
+  game.aiPlayer = aiPlayer
+  game.difficulty = difficulty
+  
+  return game
+        # 0 1 2
+        # 3 4 5
+        # 6 7 8 
+</code></pre>
+<p>Here we have another object representing the game and the players and the difficulty and wether it has an AI player or not and who is the current player</p>
+<ul>
+<li>difficulty is only logical in case of AI, it means when does the AI start calculating moves and considering scenarios, 9 is the hardest, 0 is the easiest.</li>
+</ul>
+<pre><code class="language-Nimrod">proc changePlayer(this:Game) : void =
+  this.currentPlayer = NEXT_PLAYER[this.currentPlayer]   
+</code></pre>
+<p>Simple procedure to switch turns between players</p>
+<a class="header" href="print.html#start-the-game" id="start-the-game"><h4>Start the game</h4></a>
+<pre><code class="language-Nimrod">
+proc startGame*(this:Game): void=
+    while true:
+        echo this.board
+        if this.aiPlayer != this.currentPlayer:
+          stdout.write(&quot;Enter move: &quot;)
+          let move = stdin.readLine()
+          this.board.list[parseInt($move)] = this.currentPlayer
+        this.change_player()
+        let (done, winner) = this.board.done()
+
+        if done == true:
+          echo this.board
+          if winner == &quot;tie&quot;:
+              echo(&quot;TIE&quot;)
+          else:
+              echo(&quot;WINNER IS :&quot;, winner )
+          break           
+
+</code></pre>
+<p>Here if we don't have <code>aiPlayer</code> if not set it's just a game with 2 humans switching turns and checking for the winner after each move</p>
+<a class="header" href="print.html#minmax-and-ai-support" id="minmax-and-ai-support"><h3>Minmax and AI support</h3></a>
+<p><a href="https://en.wikipedia.org/wiki/Minimax">Minmax</a> is an algorithm mainly used to predict the possible moves in the future and how to minimize the losses and maximize the chances of winning</p>
+<ul>
+<li>https://www.youtube.com/watch?v=6ELUvkSkCts</li>
+<li>https://www.youtube.com/watch?v=CwziaVrM_vc&amp;t=1199s</li>
+</ul>
+<pre><code class="language-Nimrod">
+type 
+  Move = tuple[score:int, idx:int]
+</code></pre>
+<p>We need a type Move on a certain idx to represent if it's a good/bad move <code>depending on the score</code></p>
+<ul>
+<li>good means minimizing chances of the human to win or making AI win =&gt; high score +10</li>
+<li>bad  means maximizing chances of the human to win or making AI lose =&gt; low score -10</li>
+</ul>
+<p>So let's say we are in this situation</p>
+<pre><code>O X X
+X 4 5 
+X O O
+</code></pre>
+<p>And it's <code>AI turn</code> we have two possible moves (4 or 5)</p>
+<pre><code>O X X
+X 4 O 
+X O O
+</code></pre>
+<p>this move (to 5) is clearly wrong because the next move to human will allow him to complete the diagonal (2, 4, 6) So this is a bad move we give it score -10
+or</p>
+<pre><code>O X X
+X O 5 
+X O O
+</code></pre>
+<p>this move (to 4) minimizes the losses (leads to a TIE instead of making human wins) so we give it a higher score</p>
+<pre><code class="language-Nimrod">proc getBestMove(this: Game, board: Board, player:string): Move =
+        let (done, winner) = board.done()
+        # determine the score of the move by checking where does it lead to a win or loss.
+        if done == true:
+            if winner ==  this.aiPlayer:
+                return (score:10, idx:0)
+            elif winner != &quot;tie&quot;: #human
+                return (score:(-10), idx:0)
+            else:
+                return (score:0, idx:0)
+            
+        let empty_spots = board.empty_spots()
+        var moves = newSeq[Move]() 
+        for idx in empty_spots:
+            # we calculate more new trees depending on the current situation and see where the upcoming moves lead
+            var newboard = newBoard()
+
+            newboard.list = map(board.list, proc(x:string):string=x)
+            newboard.list[idx] = player
+            let score = this.getBestMove(newboard, NEXT_PLAYER[player]).score
+            let idx = idx
+            let move = (score:score, idx:idx)
+            moves.add(move)
+        
+        if player == this.aiPlayer:
+          return max(moves)          
+          # var bestScore = -1000
+          # var bestMove: Move 
+          # for m in moves:
+          #   if m.score &gt; bestScore:
+          #     bestMove = m
+          #     bestScore = m.score
+          # return bestMove
+        else:
+          return min(moves)          
+          # var bestScore = 1000
+          # var bestMove: Move 
+          # for m in moves:
+          #   if m.score &lt; bestScore:
+          #     bestMove = m
+          #     bestScore = m.score
+          # return bestMove
+
+</code></pre>
+<p>Here we have a highly annotated <code>getBestMove</code> procedure to calculate recursively the best move for us</p>
+<p>Now our startGame should look like this</p>
+<pre><code class="language-Nimrod">proc startGame*(this:Game): void=
+    while true:
+        ##old code
+
+        ## AI check
+        else:
+            if this.currentPlayer == this.aiPlayer:
+              let emptyspots = this.board.emptySpots()
+              if len(emptyspots) &lt;= this.difficulty:
+                  echo(&quot;AI MOVE..&quot;)
+                  let move = this.getbestmove(this.board, this.aiPlayer)
+                  this.board.list[move.idx] = this.aiPlayer
+              else:
+                  echo(&quot;RANDOM GUESS&quot;)
+                  this.board.list[emptyspots.rand()] = this.aiPlayer
+  
+        ## oldcode    
+
+</code></pre>
+<p>Here we allow the game to use difficulty which means when does the AI starts calculating the moves and making the tree? from the beginning 9 cells left or when there're 4 cells left? you can set it the way you want it, and until u reach the starting difficulty situation AI will use random guesses (from the available <code>emptyspots</code>) instead of calculating</p>
+<a class="header" href="print.html#cli-entry" id="cli-entry"><h3>CLI entry</h3></a>
+<pre><code class="language-Nimrod">proc writeHelp() = 
+  echo &quot;&quot;&quot;
+TicTacToe 0.1.0 (MinMax version)
+Allowed arguments:
+  -h | --help         : show help
+  -a | --ai           : AI player [X or O]
+  -l | --difficulty   : destination to stow to
+  &quot;&quot;&quot;
+
+proc cli*() =
+  var 
+    aiplayer = &quot;&quot;
+    difficulty = 9
+
+  for kind, key, val in getopt():
+    case kind
+    of cmdLongOption, cmdShortOption:
+        case key
+        of &quot;help&quot;, &quot;h&quot;: 
+            writeHelp()
+            # quit()
+        of &quot;aiplayer&quot;, &quot;a&quot;:
+          echo &quot;AIPLAYER: &quot; &amp; val
+          aiplayer = val
+        of &quot;level&quot;, &quot;l&quot;: difficulty = parseInt(val)
+        else:
+          discard
+    else:
+      discard 
+
+  let g = newGame(aiPlayer=aiplayer, difficulty=difficulty)
+  g.startGame()
+
+
+when isMainModule:
+  cli()
+
+</code></pre>
+<p>Code is available on <a href="https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_cli.nim">https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_cli.nim</a></p>
+<a class="header" href="print.html#day-10-tic-tac-toe-with-gui" id="day-10-tic-tac-toe-with-gui"><h1>Day 10: Tic tac toe with GUI!!</h1></a>
+<p>Hopefully, you're done with day 9 and enjoyed playing tic tac toe.</p>
+<a class="header" href="print.html#expectation" id="expectation"><h2>Expectation</h2></a>
+<p>It's fun to play on the command line, but it'd be very cool to have some GUI with some buttons using <a href="https://github.com/nim-lang/ui">libui</a> bindings in Nim</p>
+<ul>
+<li>make sure to install it using <code>nimble install ui</code></li>
+</ul>
+<a class="header" href="print.html#implementation-8" id="implementation-8"><h2>Implementation</h2></a>
+<p>In the previous day we reached some good abstraction separating the logic for the command line gui and the minmax algorithm and it's not tightly coupled</p>
+<a class="header" href="print.html#minimal-ui-application" id="minimal-ui-application"><h3>minimal ui application</h3></a>
+<pre><code class="language-Nimrod">proc gui*() = 
+  var mainwin = newWindow(&quot;tictactoe&quot;, 400, 500, true)
+  show(mainwin)
+  mainLoop()
+
+when isMainModule:
+  # cli()
+  init()
+  gui()
+</code></pre>
+<p>Here we create a window 400x500 with a title <code>tictactoe</code> and we show it and start its mainLoop <code>getting ready to receive and dispatch events</code></p>
+<a class="header" href="print.html#tictactoe-gui" id="tictactoe-gui"><h3>TicTacToe GUI</h3></a>
+<p>We can imagine the gui to be something like that</p>
+<pre><code>---------------------------------------------
+|  ---------------------------------------  |
++  | INFO LABEL | button to restart       | +
+|  ---------------------------------------| |
++  |--------------------------------------| +
+|  |  btn     |    btn  |   btn           | |
++  |--------------------------------------| +
+|  |  btn     |    btn  |   btn           | |
++  |--------------------------------------| +
+|  |  btn     |    btn  |   btn           | |
++  |--------------------------------------| +
+---------------------------------------------
+</code></pre>
+<ul>
+<li>a window that contains  a vertical box</li>
+<li>the vertical box contains 4 rows</li>
+<li>first row to show information about the current game and a button to reset the game</li>
+<li>and the other rows represent the 3x3 tictactoe grid that will reflect <code>game.list</code> :)</li>
+<li>and 9 buttons to be pressed to set X or O</li>
+<li>we will support human vs AI so when human presses a button it gets disabled and the AI presses the button that minimizes its loss and that button gets disabled too.</li>
+</ul>
+<pre><code class="language-Nimrod">proc gui*() = 
+  var mainwin = newWindow(&quot;tictactoe&quot;, 400, 500, true)
+
+  # game object to contain the state, the players, the difficulty,...
+  var g = newGame(aiPlayer=&quot;O&quot;, difficulty=9)
+
+  var currentMove = -1
+  mainwin.margined = true
+  mainwin.onClosing = (proc (): bool = return true)
+
+
+  # set up the boxes 
+  let box = newVerticalBox(true)
+  let hbox0 = newHorizontalBox(true)
+  let hbox1 = newHorizontalBox(true)
+  let hbox2 = newHorizontalBox(true)
+  let hbox3 = newHorizontalBox(true)
+  # list of buttons 
+  var buttons = newSeq[Button]()
+
+  # information label
+  var labelInfo = newLabel(&quot;Info: Player X turn&quot;)
+  hbox0.add(labelInfo)
+
+  # restart button
+  hbox0.add(newButton(&quot;Restart&quot;, proc() = 
+                            g =newGame(aiPlayer=&quot;O&quot;, difficulty=9)
+                            for i, b in buttons.pairs:
+                              b.text = $i
+                              b.enable()))
+</code></pre>
+<p>Here we setup the layout we just described and create a button Restart that resets the game again and restore the buttons text and enables them all</p>
+<pre><code class="language-Nimrod">  # create the buttons
+  for i in countup(0, 8):
+    var handler : proc() 
+    closureScope:
+      let senderId = i
+      handler = proc() =
+        currentMove = senderId
+        g.board.list[senderId] = g.currentPlayer
+        g.change_player()
+        labelInfo.text = &quot;Current player: &quot; &amp; g.currentPlayer
+        for i, v in g.board.list.pairs:
+          buttons[i].text = v
+        let (done, winner) = g.board.done()
+        if done == true:
+          echo g.board
+          if winner == &quot;tie&quot;:
+              labelInfo.text = &quot;Tie..&quot;
+          else:
+            labelInfo.text = winner &amp; &quot; won.&quot;
+        else:
+          aiPlay()
+        buttons[senderId].disable()
+
+    buttons.add(newButton($i, handler))
+</code></pre>
+<ul>
+<li>Here we create the buttons please notice we are using <code>closureScope</code> feature to capture the button id to keep track of which button is clicked</li>
+<li>after pressing set set the text of the button to <code>X</code></li>
+<li>we disable the button so we don't receive anymore events.</li>
+<li>switch turns</li>
+<li>update the information label whether about the next player or the game state</li>
+<li>if the game is still going we ask the AI for a move</li>
+</ul>
+<pre><code class="language-Nimrod">
+  # code to run when the game asks the ai to play (after each move from the human..)
+  proc aiPlay() = 
+    if g.currentPlayer == g.aiPlayer:
+      let emptySpots = g.board.emptySpots()
+      if len(emptySpots) &lt;= g.difficulty:
+        let move = g.getBestMove(g.board, g.aiPlayer)
+        g.board.list[move.idx] = g.aiPlayer
+        buttons[move.idx].disable()
+      else:
+        let rndmove = emptyspots.rand()
+        g.board.list[rndmove] = g.aiPlayer
+    g.change_player()
+    labelInfo.text = &quot;Current player: &quot; &amp; g.currentPlayer
+
+    for i, v in g.board.list.pairs:
+      buttons[i].text = v
+      
+    let (done, winner) = g.board.done()
+
+    if done == true:
+      echo g.board
+      if winner == &quot;tie&quot;:
+          labelInfo.text = &quot;Tie..&quot;
+      else:
+        labelInfo.text = winner &amp; &quot; won.&quot;
+
+</code></pre>
+<ul>
+<li>using minmax algorithm from the previous day we calculate the best move</li>
+<li>change the button text to <code>O</code></li>
+<li>disable the button</li>
+<li>update the information label</li>
+</ul>
+<pre><code class="language-Nimrod">
+ hbox1.add(buttons[0])
+ hbox1.add(buttons[1])
+ hbox1.add(buttons[2])
+
+ hbox2.add(buttons[3])
+ hbox2.add(buttons[4])
+ hbox2.add(buttons[5])
+
+ hbox3.add(buttons[6])
+ hbox3.add(buttons[7])
+ hbox3.add(buttons[8])
+ 
+ box.add(hbox0, true)
+ box.add(hbox1, true)
+ box.add(hbox2, true)
+ box.add(hbox3, true)
+ mainwin.setChild(box)
+
+</code></pre>
+<ul>
+<li>Here we add the buttons to their correct rows in the correct columns and set the main widget</li>
+</ul>
+<pre><code class="language-Nimrod">  show(mainwin)
+  mainLoop()
+
+when isMainModule:
+  init()
+  gui()
+</code></pre>
+<p>Code is available on <a href="https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_gui.nim">https://github.com/xmonader/nim-tictactoe/blob/master/src/nim_tictactoe_gui.nim</a></p>
+<a class="header" href="print.html#day-11--bake-applications" id="day-11--bake-applications"><h1>Day 11 ( Bake applications)</h1></a>
+<p>I used to work on application 2 years ago, and It was a bit like ansible defining recipes to create applications and managng their dependencies.</p>
+<a class="header" href="print.html#what-to-expect-4" id="what-to-expect-4"><h2>What to expect</h2></a>
+<p>Today we will be doing something very simple to track our dependencies and print the bash commands for each task like Makefile.</p>
+<pre><code class="language-makefile">HEADERS = program.h headers.h
+
+default: program
+
+program.o: program.c $(HEADERS)
+    gcc -c program.c -o program.o
+
+program: program.o
+    gcc program.o -o program
+
+clean:
+    -rm -f program.o
+    -rm -f program
+</code></pre>
+<p>Basically, makefile consists of</p>
+<ul>
+<li>Variables</li>
+<li>Targets</li>
+<li>Dependencies</li>
+</ul>
+<p><code>variables</code> like <code>HEADERS=...</code>, <code>targets</code> whatever precedes the <code>:</code> like <code>clean</code>, <code>program</code>, <code>program.o</code>, <code>dependencies</code> are what a target depends on, so for instance <code>program</code> target that generates the executable requires <code>program.o</code> dependency to be executed first.</p>
+<a class="header" href="print.html#example-api-usage" id="example-api-usage"><h2>Example API usage</h2></a>
+<a class="header" href="print.html#normal-usage" id="normal-usage"><h3>Normal usage</h3></a>
+<pre><code class="language-Nimrod">  var b = initBake()
+  b.add_task(&quot;publish&quot;, @[&quot;build-release&quot;], &quot;print publish&quot;)
+  b.add_task(&quot;build-release&quot;, @[&quot;nim-installed&quot;], &quot;print exec command to build release mode&quot;)
+  b.add_task(&quot;nim-installed&quot;, @[&quot;curl-installed&quot;], &quot;print curl LINK | bash&quot;)
+  b.add_task(&quot;curl-installed&quot;, @[&quot;apt-installed&quot;], &quot;apt-get install curl&quot;)
+  b.add_task(&quot;apt-installed&quot;, @[], &quot;code to install apt...&quot;)
+  b.run_task(&quot;publish&quot;)
+</code></pre>
+<p>OUTPUT:</p>
+<pre><code>code to install apt...
+apt-get install curl
+print curl LINK | bash
+print exec command to build release mode
+print publish
+</code></pre>
+<a class="header" href="print.html#circular-dependencies" id="circular-dependencies"><h3>Circular dependencies</h3></a>
+<pre><code class="language-Nimrod">  var b = initBake()
+  b.add_task(&quot;publish&quot;, @[&quot;build-release&quot;], &quot;print publish&quot;)
+  b.add_task(&quot;build-release&quot;, @[&quot;nim-installed&quot;], &quot;print exec command to build release mode&quot;)
+  b.add_task(&quot;nim-installed&quot;, @[&quot;curl-installed&quot;], &quot;print curl LINK | bash&quot;)
+  b.add_task(&quot;curl-installed&quot;, @[&quot;publish&quot;, &quot;apt-installed&quot;], &quot;apt-get install curl&quot;)
+  b.add_task(&quot;apt-installed&quot;, @[], &quot;code to install apt...&quot;)
+  b.run_task(&quot;publish&quot;)
+
+</code></pre>
+<p>Output:</p>
+<pre><code>Found cycle please fix:@[&quot;build-release&quot;, &quot;nim-installed&quot;, &quot;curl-installed&quot;, &quot;publish&quot;, &quot;build-release&quot;]
+</code></pre>
+<a class="header" href="print.html#implementation-9" id="implementation-9"><h3>Implementation</h3></a>
+<a class="header" href="print.html#imports-3" id="imports-3"><h4>Imports</h4></a>
+<pre><code class="language-Nimrod">import strformat, strutils, tables, sequtils, algorithm
+</code></pre>
+<a class="header" href="print.html#graphs" id="graphs"><h4>Graphs</h4></a>
+<p>Graphs are very powerful data structure and used to solve lots of problems, like getting the shortest route and detecting circular dependencies in our code today :)</p>
+<p>So How to represent graph?
+Well, we will use <a href="https://en.wikipedia.org/wiki/Adjacency_list">Adjaceny list</a></p>
+<a class="header" href="print.html#objects" id="objects"><h4>Objects</h4></a>
+<pre><code class="language-Nimrod">
+type Task = object
+  requires*: seq[string]
+  actions*: string
+  name*: string
+
+proc `$`(this: Task): string = 
+  return fmt(&quot;Task {this.name} Requirements: {this.requires} , actions {this.actions}&quot;)
+
+</code></pre>
+<p>Task object represnts a <code>target</code> in makefile language, and it has a name, actions code and list of dependencies</p>
+<pre><code class="language-Nimrod">type Bake = ref object
+  tasksgraph* : Table[string, seq[string]]
+  tasks*      : Table[string, Task]
+</code></pre>
+<p>Bake object has <code>tasksgraph</code> adjaceny list representing the tasks and their dependencies and tasks table that maps taskname to task object</p>
+<a class="header" href="print.html#adding-a-task" id="adding-a-task"><h4>Adding a task</h4></a>
+<pre><code class="language-Nimrod">
+proc addTask*(this: Bake, taskname: string, deps: seq[string], actions:string) : void = 
+  var t =  Task(name:taskname, requires:deps, actions:actions)
+  this.tasksgraph[taskname] = deps
+  this.tasks[taskname] = t
+</code></pre>
+<ul>
+<li>We update the adjacency list with (taskname and its dependencies)</li>
+<li>Add task object to tasks Table with key task name</li>
+</ul>
+<a class="header" href="print.html#running-tasks" id="running-tasks"><h4>Running tasks</h4></a>
+<pre><code class="language-Nimrod">
+proc runTask*(this: Bake, taskname: string): void =
+  # CODE OMITTED FOR FINIDNG CYCLES..
+
+  var deps = newSeq[string]()
+  var seen = newSeq[string]()
+
+  this.runTaskHelper(taskname, deps, seen)      
+
+  for tsk in deps:
+      let t = this.tasks.getOrDefault(tsk)
+      echo(t.actions)
+
+</code></pre>
+<ul>
+<li>Before running a task we should check if it has a cycle first.</li>
+<li>Keep track of dependencies and the seen tasks so far so we don't <code>run seen tasks</code> again. (for instance if we have target install-wget and target install-curl and both require target <code>apt-get update</code>, so we want to run <code>apt-get update</code> only once )</li>
+</ul>
+<p>for example</p>
+<pre><code>code to install apt...
+apt-get install curl
+print curl LINK | bash
+print exec command to build release mode
+print publish
+</code></pre>
+<ul>
+<li>Call <code>runTaskHelper</code> procedure to walk through all the <code>tasks</code> and their <code>dependencies</code> and get us a list of deps <code>each will update deps variable as we will be sending it by reference</code></li>
+<li>After getting correct dependencies tasks sorted we execute <code>in our case we will just echo actions property</code></li>
+</ul>
+<p>and now to <code>runTaskHelper</code> that basically updates our dependencies list and put the task execution in order</p>
+<pre><code class="language-Nimrod">
+proc runTaskHelper(this: Bake, taskname: string, deps: var seq[string], seen: var seq[string]) : void = 
+  if taskname in seen:
+    echo &quot;[+] Solved {taskname} before no need to repeat action&quot;
+  var tsk = this.tasks.getOrDefault(taskname)
+
+  seen.add(taskname)
+  if len(tsk.requires) &gt; 0:
+    for c in this.tasksgraph[tsk.name]:
+      this.runTaskHelper(c, deps, seen)
+  deps.add(taskname)
+</code></pre>
+<a class="header" href="print.html#detecting-cycles" id="detecting-cycles"><h4>Detecting cycles</h4></a>
+<p>To detect a cycle we use <code>DFS</code> depth first search algorithm basically going from one node as deep as we can go for each of its neigbours and <code>Graph coloring</code>. <a href="https://www.youtube.com/watch?v=rKQaZuoUR4M">Youtube Lecture</a></p>
+<p>Explanation from geeksforgeeks</p>
+<pre><code>    WHITE : Vertex is not processed yet.  Initially
+            all vertices are WHITE.
+
+    GRAY : Vertex is being processed (DFS for this 
+        vertex has started, but not finished which means
+        that all descendants (ind DFS tree) of this vertex
+        are not processed yet (or this vertex is in function
+        call stack)
+
+    BLACK : Vertex and all its descendants are 
+            processed.
+
+    While doing DFS, if we encounter an edge from current 
+    vertex to a GRAY vertex, then this edge is back edge 
+    and hence there is a cycle.
+</code></pre>
+<p>OK, back to nim</p>
+<p>1- Defining colors</p>
+<pre><code class="language-Nimrod">type NodeColor = enum
+  ncWhite, ncGray, ncBlack
+</code></pre>
+<p>2- Graph has Cycle</p>
+<pre><code class="language-Nimrod">proc graphHasCycle(graph: Table[string, seq[string]]): (bool, Table[string, string]) =
+  var colors = initTable[string, NodeColor]()
+  for node, deps in graph:
+    colors[node] = ncWhite
+  
+  var parentMap = initTable[string, string]()
+  var hasCycle = false 
+  for node, deps in graph:
+    parentMap[node] = &quot;null&quot;
+    if colors[node] == ncWhite:
+      hasCycleDFS(graph, node, colors, hasCycle, parentMap)
+    if hasCycle:
+      return (true, parentMap)
+  return (false, parentMap)
+</code></pre>
+<p>3- Depth First Function</p>
+<pre><code class="language-Nimrod">proc hasCycleDFS(graph:Table[string, seq[string]] , node: string, colors: var Table[string, NodeColor], has_cycle: var bool, parentMap: var Table[string, string]) =
+  if hasCycle:
+      return
+  colors[node] = ncGray 
+
+  for dep in graph[node]:
+    parentMap[dep] = node
+    if colors[dep] == ncGray:
+      hasCycle = true   
+      parentMap[&quot;__CYCLESTART__&quot;] = dep
+      return
+    if colors[dep] == ncWhite:  
+      hasCycleDFS(graph, dep, colors, hasCycle, parentMap)
+  colors[node] = ncBlack  
+
+</code></pre>
+<a class="header" href="print.html#whats-next" id="whats-next"><h3>What's next?</h3></a>
+<ul>
+<li>support for variables</li>
+<li>recipes maybe using yaml file</li>
+<li>modules like ansible?</li>
+</ul>
+<a class="header" href="print.html#day-12-implementing-redis-protocol" id="day-12-implementing-redis-protocol"><h1>Day 12: Implementing Redis Protocol</h1></a>
+<p>Today we will implement RESP (REdis Serialization Protocol) in Nim. Hopefully you read Day 2 on bencode data format (encoding/parsing) because we will be using the same techniques.</p>
+<a class="header" href="print.html#resp" id="resp"><h2>RESP</h2></a>
+<p>From <a href="https://redis.io/topics/protocol">redis protocol page</a>.</p>
+<pre><code>Redis clients communicate with the Redis server using a protocol called RESP (REdis Serialization Protocol). While the protocol was designed specifically for Redis, it can be used for other client-server software projects.
+
+RESP is a compromise between the following things:
+
+Simple to implement.
+Fast to parse.
+Human readable.
+RESP can serialize different data types like integers, strings, arrays. There is also a specific type for errors. Requests are sent from the client to the Redis server as arrays of strings representing the arguments of the command to execute. Redis replies with a command-specific data type.
+</code></pre>
+<p>So, basically we have 5 types (ints, strings, bulkstrings, errors, arrays)</p>
+<a class="header" href="print.html#what-do-we-expect-1" id="what-do-we-expect-1"><h2>What do we expect?</h2></a>
+<ul>
+<li>able to decode strings into Reasonable structures in Nim</li>
+</ul>
+<pre><code class="language-Nimrod">  echo decodeString(&quot;*3\r\n:1\r\n:2\r\n:3\r\n\r\n&quot;)
+  # # @[1, 2, 3]
+  echo decodeString(&quot;+Hello, World\r\n&quot;)
+  # # Hello, World
+  echo decodeString(&quot;-Not found\r\n&quot;)
+  # # Not found
+  echo decodeString(&quot;:1512\r\n&quot;)
+  # # 1512
+  echo $decodeString(&quot;$32\r\nHello, World THIS IS REALLY NICE\r\n&quot;)
+  # Hello, World THIS IS REALLY NICE
+  echo decodeString(&quot;*2\r\n+Hello World\r\n:23\r\n&quot;)
+  # @[Hello World, 23]
+  echo decodeString(&quot;*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n\r\n*5\r\n:5\r\n:7\r\n+Hello Word\r\n-Err\r\n$6\r\nfoobar\r\n&quot;)
+  # @[@[1, 2, 3], @[5, 7, Hello Word, Err, foobar]]
+  echo $decodeString(&quot;*4\r\n:51231\r\n$3\r\nfoo\r\n$-1\r\n$3\r\nbar\r\n&quot;)
+  # @[51231, foo, , bar]
+</code></pre>
+<ul>
+<li>able to encode Nim structures representing Redis values into RESP</li>
+</ul>
+<pre><code class="language-Nimrod">  echo $encodeValue(RedisValue(kind:vkStr, s:&quot;Hello, World&quot;))
+  # # +Hello, World
+  echo $encodeValue(RedisValue(kind:vkInt, i:341))
+  # # :341
+  echo $encodeValue(RedisValue(kind:vkError, err:&quot;Not found&quot;))
+  # # -Not found
+  echo $encodeValue(RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:&quot;Hello World&quot;), RedisValue(kind:vkInt, i:23)]  ))
+  # #*2
+  # #+Hello World
+  # #:23
+
+  echo $encodeValue(RedisValue(kind:vkBulkStr, bs:&quot;Hello, World THIS IS REALLY NICE&quot;))
+  # #$32
+  # # Hello, World THIS IS REALLY NICE  
+
+</code></pre>
+<a class="header" href="print.html#implementation-10" id="implementation-10"><h2>Implementation</h2></a>
+<a class="header" href="print.html#imports-and-constants" id="imports-and-constants"><h3>Imports and constants</h3></a>
+<p>Let's starts with main imports</p>
+<pre><code>import strformat, strutils, sequtils,
+const CRLF = &quot;\r\n&quot;
+const REDISNIL = &quot;\0\0&quot;
+</code></pre>
+<ul>
+<li>CRLF is really important because lots of the protocol depends on that separator <code>\r\n</code></li>
+<li>REDISNIL <code>\0\0</code> to represent <code>Nil</code> values</li>
+</ul>
+<a class="header" href="print.html#data-types" id="data-types"><h3>Data types</h3></a>
+<p>Again, as in Bencode chapter we will define a variant <code>RedisValue</code> that represents All redis datatypes <code>strings, errors, bulkstrings, ints, arrays</code></p>
+<pre><code class="language-Nimrod">
+  ValueKind = enum
+    vkStr, vkError, vkInt, vkBulkStr, vkArray
+
+  RedisValue* = ref object
+    case kind*: ValueKind
+    of vkStr: s*: string
+    of vkError : err*: string
+    of vkInt: i*: int
+    of vkBulkStr: bs*: string
+    of vkArray: l*: seq[RedisValue]
+
+</code></pre>
+<p>Let's add <code>$</code>, <code>hash</code>, <code>==</code> procedures</p>
+<pre><code class="language-Nimrod">
+proc `$`*(obj: RedisValue): string = 
+  case obj.kind
+    of vkStr : return  fmt&quot;{$(obj.s)}&quot;
+    of vkBulkStr: return fmt&quot;{$(obj.bs)}&quot;
+    of vkInt : return fmt&quot;{$(obj.i)}&quot;
+    of vkArray: return fmt&quot;{$(obj.l)}&quot;
+    of vkError: return fmt&quot;{$(obj.err)}&quot;
+
+proc hash*(obj: RedisValue): Hash = 
+  case obj.kind
+  of vkStr : !$(hash(obj.s))
+  of vkBulkStr: !$(hash(obj.bs))
+  of vkInt : !$(hash(obj.i))
+  of vkArray: !$(hash(obj.l))
+  of vkError: !$(hash(obj.err))
+
+proc `==`* (a, b: RedisValue): bool =
+  ## Check two nodes for equality
+  if a.isNil:
+      if b.isNil: return true
+      return false
+  elif b.isNil or a.kind != b.kind:
+      return false
+  else:
+      case a.kind
+      of vkStr:
+          result = a.s == b.s
+      of vkBulkStr:
+          result = a.s == b.s
+      of vkInt:
+          result = a.i == b.i
+      of vkArray:
+          result = a.l == b.l
+          result = true
+      of vkError:
+          result = a.err == b.err
+  return false
+
+</code></pre>
+<a class="header" href="print.html#encoder" id="encoder"><h3>Encoder</h3></a>
+<p>Encoding is just converting the variant <code>RedisValue</code> to the correct representation according to RESP</p>
+<a class="header" href="print.html#encode-simple-strings" id="encode-simple-strings"><h4>Encode simple strings</h4></a>
+<p>To encode simple strings specs says <code>OK</code> should be <code>+OK\r\n</code></p>
+<pre><code class="language-Nimrod">
+proc encodeStr(v: RedisValue) : string =
+  return fmt&quot;+{v.s}{CRLF}&quot;
+</code></pre>
+<a class="header" href="print.html#encode-errors" id="encode-errors"><h4>Encode Errors</h4></a>
+<p>To encode errors we should precede it with <code>-</code> and end it with <code>\r\n</code>. So <code>Notfound</code> should be encoded as <code>-Notfound\r\n</code></p>
+<pre><code class="language-Nimrod">proc encodeErr(v: RedisValue) : string =
+  return fmt&quot;-{v.err}{CRLF}&quot;
+</code></pre>
+<a class="header" href="print.html#encode-ints" id="encode-ints"><h4>Encode Ints</h4></a>
+<p>Ints are encoded <code>:NUM\r\n</code> so 95 is <code>:95\r\n</code></p>
+<pre><code class="language-Nimrod">proc encodeInt(v: RedisValue) : string =
+  return fmt&quot;:{v.i}{CRLF}&quot;
+</code></pre>
+<a class="header" href="print.html#encode-bulkstrings" id="encode-bulkstrings"><h4>Encode Bulkstrings</h4></a>
+<p>From RESP page</p>
+<pre><code>Bulk Strings are used in order to represent a single binary safe string up to 512 MB in length.
+
+Bulk Strings are encoded in the following way:
+
+A &quot;$&quot; byte followed by the number of bytes composing the string (a prefixed length), terminated by CRLF.
+The actual string data.
+A final CRLF.
+So the string &quot;foobar&quot; is encoded as follows:
+
+&quot;$6\r\nfoobar\r\n&quot;
+When an empty string is just:
+
+&quot;$0\r\n\r\n&quot;
+RESP Bulk Strings can also be used in order to signal non-existence of a value using a special format that is used to represent a Null value. In this special format the length is -1, and there is no data, so a Null is represented as:
+
+&quot;$-1\r\n&quot;
+</code></pre>
+<pre><code class="language-Nimrod">proc encodeBulkStr(v: RedisValue) : string =
+  return fmt&quot;${v.bs.len}{CRLF}{v.bs}{CRLF}&quot;
+
+</code></pre>
+<a class="header" href="print.html#encode-arrays" id="encode-arrays"><h4>Encode Arrays</h4></a>
+<p>To encode an array we do <code>*</code> followed by array length then <code>\r\n</code> then encode each element then end the array encoding with <code>\r\n</code></p>
+<ul>
+<li>As we are calling <code>encode</code> <code>we should forward declared it</code></li>
+</ul>
+<pre><code class="language-Nimrod">
+proc encode*(v: RedisValue) : string 
+proc encodeArray(v: RedisValue): string = 
+  var res = &quot;*&quot; &amp; $len(v.l) &amp; CRLF
+  for el in v.l:
+    res &amp;= encode(el)
+  res &amp;= CRLF
+  return res
+
+</code></pre>
+<p>So for instance to encode <code>encodeValue(RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:&quot;Hello World&quot;), RedisValue(kind:vkInt, i:23)] ))</code>
+The result should be</p>
+<pre><code>*2\r\n
++Hello World\r\n
+:23\r\n
+\r\n
+</code></pre>
+<a class="header" href="print.html#encode-any-data-type" id="encode-any-data-type"><h4>Encode any data type</h4></a>
+<p>Here we switch on the passed variant and dispatch the encoding to the reasonable encoder.</p>
+<pre><code class="language-Nimrod">proc encode*(v: RedisValue) : string =
+  case v.kind 
+  of vkStr: return encodeStr(v)
+  of vkInt:    return encodeInt(v)
+  of vkError:  return encodeErr(v)
+  of vkBulkStr: return encodeBulkStr(v)
+  of vkArray: return encodeArray(v)
+
+</code></pre>
+<a class="header" href="print.html#decoder" id="decoder"><h3>Decoder</h3></a>
+<p>Decoding is converting RESP representation into the correct Nim structures <code>RedisValue</code>, Basically the reverse of what we did in the previous chapter</p>
+<p>Please note: Basic strategy is Returning the <code>RedisValue</code> and the <code>length of processed characters</code></p>
+<a class="header" href="print.html#decode-simple-string" id="decode-simple-string"><h4>Decode simple string</h4></a>
+<pre><code class="language-Nimrod">proc decodeStr(s: string): (RedisValue, int) =
+  let crlfpos = s.find(CRLF)
+  return (RedisValue(kind:vkStr, s:s[1..crlfpos-1]), crlfpos+len(CRLF))
+</code></pre>
+<p>So, Here we are creating RedisValue of kind <code>vkStr</code> of the string between <code>+</code> and <code>\r\n</code></p>
+<a class="header" href="print.html#decode-errors" id="decode-errors"><h4>Decode errors</h4></a>
+<pre><code class="language-Nimrod">proc decodeError(s: string): (RedisValue, int) =
+  let crlfpos = s.find(CRLF)
+  return (RedisValue(kind:vkError, err:s[1..crlfpos-1]), crlfpos+len(CRLF))
+</code></pre>
+<p>Here we are creating RedisValue of kind <code>vkError</code> of the string between <code>-</code> and <code>\r\n</code></p>
+<a class="header" href="print.html#decode-ints" id="decode-ints"><h4>Decode ints</h4></a>
+<p>Nums as we said are the values between <code>:</code> and <code>\r\n</code> so we <code>parseInt</code> of the characters between <code>:</code> and <code>\r\n</code> and create RedisValue of kind <code>vkInt</code> with that parsed int.</p>
+<pre><code class="language-Nimrod">proc decodeInt(s: string): (RedisValue, int) =
+  var i: int
+  let crlfpos = s.find(CRLF)
+  let sInt = s[1..crlfpos-1]
+  if sInt.isDigit():
+    i = parseInt(sInt)
+  return (RedisValue(kind:vkInt, i:i), crlfpos+len(CRLF))
+</code></pre>
+<a class="header" href="print.html#decode-bulkstrings" id="decode-bulkstrings"><h4>Decode bulkstrings</h4></a>
+<p>Bulkstrings are between <code>$</code> followed by the string length and <code>\r\n</code></p>
+<ul>
+<li>string length == 0: empty string</li>
+<li>string length == -1: nil</li>
+<li>string length &gt; 0: string with data</li>
+</ul>
+<pre><code class="language-Nimrod">
+proc decodeBulkStr(s:string): (RedisValue, int) = 
+  let crlfpos = s.find(CRLF)
+  var bulklen = 0
+  let slen = s[1..crlfpos-1]
+  bulklen = parseInt(slen)
+  var bulk: string
+  if bulklen == -1:
+      bulk = nil
+      return (RedisValue(kind:vkBulkStr, bs:REDISNIL), crlfpos+len(CRLF))
+  else:
+    let nextcrlf = s.find(CRLF, crlfpos+len(CRLF))
+    bulk = s[crlfpos+len(CRLF)..nextcrlf-1] 
+    return (RedisValue(kind:vkBulkStr, bs:bulk), nextcrlf+len(CRLF))
+</code></pre>
+<a class="header" href="print.html#decode-arrays" id="decode-arrays"><h4>Decode arrays</h4></a>
+<p>This is the trickiest part is to decode array</p>
+<ul>
+<li>first we need to get the length between <code>*</code> and <code>\r\n</code></li>
+<li>then decode objects <code>array length</code> times, and add them to <code>arr</code></li>
+<li>As we are calling <code>decode</code> <code>we should forward declared it</code></li>
+</ul>
+<pre><code class="language-Nimrod">proc decode(s: string): (RedisValue, int)
+proc decodeArray(s: string): (RedisValue, int) =
+  var arr = newSeq[RedisValue]()
+  var arrlen = 0
+  var crlfpos = s.find(CRLF)
+  var arrlenStr = s[1..crlfpos-1]
+  if arrlenStr.isDigit():
+     arrlen = parseInt(arrlenStr)
+  
+  var nextobjpos = s.find(CRLF)+len(CRLF)
+  var i = nextobjpos 
+  
+  if arrlen == -1:
+    
+    return (RedisValue(kind:vkArray, l:arr), i)
+  
+  while i &lt; len(s) and len(arr) &lt; arrlen:
+    var pair = decode(s[i..len(s)])
+    var obj = pair[0]
+    arr.add(obj)
+    i += pair[1]
+  return (RedisValue(kind:vkArray, l:arr), i+len(CRLF))
+</code></pre>
+<p>So this RESP</p>
+<pre><code>*2\r\n
++Hello World\r\n
+:23\r\n
+\r\n
+</code></pre>
+<p>Should be decoded to <code>RedisValue(kind:vkArray, l: @[RedisValue(kind:vkStr, s:&quot;Hello World&quot;), RedisValue(kind:vkInt, i:23)] )</code></p>
+<a class="header" href="print.html#decode-any-object" id="decode-any-object"><h4>Decode any object</h4></a>
+<p>Based on the first character we dispatch to the correct decoder then we skip <code>the processed count</code> in the string to decode the next object.</p>
+<pre><code class="language-Nimrod">proc decode(s: string): (RedisValue, int) =
+  var i = 0 
+  while i &lt; len(s):
+    var curchar = $s[i]
+    if curchar == &quot;+&quot;:
+      var pair = decodeStr(s[i..s.find(CRLF, i)+len(CRLF)])
+      var obj =  pair[0]
+      var count =  pair[1]
+      i += count
+      return (obj, i)
+    elif curchar == &quot;-&quot;:
+      var pair = decodeError(s[i..s.find(CRLF, i)+len(CRLF)])
+      var obj =  pair[0]
+      var count =  pair[1]
+      i += count
+      return (obj, i)
+    elif curchar == &quot;$&quot;:
+      var pair = decodeBulkStr(s[i..len(s)])
+      var obj =  pair[0]
+      var count =  pair[1]
+      i += count
+      return (obj, i)
+    elif curchar == &quot;:&quot;:
+      var pair = decodeInt(s[i..s.find(CRLF, i)+len(CRLF)])
+      var obj =  pair[0]
+      var count =  pair[1]
+      i += count
+      return (obj, i)
+    elif curchar == &quot;*&quot;:
+      var pair = decodeArray(s[i..len(s)])
+      let obj = pair[0]
+      let count =  pair[1]
+      i += count 
+      return (obj, i)
+    else:
+      echo fmt&quot;Unrecognized char {curchar}&quot;
+      break
+</code></pre>
+<a class="header" href="print.html#preparing-commands" id="preparing-commands"><h3>Preparing commands</h3></a>
+<p>In redis, commands are sent as List of <code>RedisValues</code></p>
+<p>so <code>GET USER</code> is converted to <code>*2\r\n$3\r\nGET\r\n$4\r\nUSER\r\n\r\n</code></p>
+<pre><code class="language-Nimrod">proc prepareCommand*(this: Redis, command: string, args:seq[string]): string =
+  let cmdArgs = concat(@[command], args)
+  var cmdAsRedisValues = newSeq[RedisValue]()
+  for cmd in cmdArgs:
+    cmdAsRedisValues.add(RedisValue(kind:vkBulkStr, bs:cmd))
+  var arr = RedisValue(kind:vkArray, l: cmdAsRedisValues)
+
+  return encode(arr)
+</code></pre>
+<a class="header" href="print.html#nim-resp" id="nim-resp"><h3>nim-resp</h3></a>
+<p>That day is based on <a href="https://github.com/xmonader/nim-resp">nim-resp</a> project, and on-going effort to create a redis client in Nim, it supports pipelining feature and all of the previous code. Feel free to send PRs or open issues </p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                window.print();
+            })
+        </script>
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
+</html>

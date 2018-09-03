@@ -1,353 +1,526 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <link href="stylesheets/pygments.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/softcover.css" media="screen" rel="stylesheet" type="text/css" />
-    <link href="stylesheets/custom.css" media="screen" rel="stylesheet" type="text/css" />
-    
-    <title>nimdays</title>
-    
-      <script type="text/x-mathjax-config">
-              MathJax.Hub.Config({
-        "HTML-CSS": {
-          availableFonts: ["TeX"],
-        },
-        TeX: {
-          extensions: ["AMSmath.js", "AMSsymbols.js", "color.js"],
-          equationNumbers: {
-            autoNumber: "AMS",
-            formatNumber: function (n) { return "2" + '.' + n }
-          },
-          Macros: {
-            PolyTeX:    "Poly{\\TeX}",
-            PolyTeXnic: "Poly{\\TeX}nic",
-            "softcover": "\\texttt{softcover}",
-"unitvec": ["{\\hat #1}", 1]
-          }
-        },
-        showProcessingMessages: false,
-        messageStyle: "none",
-        imageFont: null,
-        "AssistiveMML": { disabled: true }
-      });
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 2: Parsing Bencode - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
 
-        if (/PhantomJS/.test(window.navigator.userAgent)) {
-          MathJax.Hub.Queue([alert, 'MathJax Done']);
-        }
-      </script>
-      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_SVG"></script>
-    
-  </head>
-  <body>
-    
-    <div id="book">
-      <div id="cid4" data-tralics-id="cid4" class="chapter" data-number="2" data-chapter="day2_bencode"><h1><a href="day2_bencode.html#cid4" class="heading hyperref"><span class="number">Chapter 2 </span>Day 2: Parsing Bencode</a></h1>
-<p class="noindent">nim-bencode is a library to encode/decode torrent files <a href="https://en.wikipedia.org/wiki/Bencode" target="_blank" rel="noopener">Bencode</a></p>
-</div>
-<div id="cid5" data-tralics-id="cid5" class="section" data-number="2.1"><h2><a href="day2_bencode.html#cid5" class="heading hyperref"><span class="number">2.1 </span>What to expect?</a></h2>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="n">bencode</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">strformat</span>
+        <base href="">
 
-<span class="k">let</span> <span class="n">encoder</span> <span class="o">=</span> <span class="n">newEncoder</span><span class="p">()</span>
-<span class="k">let</span> <span class="n">decoder</span> <span class="o">=</span> <span class="n">newDecoder</span><span class="p">()</span>
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
-<span class="k">let</span> <span class="n">btListSample1</span> <span class="o">=</span> <span class="o">@[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btInt</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="mi">1</span><span class="p">),</span> <span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"hi"</span><span class="p">)</span> <span class="o">]</span>
-<span class="kd">var</span> <span class="n">btDictSample1</span> <span class="o">=</span> <span class="n">initOrderedTable</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">,</span> <span class="n">BencodeType</span><span class="o">]</span><span class="p">()</span>
-<span class="n">btDictSample1</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"name"</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"dmdm"</span><span class="p">)</span>
-<span class="n">btDictSample1</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"lang"</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"nim"</span><span class="p">)</span>
-<span class="n">btDictSample1</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"age"</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btInt</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="mi">50</span><span class="p">)</span>
-<span class="n">btDictSample1</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"alist"</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btList</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="n">btListSample1</span><span class="p">)</span>
+        <link rel="shortcut icon" href="favicon.png">
 
-<span class="kd">var</span> <span class="n">testObjects</span> <span class="o">=</span> <span class="n">initOrderedTable</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">,</span> <span class="kt">string</span><span class="o">]</span><span class="p">()</span>
-<span class="n">testObjects</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"hello"</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="s">"5:hello"</span>
-<span class="n">testObjects</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"yes"</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="s">"3:yes"</span>
-<span class="n">testObjects</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">btInt</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="mi">55</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="s">"i55e"</span>
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
-<span class="n">testObjects</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">btInt</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="mi">12345</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="s">"i12345e"</span>
-<span class="n">testObjects</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">btList</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="n">btListSample1</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="s">"li1e2:hie"</span>
-<span class="n">testObjects</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btDict</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span><span class="n">btDictSample1</span><span class="p">)</span><span class="o">]</span> <span class="o">=</span> <span class="s">"d4:name4:dmdm4:lang3:nim3:agei50e5:alistli1e2:hiee"</span>
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <noscript>
+            <style type="text/css">
+                .javascript-only {
+                    display: none;
+                }
+            </style>
+        </noscript>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="day1_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day2_bencode.html" class="active">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day3_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day4_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day5_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day6_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day7_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day8_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day9_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons javascript-only">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </div>
+                <div id="searchresults-outer" class="searchresults-outer">
+                    <div class="searchresults-header" id="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="day2_bencode.html#day-2-parsing-bencode" id="day-2-parsing-bencode"><h1>Day 2: Parsing Bencode</h1></a>
+<p>nim-bencode is a library to encode/decode torrent files <a href="https://en.wikipedia.org/wiki/Bencode">Bencode</a></p>
+<a class="header" href="day2_bencode.html#what-to-expect" id="what-to-expect"><h2>What to expect?</h2></a>
+<pre><code class="language-Nimrod">import bencode, tables, strformat
+
+let encoder = newEncoder()
+let decoder = newDecoder()
+
+let btListSample1 = @[BencodeType(kind:btInt, i:1), BencodeType(kind:btString, s:&quot;hi&quot;) ]
+var btDictSample1 = initOrderedTable[BencodeType, BencodeType]()
+btDictSample1[BencodeType(kind:btString, s:&quot;name&quot;)] = BencodeType(kind:btString, s:&quot;dmdm&quot;)
+btDictSample1[BencodeType(kind:btString, s:&quot;lang&quot;)] = BencodeType(kind:btString, s:&quot;nim&quot;)
+btDictSample1[BencodeType(kind:btString, s:&quot;age&quot;)] = BencodeType(kind:btInt, i:50)
+btDictSample1[BencodeType(kind:btString, s:&quot;alist&quot;)] = BencodeType(kind:btList, l:btListSample1)
+
+var testObjects = initOrderedTable[BencodeType, string]()
+testObjects[BencodeType(kind: btString, s:&quot;hello&quot;)] = &quot;5:hello&quot;
+testObjects[BencodeType(kind: btString, s:&quot;yes&quot;)] = &quot;3:yes&quot;
+testObjects[BencodeType(kind: btInt, i:55)] = &quot;i55e&quot;
+
+testObjects[BencodeType(kind: btInt, i:12345)] = &quot;i12345e&quot;
+testObjects[BencodeType(kind: btList, l:btListSample1)] = &quot;li1e2:hie&quot;
+testObjects[BencodeType(kind:btDict, d:btDictSample1)] = &quot;d4:name4:dmdm4:lang3:nim3:agei50e5:alistli1e2:hiee&quot;
 
 
-<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">testObjects</span><span class="p">.</span><span class="n">pairs</span><span class="p">():</span>
-    <span class="n">echo</span> <span class="o">$</span><span class="n">k</span> <span class="o">&amp;</span> <span class="s">" =&gt; "</span> <span class="o">&amp;</span> <span class="o">$</span><span class="n">v</span>
-    <span class="n">doAssert</span><span class="p">(</span><span class="n">encoder</span><span class="p">.</span><span class="n">encodeObject</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span><span class="p">)</span>
-    <span class="n">doAssert</span><span class="p">(</span><span class="n">decoder</span><span class="p">.</span><span class="n">decodeObject</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="n">k</span><span class="p">)</span>
-</pre></div></div>
-</div>
-<div id="cid6" data-tralics-id="cid6" class="section" data-number="2.2"><h2><a href="day2_bencode.html#cid6" class="heading hyperref"><span class="number">2.2 </span>Implementation</a></h2>
-<p class="noindent">So according to Bencode we have some datatypes
-- strings and those are encoded with the string length followed by a colon and the string itself <code>length:string</code>, e.g yes will be encoded into <code>3:yes</code>
-- ints those are encoded between <code>i</code>, <code>e</code> letters, e.g 59 will be encoded into <code>i59e</code>
-- lists can contain any of the bencode types and it’s encoded with <code>l</code>, <code>e</code>, e.g list of 1, 2 numbers is encoded into <code>li1ei2e</code> or with spaces for verbosity <code>l i1e i2e e</code>
-- dicts are mapping from strings to any type and encoded between letters <code>d</code>, <code>e</code>, e.g name =&gt; hi and num =&gt; 3 is encoded into <code>d4:name2:hi3:numi3ee</code> or with spaces for verbosity <code>d 4:name 2:hi 3:num i3e e</code></p>
-<div id="uid21" data-tralics-id="uid21" class="subsection" data-number="2.2.1"><h3><a href="day2_bencode.html#uid21" class="heading hyperref"><span class="number">2.2.1 </span>Imports</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="n">strformat</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">json</span><span class="p">,</span> <span class="n">strutils</span><span class="p">,</span> <span class="n">hashes</span>
-</pre></div></div>
+for k, v in testObjects.pairs():
+    echo $k &amp; &quot; =&gt; &quot; &amp; $v
+    doAssert(encoder.encodeObject(k) == v)
+    doAssert(decoder.decodeObject(v) == k)
+
+</code></pre>
+<a class="header" href="day2_bencode.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<p>So according to Bencode we have some datatypes</p>
+<ul>
+<li>strings and those are encoded with the string length followed by a colon and the string itself <code>length:string</code>, e.g yes will be encoded into <code>3:yes</code></li>
+<li>ints those are encoded between <code>i</code>, <code>e</code> letters, e.g 59 will be encoded into <code>i59e</code></li>
+<li>lists can contain any of the bencode types and it's encoded with <code>l</code>, <code>e</code>,  e.g list of 1, 2 numbers is encoded into <code>li1ei2e</code> or with spaces for verbosity <code>l i1e i2e e</code></li>
+<li>dicts are mapping from strings to any type and encoded between letters <code>d</code>, <code>e</code>, e.g name =&gt; hi and num =&gt; 3 is encoded into <code>d4:name2:hi3:numi3ee</code> or with spaces for verbosity <code>d 4:name 2:hi 3:num i3e e</code></li>
+</ul>
+<a class="header" href="day2_bencode.html#imports" id="imports"><h3>Imports</h3></a>
+<pre><code class="language-Nimrod">import strformat, tables, json, strutils, hashes
+</code></pre>
 <p>As we will be dealing a lot with strings, tables</p>
-</div>
-<div id="uid22" data-tralics-id="uid22" class="subsection" data-number="2.2.2"><h3><a href="day2_bencode.html#uid22" class="heading hyperref"><span class="number">2.2.2 </span>Types</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">type</span> 
-    <span class="n">BencodeKind</span><span class="o">*</span> <span class="o">=</span> <span class="k">enum</span>
-        <span class="n">btString</span><span class="p">,</span> <span class="n">btInt</span><span class="p">,</span> <span class="n">btList</span><span class="p">,</span> <span class="n">btDict</span>
-</pre></div></div>
+<a class="header" href="day2_bencode.html#types" id="types"><h3>Types</h3></a>
+<pre><code class="language-Nimrod">type 
+    BencodeKind* = enum
+        btString, btInt, btList, btDict
+</code></pre>
 <p>So as we mentioned about bencode data types we can define an enum to represents the kinds</p>
-<div class="code"><div class="highlight"><pre><span></span>    <span class="n">BencodeType</span><span class="o">*</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
-        <span class="k">case</span> <span class="n">kind</span><span class="o">*</span><span class="p">:</span> <span class="n">BencodeKind</span> 
-        <span class="k">of</span> <span class="n">BencodeKind</span><span class="p">.</span><span class="n">btString</span><span class="p">:</span> <span class="n">s</span><span class="o">*</span> <span class="p">:</span> <span class="kt">string</span> 
-        <span class="k">of</span> <span class="n">BencodeKind</span><span class="p">.</span><span class="n">btInt</span><span class="p">:</span> <span class="n">i</span><span class="o">*</span>    <span class="p">:</span> <span class="kt">int</span>
-        <span class="k">of</span> <span class="n">BencodeKind</span><span class="p">.</span><span class="n">btList</span><span class="p">:</span> <span class="n">l</span><span class="o">*</span>   <span class="p">:</span> <span class="kt">seq</span><span class="o">[</span><span class="n">BencodeType</span><span class="o">]</span>
-        <span class="k">of</span> <span class="n">BencodeKind</span><span class="p">.</span><span class="n">btDict</span><span class="p">:</span> <span class="n">d</span><span class="o">*</span>  <span class="p">:</span> <span class="n">OrderedTable</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">,</span> <span class="n">BencodeType</span><span class="o">]</span>
+<pre><code class="language-Nimrod">    BencodeType* = ref object
+        case kind*: BencodeKind 
+        of BencodeKind.btString: s* : string 
+        of BencodeKind.btInt: i*    : int
+        of BencodeKind.btList: l*   : seq[BencodeType]
+        of BencodeKind.btDict: d*  : OrderedTable[BencodeType, BencodeType]
 
-    <span class="n">Encoder</span><span class="o">*</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
-    <span class="n">Decoder</span><span class="o">*</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span> 
-</pre></div></div>
+    Encoder* = ref object
+    Decoder* = ref object 
+</code></pre>
 <ul>
-<li><code>Encoder</code> a simple class to represent encoding operations
-</li>
-<li><code>Decoder</code> a simple class to represent decoding operations
-</li>
-<li>For <code>BencodeType</code> we make use of variant objects <code>case classes</code> in other languages.<span class="intersentencespace"></span> worth noticing variant objects are the same technique used for <code>json</code> module.<span class="intersentencespace"></span>
-</li></ul>
+<li><code>Encoder</code> a simple class to represent encoding operations</li>
+<li><code>Decoder</code> a simple class to represent decoding operations</li>
+<li>For <code>BencodeType</code> we make use of variant objects <code>case classes</code> in other languages. worth noticing variant objects are the same technique used for <code>json</code> module.</li>
+</ul>
 <p>So we can use it like this</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"hello"</span><span class="p">)</span>
-<span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">btInt</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="mi">55</span><span class="p">)</span>
-<span class="k">let</span> <span class="n">btListSample1</span> <span class="o">=</span> <span class="o">@[</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btInt</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="mi">1</span><span class="p">),</span> <span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span><span class="s">"hi"</span><span class="p">)</span> <span class="o">]</span>
-<span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span> <span class="n">btList</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="n">btListSample1</span><span class="p">)</span>
-</pre></div></div>
+<pre><code class="language-Nimrod">BencodeType(kind: btString, s:&quot;hello&quot;)
+BencodeType(kind: btInt, i:55)
+let btListSample1 = @[BencodeType(kind:btInt, i:1), BencodeType(kind:btString, s:&quot;hi&quot;) ]
+BencodeType(kind: btList, l:btListSample1)
+</code></pre>
 <p>So general rule for the case classes is you have a kind defined in an enum and a constructor value u create the object with.</p>
-<p>If you’re coming from Haskell or a similar language</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="kr">data</span> <span class="kt">BValue</span> <span class="ow">=</span> <span class="kt">BInt</span> <span class="kt">Integer</span>
-            <span class="o">|</span> <span class="kt">BStr</span> <span class="kt">B</span><span class="o">.</span><span class="kt">ByteString</span>
-            <span class="o">|</span> <span class="kt">BList</span> <span class="p">[</span><span class="kt">BValue</span><span class="p">]</span>
-            <span class="o">|</span> <span class="kt">BDict</span> <span class="p">(</span><span class="kt">M</span><span class="o">.</span><span class="kt">Map</span> <span class="kt">BValue</span> <span class="kt">BValue</span><span class="p">)</span>
-            <span class="kr">deriving</span> <span class="p">(</span><span class="kt">Show</span><span class="p">,</span> <span class="kt">Eq</span><span class="p">,</span> <span class="kt">Ord</span><span class="p">)</span>
-</pre></div></div>
+<p>If you're coming from Haskell or a similar language</p>
+<pre><code class="language-haskell">data BValue = BInt Integer
+            | BStr B.ByteString
+            | BList [BValue]
+            | BDict (M.Map BValue BValue)
+            deriving (Show, Eq, Ord)
+</code></pre>
 <p>Please, note if you define your own variant you should define <code>hash</code>, <code>==</code> procs to be able to compare or hash the values.</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">hash</span><span class="o">*</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">BencodeType</span><span class="p">):</span> <span class="n">Hash</span> <span class="o">=</span> 
-    <span class="k">case</span> <span class="n">obj</span><span class="p">.</span><span class="n">kind</span>
-    <span class="k">of</span> <span class="n">btString</span> <span class="p">:</span> <span class="o">!$</span><span class="p">(</span><span class="n">hash</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">s</span><span class="p">))</span>
-    <span class="k">of</span> <span class="n">btInt</span> <span class="p">:</span> <span class="o">!$</span><span class="p">(</span><span class="n">hash</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">i</span><span class="p">))</span>
-    <span class="k">of</span> <span class="n">btList</span><span class="p">:</span> <span class="o">!$</span><span class="p">(</span><span class="n">hash</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">l</span><span class="p">))</span>
-    <span class="k">of</span> <span class="n">btDict</span><span class="p">:</span> 
-        <span class="kd">var</span> <span class="n">h</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">.</span><span class="n">d</span><span class="p">.</span><span class="n">pairs</span><span class="p">:</span>
-            <span class="n">h</span> <span class="o">=</span> <span class="n">hash</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">!&amp;</span> <span class="n">hash</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
-        <span class="o">!$</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
-</pre></div></div>
+<pre><code class="language-Nimrod">proc hash*(obj: BencodeType): Hash = 
+    case obj.kind
+    of btString : !$(hash(obj.s))
+    of btInt : !$(hash(obj.i))
+    of btList: !$(hash(obj.l))
+    of btDict: 
+        var h = 0
+        for k, v in obj.d.pairs:
+            h = hash(k) !&amp; hash(v)
+        !$(h)
+</code></pre>
 <ul>
-<li><code>hash</code> proc returns <code>Hash</code> and depending on the <code>kind</code> we return the hash of the underlying stored objects, strings, ints, lists or calculate a new hash if needed
-</li>
-<li><code>!&amp;</code> consider it like merging the two hashes together
-</li>
-<li><code>!$</code> is used to finalize the Hash object
-</li></ul>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">`==`</span><span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">BencodeType</span><span class="p">):</span> <span class="kt">bool</span> <span class="o">=</span>
-    <span class="sd">## Check two nodes for equality</span>
-    <span class="k">if</span> <span class="n">a</span><span class="p">.</span><span class="n">isNil</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">b</span><span class="p">.</span><span class="n">isNil</span><span class="p">:</span> <span class="k">return</span> <span class="kp">true</span>
-        <span class="k">return</span> <span class="kp">false</span>
-    <span class="k">elif</span> <span class="n">b</span><span class="p">.</span><span class="n">isNil</span> <span class="ow">or</span> <span class="n">a</span><span class="p">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="n">b</span><span class="p">.</span><span class="n">kind</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kp">false</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">case</span> <span class="n">a</span><span class="p">.</span><span class="n">kind</span>
-        <span class="k">of</span> <span class="n">btString</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">s</span> <span class="o">==</span> <span class="n">b</span><span class="p">.</span><span class="n">s</span>
-        <span class="k">of</span> <span class="n">btInt</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">i</span> <span class="o">==</span> <span class="n">b</span><span class="p">.</span><span class="n">i</span>
-        <span class="k">of</span> <span class="n">btList</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">a</span><span class="p">.</span><span class="n">l</span> <span class="o">==</span> <span class="n">b</span><span class="p">.</span><span class="n">l</span>
-        <span class="k">of</span> <span class="n">btDict</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">a</span><span class="p">.</span><span class="n">d</span><span class="p">.</span><span class="n">len</span> <span class="o">!=</span> <span class="n">b</span><span class="p">.</span><span class="n">d</span><span class="p">.</span><span class="n">len</span><span class="p">:</span> <span class="k">return</span> <span class="kp">false</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">a</span><span class="p">.</span><span class="n">d</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="n">b</span><span class="p">.</span><span class="n">d</span><span class="p">.</span><span class="n">hasKey</span><span class="p">(</span><span class="n">key</span><span class="p">):</span> <span class="k">return</span> <span class="kp">false</span>
-                <span class="k">if</span> <span class="n">b</span><span class="p">.</span><span class="n">d</span><span class="o">[</span><span class="n">key</span><span class="o">]</span> <span class="o">!=</span> <span class="n">val</span><span class="p">:</span> <span class="k">return</span> <span class="kp">false</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="kp">true</span>
-</pre></div></div>
-<p>define equality operator on BencodeTypes to determine when they’re equal by defining proc for operator <code>==</code></p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">`$`</span><span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">BencodeType</span><span class="p">):</span> <span class="kt">string</span> <span class="o">=</span> 
-    <span class="k">case</span> <span class="n">a</span><span class="p">.</span><span class="n">kind</span>
-    <span class="k">of</span> <span class="n">btString</span><span class="p">:</span>  <span class="n">fmt</span><span class="p">(</span><span class="s">"&lt;Bencode {a.s}&gt;"</span><span class="p">)</span>
-    <span class="k">of</span> <span class="n">btInt</span><span class="p">:</span> <span class="n">fmt</span><span class="p">(</span><span class="s">"&lt;Bencode {a.i}&gt;"</span><span class="p">)</span>
-    <span class="k">of</span> <span class="n">btList</span><span class="p">:</span> <span class="n">fmt</span><span class="p">(</span><span class="s">"&lt;Bencode {a.l}&gt;"</span><span class="p">)</span>
-    <span class="k">of</span> <span class="n">btDict</span><span class="p">:</span> <span class="n">fmt</span><span class="p">(</span><span class="s">"&lt;Bencode {a.d}"</span><span class="p">)</span>
-</pre></div></div>
+<li><code>hash</code> proc returns <code>Hash</code>  and depending on the <code>kind</code> we return the hash of the underlying stored objects, strings, ints, lists or calculate a new hash if needed</li>
+<li><code>!&amp;</code> consider it like merging the two hashes together</li>
+<li><code>!$</code> is used to finalize the Hash object</li>
+</ul>
+<pre><code class="language-Nimrod">proc `==`* (a, b: BencodeType): bool =
+    ## Check two nodes for equality
+    if a.isNil:
+        if b.isNil: return true
+        return false
+    elif b.isNil or a.kind != b.kind:
+        return false
+    else:
+        case a.kind
+        of btString:
+            result = a.s == b.s
+        of btInt:
+            result = a.i == b.i
+        of btList:
+            result = a.l == b.l
+        of btDict:
+            if a.d.len != b.d.len: return false
+            for key, val in a.d:
+                if not b.d.hasKey(key): return false
+                if b.d[key] != val: return false
+            result = true
+</code></pre>
+<p>define equality operator on BencodeTypes to determine when they're equal by defining proc for operator <code>==</code></p>
+<pre><code class="language-Nimrod">proc `$`* (a: BencodeType): string = 
+    case a.kind
+    of btString:  fmt(&quot;&lt;Bencode {a.s}&gt;&quot;)
+    of btInt: fmt(&quot;&lt;Bencode {a.i}&gt;&quot;)
+    of btList: fmt(&quot;&lt;Bencode {a.l}&gt;&quot;)
+    of btDict: fmt(&quot;&lt;Bencode {a.d}&quot;)
+</code></pre>
 <p>Define a simple <code>toString</code> proc using the <code>$</code> operator.</p>
-</div>
-<div id="uid29" data-tralics-id="uid29" class="subsection" data-number="2.2.3"><h3><a href="day2_bencode.html#uid29" class="heading hyperref"><span class="number">2.2.3 </span>Encoding</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">encode</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span>  <span class="n">obj</span><span class="p">:</span> <span class="n">BencodeType</span><span class="p">)</span> <span class="p">:</span> <span class="kt">string</span>
-</pre></div></div>
+<a class="header" href="day2_bencode.html#encoding" id="encoding"><h3>Encoding</h3></a>
+<pre><code class="language-Nimrod">proc encode(this: Encoder,  obj: BencodeType) : string
+</code></pre>
 <p>we add forward declarating to encode proc because to encode a list we might encode another values <code>strings</code>, or even <code>lists</code> so we will recursively call encode if needed, feel free to skip to the next part.</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">encode_s</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="kt">string</span><span class="o">=</span>
-    <span class="c"># TODO: check len</span>
-    <span class="k">return</span> <span class="o">$</span><span class="n">s</span><span class="p">.</span><span class="n">len</span> <span class="o">&amp;</span> <span class="s">":"</span> <span class="o">&amp;</span> <span class="n">s</span>
-</pre></div></div>
+<pre><code class="language-Nimrod">proc encode_s(this: Encoder, s: string) : string=
+    # TODO: check len
+    return $s.len &amp; &quot;:&quot; &amp; s
+</code></pre>
 <p>To encode a string we said we will put encoded with its length + <code>:</code> + string itself</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">encode_i</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="kt">int</span><span class="p">)</span> <span class="p">:</span> <span class="kt">string</span><span class="o">=</span>
-    <span class="c"># TODO: check len</span>
-    <span class="k">return</span> <span class="n">fmt</span><span class="p">(</span><span class="s">"i{i}e"</span><span class="p">)</span> 
-</pre></div></div>
+<pre><code class="language-Nimrod">proc encode_i(this: Encoder, i: int) : string=
+    # TODO: check len
+    return fmt(&quot;i{i}e&quot;) 
+</code></pre>
 <p>To encode an int we put it between <code>i</code>, <code>e</code> chars</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">encode_l</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="kt">seq</span><span class="o">[</span><span class="n">BencodeType</span><span class="o">]</span><span class="p">):</span> <span class="kt">string</span> <span class="o">=</span>
-    <span class="kd">var</span> <span class="n">encoded</span> <span class="o">=</span> <span class="s">"l"</span>
-    <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">l</span><span class="p">:</span>
-        <span class="n">encoded</span> <span class="o">&amp;=</span> <span class="n">this</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">el</span><span class="p">)</span>
-    <span class="n">encoded</span> <span class="o">&amp;=</span> <span class="s">"e"</span>
-    <span class="k">return</span> <span class="n">encoded</span>
-</pre></div></div>
-<p>- To encode a list of elements of type <code>BencodeType</code> we put their encoded values between <code>l</code>, <code>e</code> chars
-- Notice the call to <code>this.encode</code> that’s why we needed the forward declaration.</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">encode_d</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">OrderedTable</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">,</span> <span class="n">BencodeType</span><span class="o">]</span><span class="p">):</span> <span class="kt">string</span> <span class="o">=</span>
-    <span class="kd">var</span> <span class="n">encoded</span> <span class="o">=</span> <span class="s">"d"</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="p">.</span><span class="n">pairs</span><span class="p">():</span>
-        <span class="n">assert</span> <span class="n">k</span><span class="p">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">BencodeKind</span><span class="p">.</span><span class="n">btString</span>
-        <span class="n">encoded</span> <span class="o">&amp;=</span> <span class="n">this</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">this</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<pre><code class="language-Nimrod">proc encode_l(this: Encoder, l: seq[BencodeType]): string =
+    var encoded = &quot;l&quot;
+    for el in l:
+        encoded &amp;= this.encode(el)
+    encoded &amp;= &quot;e&quot;
+    return encoded
+</code></pre>
+<ul>
+<li>To encode a list of elements of type <code>BencodeType</code> we put their encoded values between <code>l</code>, <code>e</code> chars</li>
+<li>Notice the call to <code>this.encode</code> that's why we needed the forward declaration.</li>
+</ul>
+<pre><code class="language-Nimrod">proc encode_d(this: Encoder, d: OrderedTable[BencodeType, BencodeType]): string =
+    var encoded = &quot;d&quot;
+    for k, v in d.pairs():
+        assert k.kind == BencodeKind.btString
+        encoded &amp;= this.encode(k) &amp; this.encode(v)
 
-    <span class="n">encoded</span> <span class="o">&amp;=</span> <span class="s">"e"</span>
-    <span class="k">return</span> <span class="n">encoded</span>
-</pre></div></div>
-<p>- To encode a dict we enclose the encoded value of the pairs between <code>d</code>, <code>e</code>
-- Notice the recursive call to <code>this.encode</code> to the keys and values
-- Notice the assertion the kind of the keys <code>must</code> be a <code>btString</code> according to <code>Bencode</code> specs.</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">encode</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span>  <span class="n">obj</span><span class="p">:</span> <span class="n">BencodeType</span><span class="p">)</span> <span class="p">:</span>  <span class="kt">string</span> <span class="o">=</span>
-    <span class="k">case</span> <span class="n">obj</span><span class="p">.</span><span class="n">kind</span>
-    <span class="k">of</span> <span class="n">BencodeKind</span><span class="p">.</span><span class="n">btString</span><span class="p">:</span>  <span class="n">result</span> <span class="o">=</span><span class="n">this</span><span class="p">.</span><span class="n">encode_s</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">s</span><span class="p">)</span>
-    <span class="k">of</span> <span class="n">BencodeKind</span><span class="p">.</span><span class="n">btInt</span> <span class="p">:</span>  <span class="n">result</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">encode_i</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">i</span><span class="p">)</span>
-    <span class="k">of</span> <span class="n">BencodeKind</span><span class="p">.</span><span class="n">btList</span> <span class="p">:</span> <span class="n">result</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">encode_l</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">l</span><span class="p">)</span>
-    <span class="k">of</span> <span class="n">BencodeKind</span><span class="p">.</span><span class="n">btDict</span> <span class="p">:</span> <span class="n">result</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">encode_d</span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">d</span><span class="p">)</span>
-</pre></div></div>
+    encoded &amp;= &quot;e&quot;
+    return encoded
+</code></pre>
+<ul>
+<li>To encode a dict we enclose the encoded value of the pairs between <code>d</code>, <code>e</code></li>
+<li>Notice the recursive call to <code>this.encode</code> to the keys and values</li>
+<li>Notice the assertion the kind of the keys <code>must</code> be a <code>btString</code> according to <code>Bencode</code> specs.</li>
+</ul>
+<pre><code class="language-Nimrod">proc encode(this: Encoder,  obj: BencodeType) :  string =
+    case obj.kind
+    of BencodeKind.btString:  result =this.encode_s(obj.s)
+    of BencodeKind.btInt :  result = this.encode_i(obj.i)
+    of BencodeKind.btList : result = this.encode_l(obj.l)
+    of BencodeKind.btDict : result = this.encode_d(obj.d)
+</code></pre>
 <p>Simple proxy to encode <code>obj</code> of <code>BencodeType</code></p>
-</div>
-<div id="uid30" data-tralics-id="uid30" class="subsection" data-number="2.2.4"><h3><a href="day2_bencode.html#uid30" class="heading hyperref"><span class="number">2.2.4 </span>Decoding</a></h3>
-<p class="noindent"></p><div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">decode</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Decoder</span><span class="p">,</span>  <span class="n">source</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span>
-</pre></div></div>
+<a class="header" href="day2_bencode.html#decoding" id="decoding"><h3>Decoding</h3></a>
+<pre><code class="language-Nimrod">proc decode(this: Decoder,  source: string) : (BencodeType, int)
+</code></pre>
 <p>Forward declaration for <code>decode</code> same as <code>decode</code></p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">decode_s</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Decoder</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="o">=</span>
-    <span class="k">let</span> <span class="n">lengthpart</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">split</span><span class="p">(</span><span class="s">":"</span><span class="p">)</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-    <span class="k">let</span> <span class="n">sizelength</span> <span class="o">=</span> <span class="n">lengthpart</span><span class="p">.</span><span class="n">len</span>
-    <span class="k">let</span> <span class="n">strlen</span> <span class="o">=</span> <span class="n">parseInt</span><span class="p">(</span><span class="n">lengthpart</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btString</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span><span class="o">[</span><span class="n">sizelength</span><span class="o">+</span><span class="mf">1</span><span class="p">..</span><span class="n">strlen</span><span class="o">+</span><span class="mi">1</span><span class="o">]</span><span class="p">),</span> <span class="n">sizelength</span><span class="o">+</span><span class="mi">1</span><span class="o">+</span><span class="n">strlen</span><span class="p">)</span>
-</pre></div></div>
+<pre><code class="language-Nimrod">proc decode_s(this: Decoder, s: string) : (BencodeType, int) =
+    let lengthpart = s.split(&quot;:&quot;)[0]
+    let sizelength = lengthpart.len
+    let strlen = parseInt(lengthpart)
+    return (BencodeType(kind:btString, s: s[sizelength+1..strlen+1]), sizelength+1+strlen)
+</code></pre>
 <p>Create a BencodeType of after decoding a string <code>reverse operation of encode_s</code>
 Basically and read string of length <code>sizelength</code> after the <code>colon</code> and construct a <code>BencodeType</code> of kind <code>btString</code> out of it</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">decode_i</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Decoder</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="o">=</span>
-    <span class="k">let</span> <span class="n">epos</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="sc">'e'</span><span class="p">)</span>
-    <span class="k">let</span> <span class="n">i</span> <span class="o">=</span> <span class="n">parseInt</span><span class="p">(</span><span class="n">s</span><span class="o">[</span><span class="mf">1</span><span class="p">..</span><span class="o">&lt;</span><span class="n">epos</span><span class="o">]</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btInt</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="p">),</span> <span class="n">epos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
-</pre></div></div>
-<p>Extract the number between <code>i</code>, <code>e</code> chars and construct <code>BencodeType</code> of kind <code>btInt</code> out of it</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">decode_l</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Decoder</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="kt">string</span><span class="p">):</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="o">=</span>
-    <span class="c"># l ... e</span>
-    <span class="kd">var</span> <span class="n">els</span> <span class="o">=</span> <span class="n">newSeq</span><span class="o">[</span><span class="n">BencodeType</span><span class="o">]</span><span class="p">()</span>
-    <span class="kd">var</span> <span class="n">curchar</span> <span class="o">=</span> <span class="n">s</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
-    <span class="kd">var</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">s</span><span class="p">.</span><span class="n">len</span><span class="p">:</span>
-        <span class="n">curchar</span> <span class="o">=</span> <span class="n">s</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span>
-        <span class="k">if</span> <span class="n">curchar</span> <span class="o">==</span> <span class="sc">'e'</span><span class="p">:</span>
-            <span class="n">idx</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">break</span>
-    
-        <span class="k">let</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">s</span><span class="o">[</span><span class="n">idx</span><span class="p">..</span><span class="o">&lt;</span><span class="n">s</span><span class="p">.</span><span class="n">len</span><span class="o">]</span><span class="p">)</span>
-        <span class="k">let</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-        <span class="k">let</span> <span class="n">nextobjpos</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> 
-        <span class="n">els</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-        <span class="n">idx</span> <span class="o">+=</span> <span class="n">nextobjpos</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btList</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span><span class="n">els</span><span class="p">),</span> <span class="n">idx</span><span class="p">)</span>
-</pre></div></div>
-<p>Decoding the list can be bit tricky
-- Its elements are between <code>l</code>, <code>e</code> chars
-- So we start trying to decode objects starting from the first letter <code>after</code> the <code>l</code> until we reach the final <code>e</code>
-e.g
-</p><div class="code"><div class="highlight"><pre><span></span>li1ei2ee
-</pre></div></div>
-<p>will be parsed like the following
-</p><div class="code"><div class="highlight"><pre><span></span>li120ei492ee
- $   $
-</pre></div></div>
-<ul>
-<li>will consume the object <code>i120e</code> and set the cursor to the beginning of the second object <code>i492e</code>
-</li>
-<li>after all the objects are consumed we consume the end character <code>e</code> and we are done
-</li>
-<li>That’s why all decode procs return <code>int</code> value to let us now how much characters to skip
-</li></ul>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">decode_d</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Decoder</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="kt">string</span><span class="p">):</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="o">=</span>
-    <span class="kd">var</span> <span class="n">d</span> <span class="o">=</span> <span class="n">initOrderedTable</span><span class="o">[</span><span class="n">BencodeType</span><span class="p">,</span> <span class="n">BencodeType</span><span class="o">]</span><span class="p">()</span>
-    <span class="kd">var</span> <span class="n">curchar</span> <span class="o">=</span> <span class="n">s</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
-    <span class="kd">var</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="kd">var</span> <span class="n">readingKey</span> <span class="o">=</span> <span class="kp">true</span>
-    <span class="kd">var</span> <span class="n">curKey</span><span class="p">:</span> <span class="n">BencodeType</span>
-    <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">s</span><span class="p">.</span><span class="n">len</span><span class="p">:</span>
-        <span class="n">curchar</span> <span class="o">=</span> <span class="n">s</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span>
-        <span class="k">if</span> <span class="n">curchar</span> <span class="o">==</span> <span class="sc">'e'</span><span class="p">:</span>
-            <span class="k">break</span>
-        <span class="k">let</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">s</span><span class="o">[</span><span class="n">idx</span><span class="p">..</span><span class="o">&lt;</span><span class="n">s</span><span class="p">.</span><span class="n">len</span><span class="o">]</span><span class="p">)</span>
-        <span class="k">let</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-        <span class="k">let</span> <span class="n">nextobjpos</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span>
-        <span class="k">if</span> <span class="n">readingKey</span> <span class="o">==</span> <span class="kp">true</span><span class="p">:</span>
-            <span class="n">curKey</span> <span class="o">=</span> <span class="n">obj</span>
-            <span class="n">readingKey</span> <span class="o">=</span> <span class="kp">false</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">d</span><span class="o">[</span><span class="n">curKey</span><span class="o">]</span> <span class="o">=</span> <span class="n">obj</span>
-            <span class="n">readingKey</span> <span class="o">=</span> <span class="kp">true</span>
-        <span class="n">idx</span> <span class="o">+=</span> <span class="n">nextobjpos</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">(</span><span class="n">kind</span><span class="p">:</span><span class="n">btDict</span><span class="p">,</span> <span class="n">d</span><span class="p">:</span> <span class="n">d</span><span class="p">),</span> <span class="n">idx</span><span class="p">)</span>
-</pre></div></div>
-<ul>
-<li>Same technique as above
-</li>
-<li>Basically we read one object if we don’t have a current key then we set it as the current key
-</li>
-<li>If we have a current key object then the object we read is the value, so we set the currentKey to that value and <code>change</code> mode to readingKey again.<span class="intersentencespace"></span>
-</li></ul>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">decode</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Decoder</span><span class="p">,</span>  <span class="n">source</span><span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="n">BencodeType</span><span class="p">,</span> <span class="kt">int</span><span class="p">)</span> <span class="o">=</span>
-    <span class="kd">var</span> <span class="n">curchar</span> <span class="o">=</span> <span class="n">source</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-    <span class="kd">var</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">while</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">source</span><span class="p">.</span><span class="n">len</span><span class="p">:</span>
-        <span class="n">curchar</span> <span class="o">=</span> <span class="n">source</span><span class="o">[</span><span class="n">idx</span><span class="o">]</span>
-        <span class="k">case</span> <span class="n">curchar</span>
-        <span class="k">of</span> <span class="sc">'i'</span><span class="p">:</span>
-            <span class="k">let</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">decode_i</span><span class="p">(</span><span class="n">source</span><span class="o">[</span><span class="n">idx</span><span class="p">..</span><span class="n">source</span><span class="p">.</span><span class="n">len</span><span class="o">]</span><span class="p">)</span>
-            <span class="k">let</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-            <span class="k">let</span> <span class="n">nextobjpos</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> 
-            <span class="n">idx</span> <span class="o">+=</span> <span class="n">nextobjpos</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
-        <span class="k">of</span> <span class="sc">'l'</span><span class="p">:</span>
-            <span class="k">let</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">decode_l</span><span class="p">(</span><span class="n">source</span><span class="o">[</span><span class="n">idx</span><span class="p">..</span><span class="n">source</span><span class="p">.</span><span class="n">len</span><span class="o">]</span><span class="p">)</span>
-            <span class="k">let</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-            <span class="k">let</span> <span class="n">nextobjpos</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> 
-            <span class="n">idx</span> <span class="o">+=</span> <span class="n">nextobjpos</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
-        <span class="k">of</span> <span class="sc">'d'</span><span class="p">:</span>
-            <span class="k">let</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">decode_d</span><span class="p">(</span><span class="n">source</span><span class="o">[</span><span class="n">idx</span><span class="p">..</span><span class="n">source</span><span class="p">.</span><span class="n">len</span><span class="o">]</span><span class="p">)</span>
-            <span class="k">let</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-            <span class="k">let</span> <span class="n">nextobjpos</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> 
-            <span class="n">idx</span> <span class="o">+=</span> <span class="n">nextobjpos</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span> 
-            <span class="k">let</span> <span class="n">pair</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">decode_s</span><span class="p">(</span><span class="n">source</span><span class="o">[</span><span class="n">idx</span><span class="p">..</span><span class="n">source</span><span class="p">.</span><span class="n">len</span><span class="o">]</span><span class="p">)</span>
-            <span class="k">let</span> <span class="n">obj</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-            <span class="k">let</span> <span class="n">nextobjpos</span> <span class="o">=</span> <span class="n">pair</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span> 
-            <span class="n">idx</span> <span class="o">+=</span> <span class="n">nextobjpos</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span>
-</pre></div></div>
-<p>Starts decoding based on the beginning of character encoding object <code>i</code> for int, <code>l</code> for lists, <code>d</code> for dicts and otherwise tries to parse string</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">newEncoder</span><span class="o">*</span><span class="p">():</span> <span class="n">Encoder</span> <span class="o">=</span>
-    <span class="n">new</span> <span class="n">Encoder</span>
+<pre><code class="language-Nimrod">proc decode_i(this: Decoder, s: string) : (BencodeType, int) =
+    let epos = s.find('e')
+    let i = parseInt(s[1..&lt;epos])
+    return (BencodeType(kind:btInt, i:i), epos+1)
 
-<span class="k">proc </span><span class="nf">newDecoder</span><span class="o">*</span><span class="p">():</span> <span class="n">Decoder</span> <span class="o">=</span> 
-    <span class="n">new</span> <span class="n">Decoder</span>
-</pre></div></div>
+</code></pre>
+<p>Extract the number between <code>i</code>, <code>e</code> chars and construct <code>BencodeType</code> of kind <code>btInt</code> out of it</p>
+<pre><code class="language-Nimrod">proc decode_l(this: Decoder, s: string): (BencodeType, int) =
+    # l ... e
+    var els = newSeq[BencodeType]()
+    var curchar = s[1]
+    var idx = 1
+    while idx &lt; s.len:
+        curchar = s[idx]
+        if curchar == 'e':
+            idx += 1
+            break
+    
+        let pair = this.decode(s[idx..&lt;s.len])
+        let obj = pair[0]
+        let nextobjpos = pair[1] 
+        els.add(obj)
+        idx += nextobjpos
+    return (BencodeType(kind:btList, l:els), idx)
+</code></pre>
+<p>Decoding the list can be bit tricky</p>
+<ul>
+<li>Its elements are between <code>l</code>, <code>e</code> chars</li>
+<li>So we start trying to decode objects starting from the first letter <code>after</code> the <code>l</code> until we reach the final <code>e</code>
+e.g</li>
+</ul>
+<pre><code>li1ei2ee
+</code></pre>
+<p>will be parsed like the following</p>
+<pre><code>li120ei492ee
+ $   $
+</code></pre>
+<ul>
+<li>will consume the object <code>i120e</code> and set the cursor to the beginning of the second object <code>i492e</code></li>
+<li>after all the objects are consumed we consume the end character <code>e</code> and we are done</li>
+<li>That's why all decode procs return <code>int</code> value to let us now how much characters to skip</li>
+</ul>
+<pre><code class="language-Nimrod">proc decode_d(this: Decoder, s: string): (BencodeType, int) =
+    var d = initOrderedTable[BencodeType, BencodeType]()
+    var curchar = s[1]
+    var idx = 1
+    var readingKey = true
+    var curKey: BencodeType
+    while idx &lt; s.len:
+        curchar = s[idx]
+        if curchar == 'e':
+            break
+        let pair = this.decode(s[idx..&lt;s.len])
+        let obj = pair[0]
+        let nextobjpos = pair[1]
+        if readingKey == true:
+            curKey = obj
+            readingKey = false
+        else:
+            d[curKey] = obj
+            readingKey = true
+        idx += nextobjpos
+    return (BencodeType(kind:btDict, d: d), idx)
+</code></pre>
+<ul>
+<li>Same technique as above</li>
+<li>Basically we read one object if we don't have a current key then we set it as the current key</li>
+<li>If we have a current key object then the object we read is the value, so we set the currentKey to that value and <code>change</code> mode to readingKey again.</li>
+</ul>
+<pre><code class="language-Nimrod">proc decode(this: Decoder,  source: string) : (BencodeType, int) =
+    var curchar = source[0]
+    var idx = 0
+    while idx &lt; source.len:
+        curchar = source[idx]
+        case curchar
+        of 'i':
+            let pair = this.decode_i(source[idx..source.len])
+            let obj = pair[0]
+            let nextobjpos = pair[1] 
+            idx += nextobjpos
+            return (obj, idx)
+        of 'l':
+            let pair = this.decode_l(source[idx..source.len])
+            let obj = pair[0]
+            let nextobjpos = pair[1] 
+            idx += nextobjpos
+            return (obj, idx)
+        of 'd':
+            let pair = this.decode_d(source[idx..source.len])
+            let obj = pair[0]
+            let nextobjpos = pair[1] 
+            idx += nextobjpos
+            return (obj, idx)
+        else: 
+            let pair = this.decode_s(source[idx..source.len])
+            let obj = pair[0]
+            let nextobjpos = pair[1] 
+            idx += nextobjpos
+            return (obj, idx)
+</code></pre>
+<p>Starts decoding based on the beginning of character encoding object <code>i</code> for int, <code>l</code> for lists, <code>d</code> for dicts and otherwise tries to parse string</p>
+<pre><code class="language-Nimrod">proc newEncoder*(): Encoder =
+    new Encoder
+
+proc newDecoder*(): Decoder = 
+    new Decoder
+</code></pre>
 <p>Simple constructor procs for newEncoder, newDecoder</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">encodeObject</span><span class="o">*</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Encoder</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">BencodeType</span><span class="p">)</span> <span class="p">:</span> <span class="kt">string</span> <span class="o">=</span>
-    <span class="k">return</span> <span class="n">this</span><span class="p">.</span><span class="n">encode</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
-</pre></div></div>
+<pre><code class="language-Nimrod">proc encodeObject*(this: Encoder, obj: BencodeType) : string =
+    return this.encode(obj)
+</code></pre>
 <p><code>encodeObject</code> dispatch the call to <code>encode</code> proc.</p>
-<div class="code"><div class="highlight"><pre><span></span><span class="k">proc </span><span class="nf">decodeObject</span><span class="o">*</span><span class="p">(</span><span class="n">this</span><span class="p">:</span> <span class="n">Decoder</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span><span class="kt">string</span><span class="p">)</span> <span class="p">:</span> <span class="n">BencodeType</span> <span class="o">=</span>
-    <span class="k">let</span> <span class="n">p</span> <span class="o">=</span> <span class="n">this</span><span class="p">.</span><span class="n">decode</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">p</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span>
-</pre></div></div>
+<pre><code class="language-Nimrod">proc decodeObject*(this: Decoder, source:string) : BencodeType =
+    let p = this.decode(source)
+    return p[0]
+</code></pre>
 <p><code>decodeObject</code> provides a friendlier API to return the BencodeType from decode instead of <code>BencodeType</code>, <code>how many to read</code> int</p>
-</div></div>
-    </div>
-  </body>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day1_dmidecode.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="day3_libmagic.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day1_dmidecode.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="day3_libmagic.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
 </html>
