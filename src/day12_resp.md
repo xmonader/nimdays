@@ -98,16 +98,18 @@ Let's add `$`, `hash`, `==` procedures
 
 ```Nimrod
 
+import hashes
+
 proc `$`*(obj: RedisValue): string = 
-  case obj.kind
-    of vkStr : return  fmt"{$(obj.s)}"
-    of vkBulkStr: return fmt"{$(obj.bs)}"
-    of vkInt : return fmt"{$(obj.i)}"
-    of vkArray: return fmt"{$(obj.l)}"
-    of vkError: return fmt"{$(obj.err)}"
+  result = case obj.kind
+  of vkStr : obj.s
+  of vkBulkStr: obj.bs
+  of vkInt : $obj.i
+  of vkArray: $obj.l
+  of vkError: obj.err
 
 proc hash*(obj: RedisValue): Hash = 
-  case obj.kind
+  result = case obj.kind
   of vkStr : !$(hash(obj.s))
   of vkBulkStr: !$(hash(obj.bs))
   of vkInt : !$(hash(obj.i))
@@ -117,10 +119,9 @@ proc hash*(obj: RedisValue): Hash =
 proc `==`* (a, b: RedisValue): bool =
   ## Check two nodes for equality
   if a.isNil:
-      if b.isNil: return true
-      return false
+      result = b.isNil
   elif b.isNil or a.kind != b.kind:
-      return false
+      result = false
   else:
       case a.kind
       of vkStr:
@@ -131,10 +132,8 @@ proc `==`* (a, b: RedisValue): bool =
           result = a.i == b.i
       of vkArray:
           result = a.l == b.l
-          result = true
       of vkError:
           result = a.err == b.err
-  return false
 
 ```
 
