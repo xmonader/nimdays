@@ -14,3 +14,4 @@ Documenting my days with The Nim Programming language.
 [Day 10: TicTacToe GUI](day10_tictactoe_gui.md)
 [Day 11: Bake build system](day11_buildsystem.md)
 [Day 12: Redis Protocol](day12_resp.md)
+[Day 13: Redis Client](day13_redisclient.md)

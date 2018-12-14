@@ -85,7 +85,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html" class="active">Day 12: Redis Protocol</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html" class="active">Day 12: Redis Protocol</a></li><li class="affix"><a href="day13_redisclient.html">Day 13: Redis Client</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -229,16 +229,18 @@ const REDISNIL = &quot;\0\0&quot;
 </code></pre>
 <p>Let's add <code>$</code>, <code>hash</code>, <code>==</code> procedures</p>
 <pre><code class="language-Nimrod">
+import hashes
+
 proc `$`*(obj: RedisValue): string = 
-  case obj.kind
-    of vkStr : return  fmt&quot;{$(obj.s)}&quot;
-    of vkBulkStr: return fmt&quot;{$(obj.bs)}&quot;
-    of vkInt : return fmt&quot;{$(obj.i)}&quot;
-    of vkArray: return fmt&quot;{$(obj.l)}&quot;
-    of vkError: return fmt&quot;{$(obj.err)}&quot;
+  result = case obj.kind
+  of vkStr : obj.s
+  of vkBulkStr: obj.bs
+  of vkInt : $obj.i
+  of vkArray: $obj.l
+  of vkError: obj.err
 
 proc hash*(obj: RedisValue): Hash = 
-  case obj.kind
+  result = case obj.kind
   of vkStr : !$(hash(obj.s))
   of vkBulkStr: !$(hash(obj.bs))
   of vkInt : !$(hash(obj.i))
@@ -248,10 +250,9 @@ proc hash*(obj: RedisValue): Hash =
 proc `==`* (a, b: RedisValue): bool =
   ## Check two nodes for equality
   if a.isNil:
-      if b.isNil: return true
-      return false
+      result = b.isNil
   elif b.isNil or a.kind != b.kind:
-      return false
+      result = false
   else:
       case a.kind
       of vkStr:
@@ -262,10 +263,8 @@ proc `==`* (a, b: RedisValue): bool =
           result = a.i == b.i
       of vkArray:
           result = a.l == b.l
-          result = true
       of vkError:
           result = a.err == b.err
-  return false
 
 </code></pre>
 <a class="header" href="day12_resp.html#encoder" id="encoder"><h3>Encoder</h3></a>
@@ -479,7 +478,7 @@ proc decodeArray(s: string): (RedisValue, int) =
   return encode(arr)
 </code></pre>
 <a class="header" href="day12_resp.html#nim-resp" id="nim-resp"><h3>nim-resp</h3></a>
-<p>That day is based on <a href="https://github.com/xmonader/nim-resp">nim-resp</a> project, and on-going effort to create a redis client in Nim, it supports pipelining feature and all of the previous code. Feel free to send PRs or open issues </p>
+<p>That day is based on <a href="https://github.com/xmonader/nim-resp">nim-resp</a> project, and on-going effort to create a redis client in Nim, it supports pipelining feature and all of the previous code. Feel free to send PRs or open issues</p>
 
                     </main>
 
@@ -491,6 +490,10 @@ proc decodeArray(s: string): (RedisValue, int) =
                             </a>
                         
 
+                        
+                            <a rel="next" href="day13_redisclient.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -505,6 +508,10 @@ proc decodeArray(s: string): (RedisValue, int) =
                     </a>
                 
 
+                
+                    <a href="day13_redisclient.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
                 
             </nav>
 

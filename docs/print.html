@@ -85,7 +85,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li><li class="affix"><a href="day13_redisclient.html">Day 13: Redis Client</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -2555,16 +2555,18 @@ const REDISNIL = &quot;\0\0&quot;
 </code></pre>
 <p>Let's add <code>$</code>, <code>hash</code>, <code>==</code> procedures</p>
 <pre><code class="language-Nimrod">
+import hashes
+
 proc `$`*(obj: RedisValue): string = 
-  case obj.kind
-    of vkStr : return  fmt&quot;{$(obj.s)}&quot;
-    of vkBulkStr: return fmt&quot;{$(obj.bs)}&quot;
-    of vkInt : return fmt&quot;{$(obj.i)}&quot;
-    of vkArray: return fmt&quot;{$(obj.l)}&quot;
-    of vkError: return fmt&quot;{$(obj.err)}&quot;
+  result = case obj.kind
+  of vkStr : obj.s
+  of vkBulkStr: obj.bs
+  of vkInt : $obj.i
+  of vkArray: $obj.l
+  of vkError: obj.err
 
 proc hash*(obj: RedisValue): Hash = 
-  case obj.kind
+  result = case obj.kind
   of vkStr : !$(hash(obj.s))
   of vkBulkStr: !$(hash(obj.bs))
   of vkInt : !$(hash(obj.i))
@@ -2574,10 +2576,9 @@ proc hash*(obj: RedisValue): Hash =
 proc `==`* (a, b: RedisValue): bool =
   ## Check two nodes for equality
   if a.isNil:
-      if b.isNil: return true
-      return false
+      result = b.isNil
   elif b.isNil or a.kind != b.kind:
-      return false
+      result = false
   else:
       case a.kind
       of vkStr:
@@ -2588,10 +2589,8 @@ proc `==`* (a, b: RedisValue): bool =
           result = a.i == b.i
       of vkArray:
           result = a.l == b.l
-          result = true
       of vkError:
           result = a.err == b.err
-  return false
 
 </code></pre>
 <a class="header" href="print.html#encoder" id="encoder"><h3>Encoder</h3></a>
@@ -2805,7 +2804,362 @@ proc decodeArray(s: string): (RedisValue, int) =
   return encode(arr)
 </code></pre>
 <a class="header" href="print.html#nim-resp" id="nim-resp"><h3>nim-resp</h3></a>
-<p>That day is based on <a href="https://github.com/xmonader/nim-resp">nim-resp</a> project, and on-going effort to create a redis client in Nim, it supports pipelining feature and all of the previous code. Feel free to send PRs or open issues </p>
+<p>That day is based on <a href="https://github.com/xmonader/nim-resp">nim-resp</a> project, and on-going effort to create a redis client in Nim, it supports pipelining feature and all of the previous code. Feel free to send PRs or open issues</p>
+<a class="header" href="print.html#day-13-implementing-redis-client" id="day-13-implementing-redis-client"><h1>Day 13: Implementing Redis Client</h1></a>
+<p>Today we will implement a redis client for Nim. Requires reading Day 12 to create redis parser</p>
+<a class="header" href="print.html#redisclient" id="redisclient"><h2>Redisclient</h2></a>
+<p>We want to create a client to communicate with redis servers</p>
+<blockquote>
+<p>As library designers we should keep in mind How people are going to use our library, specially if it's doing IO Operations and we need to make decisions about what kind of APIs are we going to support (blocking or nonblocking ones) or should we duplicate the functionality for both interfaces. Lucky us Nim is pretty neat when it comes to providing async, sync interfaces for your library.</p>
+</blockquote>
+<a class="header" href="print.html#what-do-we-expect-2" id="what-do-we-expect-2"><h2>What do we expect?</h2></a>
+<ul>
+<li>Sync APIs: blocking APIs</li>
+</ul>
+<pre><code class="language-Nimrod">  let con = open(&quot;localhost&quot;, 6379.Port)
+  echo $con.execCommand(&quot;PING&quot;, @[])
+  echo $con.execCommand(&quot;SET&quot;, @[&quot;auser&quot;, &quot;avalue&quot;])
+  echo $con.execCommand(&quot;GET&quot;, @[&quot;auser&quot;])
+  echo $con.execCommand(&quot;SCAN&quot;, @[&quot;0&quot;])
+</code></pre>
+<ul>
+<li>Async APIs: Nonblocking APIs around <code>async/await</code></li>
+</ul>
+<pre><code class="language-Nimrod">  let con = await openAsync(&quot;localhost&quot;, 6379.Port)
+  echo await con.execCommand(&quot;PING&quot;, @[])
+  echo await con.execCommand(&quot;SET&quot;, @[&quot;auser&quot;, &quot;avalue&quot;])
+  echo await con.execCommand(&quot;GET&quot;, @[&quot;auser&quot;])
+  echo await con.execCommand(&quot;SCAN&quot;, @[&quot;0&quot;])
+  echo await con.execCommand(&quot;SET&quot;, @[&quot;auser&quot;, &quot;avalue&quot;])
+  echo await con.execCommand(&quot;GET&quot;, @[&quot;auser&quot;])
+  echo await con.execCommand(&quot;SCAN&quot;, @[&quot;0&quot;])
+
+  await con.enqueueCommand(&quot;PING&quot;, @[])
+  await con.enqueueCommand(&quot;PING&quot;, @[])
+  await con.enqueueCommand(&quot;PING&quot;, @[])
+  echo await con.commitCommands()
+ 
+</code></pre>
+<ul>
+<li>Pipelining</li>
+</ul>
+<pre><code class="language-Nimrod">  con.enqueueCommand(&quot;PING&quot;, @[])
+  con.enqueueCommand(&quot;PING&quot;, @[])
+  con.enqueueCommand(&quot;PING&quot;, @[])
+  
+  echo $con.commitCommands()
+</code></pre>
+<a class="header" href="print.html#implementation-11" id="implementation-11"><h2>Implementation</h2></a>
+<a class="header" href="print.html#imports-and-constants-1" id="imports-and-constants-1"><h3>Imports and constants</h3></a>
+<p>Let's starts with main imports</p>
+<pre><code>import redisparser, strformat, tables, json, strutils, sequtils, hashes, net, asyncdispatch, asyncnet, os, strutils, parseutils, deques, options, net
+
+</code></pre>
+<p>Mainly</p>
+<ul>
+<li><code>redisparser</code> because we will be manipulating redis values so let's not decouple the parsing and transport</li>
+<li><code>asyncnet, asyncdispatch</code> for async sockets APIs</li>
+<li><code>net</code> for SSL and blocking APIs</li>
+</ul>
+<a class="header" href="print.html#data-types-1" id="data-types-1"><h3>Data types</h3></a>
+<p>Thinking of the expected APIs we talked about earlier we have some sort of client that has exactly the same operations with different blocking policies, so we can abstract it a bit</p>
+<pre><code class="language-Nimrod">type
+  RedisBase[TSocket] = ref object of RootObj
+    socket: TSocket
+    connected: bool
+    timeout*: int
+    pipeline*: seq[RedisValue]
+
+</code></pre>
+<p>Base class parameterized on <code>TSocket</code> that has</p>
+<ul>
+<li>socket: socket object that can be the blocking <code>net.Socket</code> or the nonoblocking <code>asyncnet.AsyncSocket</code></li>
+<li>connected: flag to indicate the connection status</li>
+<li>timeout: to timeout (raise TimeoutError) after certain amount of seconds</li>
+</ul>
+<pre><code class="language-Nimrod">  Redis* = ref object of RedisBase[net.Socket]
+</code></pre>
+<p>Here we say <code>Redis</code> is a sub type of <code>RedisBase</code> and the type of transport socket we are using is the blocking <code>net.Socket</code></p>
+<pre><code class="language-Nimrod">  AsyncRedis* = ref object of RedisBase[asyncnet.AsyncSocket]
+</code></pre>
+<p>Same, but here we say the socket we use is non blocking of type <code>asyncnet.AsyncSocket</code></p>
+<a class="header" href="print.html#opening-connection" id="opening-connection"><h3>Opening Connection</h3></a>
+<pre><code class="language-Nimrod">proc open*(host = &quot;localhost&quot;, port = 6379.Port, ssl=false, timeout=0): Redis =
+  result = Redis(
+    socket: newSocket(buffered = true),
+  )
+  result.pipeline = @[]
+  result.timeout = timeout
+  ## .. code omitted for supporting SSL
+  result.socket.connect(host, port)
+  result.connected = true
+</code></pre>
+<p>Here we define <code>open</code> proc the entry point to get sync redis client <code>Redis</code>. We do some initializations regarding the endpoint and the timeout and setting that on our <code>Redis</code> new object.</p>
+<pre><code class="language-Nimrod">proc openAsync*(host = &quot;localhost&quot;, port = 6379.Port, ssl=false, timeout=0): Future[AsyncRedis] {.async.} =
+  ## Open an asynchronous connection to a redis server.
+  result = AsyncRedis(
+    socket: newAsyncSocket(buffered = true),
+  )
+  ## .. code omitted for supporting SSL
+  result.pipeline = @[]
+  result.timeout = timeout
+  await result.socket.connect(host, port)
+  result.connected = true
+
+</code></pre>
+<p>Exactly the same thing for openAsync, but instead of returning <code>Redis</code> we return a <code>Future</code> of potential <code>AsyncRedis</code> object</p>
+<a class="header" href="print.html#executing-commands" id="executing-commands"><h3>Executing commands</h3></a>
+<p>Our APIs will be created around <code>execCommand</code> proc that will send some <code>command</code> with <code>arguments</code> formatted with <code>redis</code> protocol (using the redisparser library) to a server using Our socket and then read a complete parsable <code>RedisValue</code> back to the user (using <code>readForm</code> proc)</p>
+<ul>
+<li>Sync version</li>
+</ul>
+<pre><code class="language-Nimrod">
+proc execCommand*(this: Redis|AsyncRedis, command: string, args:seq[string]): RedisValue =
+  let cmdArgs = concat(@[command], args)
+  var cmdAsRedisValues = newSeq[RedisValue]()
+  for cmd in cmdArgs:
+    cmdAsRedisValues.add(RedisValue(kind:vkBulkStr, bs:cmd))
+  var arr = RedisValue(kind:vkArray, l: cmdAsRedisValues)
+  this.socket.send(encode(arr))
+  let form = this.readForm()
+  let val = decodeString(form)
+  return val
+</code></pre>
+<ul>
+<li>Async version</li>
+</ul>
+<pre><code class="language-Nimrod">
+proc execCommandAsync*(this: Redis|AsyncRedis, command: string, args:seq[string]): Future[RedisValue] =
+  let cmdArgs = concat(@[command], args)
+  var cmdAsRedisValues = newSeq[RedisValue]()
+  for cmd in cmdArgs:
+    cmdAsRedisValues.add(RedisValue(kind:vkBulkStr, bs:cmd))
+  var arr = RedisValue(kind:vkArray, l: cmdAsRedisValues)
+  await this.socket.send(encode(arr))
+  let form = await this.readForm()
+  let val = decodeString(form)
+  return val
+
+</code></pre>
+<p>It'd be very annoying to do provide duplicate procs for every single API <code>get</code> and <code>asyncGet</code> ... etc</p>
+<a class="header" href="print.html#multisync-ftw" id="multisync-ftw"><h4>Multisync FTW!</h4></a>
+<p>Nim provides a very neat feature <code>multisync</code> pragma that allows us to use the <code>async</code> definition in sync scopes</p>
+<p>Here is the details from <a href="https://github.com/nim-lang/Nim/blob/master/lib/pure/asyncmacro.nim#L430">nim</a></p>
+<blockquote>
+<p>Macro which processes async procedures into both asynchronous and synchronous procedures. The generated async procedures use the <code>async</code> macro, whereas the generated synchronous procedures simply strip off the <code>await</code> calls.</p>
+</blockquote>
+<pre><code class="language-Nimrod">
+proc execCommand*(this: Redis|AsyncRedis, command: string, args:seq[string]): Future[RedisValue] {.multisync.} =
+  let cmdArgs = concat(@[command], args)
+  var cmdAsRedisValues = newSeq[RedisValue]()
+  for cmd in cmdArgs:
+    cmdAsRedisValues.add(RedisValue(kind:vkBulkStr, bs:cmd))
+  var arr = RedisValue(kind:vkArray, l: cmdAsRedisValues)
+  await this.socket.send(encode(arr))
+  let form = await this.readForm()
+  let val = decodeString(form)
+  return val
+</code></pre>
+<a class="header" href="print.html#readers" id="readers"><h3>Readers</h3></a>
+<p><code>readForm</code> is the other main proc in our client. <code>readForm</code> is responsible for reading X amount of bytes from the socket until we have a complete <code>RedisValue</code> object.</p>
+<ul>
+<li><code>readMany</code> as the redis protocol encodes some information about the values lengths we can totally make use of that, so let's build a primitive <code>readMany</code> that reads X amount of the socket</li>
+</ul>
+<pre><code class="language-Nimrod">
+proc readMany(this:Redis|AsyncRedis, count:int=1): Future[string] {.multisync.} =
+  if count == 0:
+    return &quot;&quot;
+  let data = await this.receiveManaged(count)
+  return data
+</code></pre>
+<p>Here again to make sure our code works with <code>sync</code> and <code>async</code> usages we use <code>multisync</code> if the count required is 0 we return empty string without any fancy things with the socket otherwise we delegate to the <code>receiveManaged</code> proc</p>
+<ul>
+<li><code>receivedManaged</code> a bit into details version on how we read the data from the socket (could be combined in the readMany proc code)</li>
+</ul>
+<pre><code class="language-Nimrod">proc receiveManaged*(this:Redis|AsyncRedis, size=1): Future[string] {.multisync.} =
+  result = newString(size)
+  when this is Redis:
+    if this.timeout == 0:
+      discard this.socket.recv(result, size)
+    else:
+      discard this.socket.recv(result, size, this.timeout)
+  else:
+    discard await this.socket.recvInto(addr result[0], size)
+  return result
+</code></pre>
+<p>We check the type of <code>this</code> object using <code>when/is</code> combo to dispatch to the correct implementation (sync or async) with timeouts or not</p>
+<ul>
+<li><code>recv</code> has multiple versions one of them takes a <code>Timeout</code> <code>this.timeout</code> if the user wants to timeout after a while</li>
+<li><code>recvInto</code> is the <code>async</code> version and doesn't support timeouts</li>
+</ul>
+<a class="header" href="print.html#readform" id="readform"><h4>readForm</h4></a>
+<p><code>readForm</code> is used to retrieve a complete <code>RedisValue</code> from the server using the primitives we provided like 1readMany<code>or</code>receiveManaged`</p>
+<p>Remember how we decode strings into RedisValue objects?</p>
+<pre><code class="language-Nimrod">  echo decodeString(&quot;*3\r\n:1\r\n:2\r\n:3\r\n\r\n&quot;)
+  # # @[1, 2, 3]
+  echo decodeString(&quot;+Hello, World\r\n&quot;)
+  # # Hello, World
+  echo decodeString(&quot;-Not found\r\n&quot;)
+  # # Not found
+  echo decodeString(&quot;:1512\r\n&quot;)
+  # # 1512
+  echo $decodeString(&quot;$32\r\nHello, World THIS IS REALLY NICE\r\n&quot;)
+  # Hello, World THIS IS REALLY NICE
+  echo decodeString(&quot;*2\r\n+Hello World\r\n:23\r\n&quot;)
+  # @[Hello World, 23]
+  echo decodeString(&quot;*2\r\n*3\r\n:1\r\n:2\r\n:3\r\n\r\n*5\r\n:5\r\n:7\r\n+Hello Word\r\n-Err\r\n$6\r\nfoobar\r\n&quot;)
+  # @[@[1, 2, 3], @[5, 7, Hello Word, Err, foobar]]
+  echo $decodeString(&quot;*4\r\n:51231\r\n$3\r\nfoo\r\n$-1\r\n$3\r\nbar\r\n&quot;)
+  # @[51231, foo, , bar]
+</code></pre>
+<p>We will be doing exactly the same, but the only tricky part is we are reading from a socket and we can't move freely forward/backward without consuming data.</p>
+<p>The way we were decoding strings into RedisValues was by peeking on the first character to see what type we are decoding <code>simple string</code>, <code>bulkstring</code>, <code>error</code>, <code>int</code>, <code>array</code></p>
+<pre><code class="language-Nimrod">
+proc readForm(this:Redis|AsyncRedis): Future[string] {.multisync.} =
+  var form = &quot;&quot;
+  ## code responsible of reading a complete parsable string representing RedisValue from the socket
+  return form
+</code></pre>
+<ul>
+<li>Setup the loop</li>
+</ul>
+<pre><code class="language-Nimrod">  while true:
+    let b = await this.receiveManaged()
+    form &amp;= b
+    ## ...
+</code></pre>
+<p>as long as we aren't done reading a complete form yet we read just 1 byte and append it to the form string we will be returning (in the beginning that byte can be one of (<code>+</code>, <code>-</code>, <code>:</code>, <code>$</code>, <code>*</code>)</p>
+<ul>
+<li>Simple String</li>
+</ul>
+<pre><code class="language-Nimrod">    if b == &quot;+&quot;:
+      form &amp;= await this.readStream(CRLF)
+      return form
+</code></pre>
+<p>If the character we peeking at is <code>+</code> we read until we consume the <code>\r\n</code> <code>CRLF</code> (from redisparser library) because strings in redis protocl are contained between <code>+</code> and <code>CRLF</code></p>
+<p>but wait! what's <code>readStream</code>?
+It's a small proc we need to consume bytes from the socket until we reach [and consume] a certain character</p>
+<pre><code class="language-Nimrod">proc readStream(this:Redis|AsyncRedis, breakAfter:string): Future[string] {.multisync.} =
+  var data = &quot;&quot;
+  while true:
+    if data.endsWith(breakAfter):
+      break
+    let strRead = await this.receiveManaged()
+    data &amp;= strRead
+  return data
+</code></pre>
+<ul>
+<li>Errors</li>
+</ul>
+<pre><code class="language-Nimrod">    elif b == &quot;-&quot;:
+      form &amp;= await this.readStream(CRLF)
+      return form
+</code></pre>
+<p>Exactly the same as <code>Simple strings</code> but we check on <code>-</code> instead of <code>+</code></p>
+<ul>
+<li>Ints</li>
+</ul>
+<pre><code class="language-Nimrod">    elif b == &quot;:&quot;:
+      form &amp;= await this.readStream(CRLF)
+      return form
+</code></pre>
+<p>Same, serialized between <code>:</code> and <code>CRLF</code></p>
+<ul>
+<li>Bulkstrings</li>
+</ul>
+<pre><code class="language-Nimrod">    elif b == &quot;$&quot;:
+      let bulklenstr = await this.readStream(CRLF)
+      let bulklenI = parseInt(bulklenstr.strip()) 
+      form &amp;= bulklenstr
+      if bulklenI == -1:
+        form &amp;= CRLF
+
+    else:
+      form &amp;= await this.readMany(bulklenI)
+      form &amp;= await this.readStream(CRLF)
+
+    return form
+</code></pre>
+<p>From RESP page</p>
+<pre><code>Bulk Strings are used in order to represent a single binary safe string up to 512 MB in length.
+
+Bulk Strings are encoded in the following way:
+
+A &quot;$&quot; byte followed by the number of bytes composing the string (a prefixed length), terminated by CRLF.
+The actual string data.
+A final CRLF.
+So the string &quot;foobar&quot; is encoded as follows:
+
+&quot;$6\r\nfoobar\r\n&quot;
+When an empty string is just:
+
+&quot;$0\r\n\r\n&quot;
+RESP Bulk Strings can also be used in order to signal non-existence of a value using a special format that is used to represent a Null value. In this special format the length is -1, and there is no data, so a Null is represented as:
+
+&quot;$-1\r\n&quot;
+</code></pre>
+<p>So we can have
+1- <code>0</code> for empty strings <code>$0\r\n\r\n</code>:read from <code>$</code> until we consume CRLF and CRLF
+2- <code>number</code> of bytes to read:  read from <code>$</code> N amounts of bytes then consume CRLF
+3- <code>-1</code> for nils read from <code>$</code>  until we consume CRLF</p>
+<ul>
+<li>Arrays</li>
+</ul>
+<pre><code class="language-Nimrod">    elif b == &quot;*&quot;:
+        let lenstr = await this.readStream(CRLF)
+        form &amp;= lenstr
+        let lenstrAsI = parseInt(lenstr.strip())
+        for i in countup(1, lenstrAsI):
+          form &amp;= await this.readForm()
+        return form
+</code></pre>
+<p>Arrays can be bit tricky. To encode an array we do <code>*</code> followed by array length then <code>\r\n</code> then encode each element then end the array encoding with <code>\r\n</code></p>
+<p>As the arrays encode their <code>length</code> we know how many inner <code>forms</code> or items we need to read from the socket while reading the array</p>
+<a class="header" href="print.html#pipelining" id="pipelining"><h3>Pipelining</h3></a>
+<p>From redis <a href="https://redis.io/topics/pipelining">pipelining</a> page</p>
+<pre><code>A Request/Response server can be implemented so that it is able to process new requests even if the client didn't already read the old responses. This way it is possible to send multiple commands to the server without waiting for the replies at all, and finally read the replies in a single step.
+
+This is called pipelining, and is a technique widely in use since many decades. For instance many POP3 protocol implementations already supported this feature, dramatically speeding up the process of downloading new emails from the server.
+Redis supports pipelining since the very early days, so whatever version you are running, you can use pipelining with Redis. This is an example using the raw netcat utility:
+$ (printf &quot;PING\r\nPING\r\nPING\r\n&quot;; sleep 1) | nc localhost 6379
++PONG
++PONG
++PONG
+</code></pre>
+<p>So the idea we maintain a sequence of commands commands to be executed <code>enqueueCommand</code> and send them <code>commitCommands</code> and reset the <code>pipeline</code> sequence afterwards</p>
+<pre><code class="language-Nimrod">
+proc enqueueCommand*(this:Redis|AsyncRedis, command:string, args: seq[string]): Future[void] {.multisync.} = 
+  let cmdArgs = concat(@[command], args)
+  var cmdAsRedisValues = newSeq[RedisValue]()
+  for cmd in cmdArgs:
+    cmdAsRedisValues.add(RedisValue(kind:vkBulkStr, bs:cmd))
+  var arr = RedisValue(kind:vkArray, l: cmdAsRedisValues)
+  this.pipeline.add(arr)
+
+proc commitCommands*(this:Redis|AsyncRedis) : Future[RedisValue] {.multisync.} =
+  for cmd in this.pipeline:
+    await this.socket.send(cmd.encode())
+  var responses = newSeq[RedisValue]()
+  for i in countup(0, len(this.pipeline)-1):
+    responses.add(decodeString(await this.readForm()))
+  this.pipeline = @[]
+  return RedisValue(kind:vkArray, l:responses)
+
+</code></pre>
+<a class="header" href="print.html#higher-level-apis" id="higher-level-apis"><h3>Higher level APIs</h3></a>
+<p>are basically <code>proc</code>s around the <code>execCommand</code> proc and with using <code>multisync</code> pargma you can have them enabled for both <code>sync</code> and <code>async</code> execution</p>
+<pre><code class="language-nim">proc del*(this: Redis | AsyncRedis, keys: seq[string]): Future[RedisValue] {.multisync.} =
+  ## Delete a key or multiple keys
+  return await this.execCommand(&quot;DEL&quot;, keys)
+
+
+proc exists*(this: Redis | AsyncRedis, key: string): Future[bool] {.multisync.} =
+  ## Determine if a key exists
+  let val = await this.execCommand(&quot;EXISTS&quot;, @[key])
+  result = val.i == 1
+</code></pre>
+<a class="header" href="print.html#nim-redisclient" id="nim-redisclient"><h2>nim-redisclient</h2></a>
+<p>That day is based on <a href="https://github.com/xmonader/nim-redisclient">nim-redisclient</a> project which is using some higher level API code from <a href="https://github.com/nim-lang/redis">Nim/redis</a>. Feel free to send PRs or open issues</p>
 
                     </main>
 
