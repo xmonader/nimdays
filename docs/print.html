@@ -85,7 +85,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li><li class="affix"><a href="day13_redisclient.html">Day 13: Redis Client</a></li></ol>
+            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li><li class="affix"><a href="day13_redisclient.html">Day 13: Redis Client</a></li><li class="affix"><a href="day14_nimassets.html">Day 14: Nim-Assets</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -3160,6 +3160,164 @@ proc exists*(this: Redis | AsyncRedis, key: string): Future[bool] {.multisync.} 
 </code></pre>
 <a class="header" href="print.html#nim-redisclient" id="nim-redisclient"><h2>nim-redisclient</h2></a>
 <p>That day is based on <a href="https://github.com/xmonader/nim-redisclient">nim-redisclient</a> project which is using some higher level API code from <a href="https://github.com/nim-lang/redis">Nim/redis</a>. Feel free to send PRs or open issues</p>
+<a class="header" href="print.html#day-14-nim-assets-bundle-your-assets-into-single-binary" id="day-14-nim-assets-bundle-your-assets-into-single-binary"><h1>Day 14: Nim Assets (bundle your assets into single binary)</h1></a>
+<p>Today we will implement <code>nimassets</code> project heavily inspired by <a href="https://github.com/jteeuwen/go-bindata">go-bindata</a></p>
+<a class="header" href="print.html#nimassets" id="nimassets"><h2>nimassets</h2></a>
+<p>Typically while developing projects we have assets like (icons, images, template files, css, javascript..etc) and It can be annoying to distribute them with your application or even risk losing them or misconfiguring paths or messed-up packaging script, so packaging all of them into the same binary would be an interesting option to have. these concerns were the reason to have something like <code>go-bindata</code> or  <a href="http://doc.qt.io/qt-5/resources.html">Qt resource system</a></p>
+<a class="header" href="print.html#what-do-we-expect-3" id="what-do-we-expect-3"><h2>What do we expect?</h2></a>
+<ul>
+<li>Having single binary that has the actually resources into the executable.</li>
+<li>Generating nim file out of the <code>resources</code> we want to bundle. Maybe something like <code>nimassets -d=templatesdir -o=assetsfile.nim</code></li>
+<li>Easy access to these bundled resources using <code>getAsset</code> proc</li>
+</ul>
+<pre><code class="language-Nimrod">import assetsfile
+
+echo assetsfile.getAsset(&quot;templatesdir/index.html&quot;)
+</code></pre>
+<a class="header" href="print.html#the-plan" id="the-plan"><h2>The plan</h2></a>
+<p>So from a very highlevel</p>
+<pre><code>[ Resource1 ]                                
+[ Resource2 ]   -&gt; converter (nimassets) -&gt;  [Nim file Represneting the resources list]
+[ Resource3 ]                                
+
+</code></pre>
+<p>The generated file should look like</p>
+<pre><code class="language-Nimrod">
+import os, tables, strformat, base64, ospaths
+
+var assets = initTable[string, string]()
+
+proc getAsset*(path: string): string = 
+  result = assets[path].decode()
+
+assets[RESOURCE1_PATH] = BASE64_ENCODE(RESOURCE1_CONTENT)
+assets[RESOURCE2_PATH] = BASE64_ENCODE(RESOURCE2_CONTENT)
+assets[RESOURCE3_PATH] = BASE64_ENCODE(RESOURCE3_CONTENT)
+...
+...
+...
+...
+
+</code></pre>
+<ul>
+<li>We store the resource path and its base64 encoded content in <code>assets</code> table</li>
+<li>We will expose 1 proc <code>getAsset</code> that takes <code>path</code> and returns the content by <code>decoding base64</code> content</li>
+</ul>
+<a class="header" href="print.html#implementation-12" id="implementation-12"><h2>Implementation</h2></a>
+<p>Let's go top down approach for the implementation</p>
+<a class="header" href="print.html#command-line-arguments" id="command-line-arguments"><h3>Command line arguments</h3></a>
+<pre><code class="language-Nimrod">const buildBranchName* = staticExec(&quot;git rev-parse --abbrev-ref HEAD&quot;) ## \
+const buildCommit* = staticExec(&quot;git rev-parse HEAD&quot;)  ## \
+# const latestTag* = staticExec(&quot;git describe --abbrev=0 --tags&quot;) ## \
+
+const versionString* = fmt&quot;0.1.0 ({buildBranchName}/{buildCommit})&quot;
+
+proc writeHelp() = 
+    echo fmt&quot;&quot;&quot;
+nimassets {versionString} (Bundle your assets into nim file)
+    -h | --help         : show help
+    -v | --version      : show version
+    -o | --output       : output filename
+    -f | --fast         : faster generation
+    -d | --dir          : dir to include (recursively)
+&quot;&quot;&quot;
+
+proc writeVersion() =
+    echo fmt&quot;nimassets version {versionString}&quot;
+
+proc cli*() =
+  var 
+    compress, fast : bool = false
+    dirs = newSeq[string]()
+    output = &quot;assets.nim&quot;
+  
+  if paramCount() == 0:
+    writeHelp()
+    quit(0)
+  
+  for kind, key, val in getopt():
+    case kind
+    of cmdLongOption, cmdShortOption:
+        case key
+        of &quot;help&quot;, &quot;h&quot;: 
+            writeHelp()
+            quit()
+        of &quot;version&quot;, &quot;v&quot;:
+            writeVersion()
+            quit()
+        of &quot;fast&quot;, &quot;f&quot;: fast = true
+        of &quot;dir&quot;, &quot;d&quot;: dirs.add(val)
+        of &quot;output&quot;, &quot;o&quot;: output = val 
+        else:
+          discard
+    else:
+      discard 
+  for d in dirs:
+    if not dirExists(d):
+      echo fmt&quot;[-] Directory doesnt exist {d}&quot;
+      quit 2 # 2 means dir doesn't exist.
+  # echo fmt&quot;compress: {compress} fast: {fast} dirs:{dirs} output:{output}&quot;
+  createAssetsFile(dirs, output, fast, compress)
+
+when isMainModule:
+  cli()
+</code></pre>
+<p>Pretty simple, we accept list of directories (using <code>-d</code> or <code>--dir</code> flag) to bundle into a nim file defined using <code>output</code> flag (<code>assets.nim</code> by default)</p>
+<p><code>--fast</code> flag indicates if we should use threading or not to speed up a little
+<code>compress</code> used to allow compression we will pass it always as <code>false</code></p>
+<blockquote>
+<p>for version information (branch and commit id) we used some git commands combined with <code>staticExec</code> to ensure these values are available at compile time</p>
+</blockquote>
+<a class="header" href="print.html#createassetsfile" id="createassetsfile"><h3>createAssetsFile</h3></a>
+<p>this proc is the entry to our application as it receives seq of the directories we want to bundle, the output filename, code optimization, and will make use of compress flag in the future</p>
+<pre><code class="language-Nimrod">proc createAssetsFile(dirs:seq[string], outputfile=&quot;assets.nim&quot;, fast=false, compress=false) =
+  var generator: proc(s:string): string
+  var data = assetsFileHeader
+
+  if fast:
+    generator = generateDirAssetsSpawn
+  else:
+    generator = generateDirAssetsSimple
+
+  for d in dirs:
+    data &amp;= generator(d)
+  
+  writeFile(outputfile, data)
+
+</code></pre>
+<p>Here we write (the header of the assets file and the result of generating the bundle of each directory) to the <code>outputfile</code></p>
+<p>and either we bundle files one by one (using <code>generateDirAssetsSimple</code>) or separately (using <code>generateDirAssetsSpawn</code>)</p>
+<a class="header" href="print.html#generatedirassetssimple" id="generatedirassetssimple"><h3>generateDirAssetsSimple</h3></a>
+<pre><code class="language-Nimrod">proc generateDirAssetsSimple(dir:string): string =
+  var key, val, valString: string
+
+  for path in expandTilde(dir).walkDirRec():
+    key = path
+    val = readFile(path).encode()
+    valString = &quot; \&quot;\&quot;\&quot;&quot; &amp; val &amp; &quot;\&quot;\&quot;\&quot; &quot;
+    result &amp;= fmt&quot;&quot;&quot;assets.add(&quot;{path}&quot;, {valString})&quot;&quot;&quot; &amp; &quot;\n\n&quot;
+</code></pre>
+<p>We walk recursively on the directory using <code>walkDirRec</code> and write down the part <code>assets[RESOURECE_PATH] = ENCODE_BASE64(RESOURCE CONTENT)</code> for each file in the directory.</p>
+<a class="header" href="print.html#generatedirassetsspawn" id="generatedirassetsspawn"><h3>generateDirAssetsSpawn</h3></a>
+<pre><code class="language-Nimrod">proc handleFile(path:string): string {.thread.} =
+  var val, valString: string
+  val = readFile(path).encode()
+  valString = &quot; \&quot;\&quot;\&quot;&quot; &amp; val &amp; &quot;\&quot;\&quot;\&quot; &quot;
+  result = fmt&quot;&quot;&quot;assets.add(&quot;{path}&quot;, {valString})&quot;&quot;&quot; &amp; &quot;\n\n&quot;
+
+proc generateDirAssetsSpawn(dir: string): string = 
+  var results = newSeq[FlowVar[string]]()
+  for path in expandTilde(dir).walkDirRec():
+    results.add(spawn handleFile(path))
+
+  # wait till all of them are done.
+  for r in results:
+    result &amp;= ^r
+</code></pre>
+<p>the same but as <code>generateDirAssetsSimple</code> but using spawn to do generate the <code>assets table entry</code></p>
+<p>And that's basically it.</p>
+<a class="header" href="print.html#nimassets-1" id="nimassets-1"><h2>nimassets</h2></a>
+<p>All of the code is based on <a href="https://github.com/xmonader/nimassets">nimassets</a> project. Feel free to send a PR or report issues.</p>
 
                     </main>
 

@@ -1,0 +1,374 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 14: Nim-Assets - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme -->
+        
+
+        
+
+        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
+        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
+        <script>
+            if (typeof Clipboard == 'undefined') {
+                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
+            }
+        </script>
+
+        <noscript>
+            <style type="text/css">
+                .javascript-only {
+                    display: none;
+                }
+            </style>
+        </noscript>
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme;
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li><li class="affix"><a href="day13_redisclient.html">Day 13: Redis Client</a></li><li class="affix"><a href="day14_nimassets.html" class="active">Day 14: Nim-Assets</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons javascript-only">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="searchbar-outer" class="searchbar-outer">
+                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                </div>
+                <div id="searchresults-outer" class="searchresults-outer">
+                    <div class="searchresults-header" id="searchresults-header"></div>
+                    <ul id="searchresults">
+                    </ul>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="day14_nimassets.html#day-14-nim-assets-bundle-your-assets-into-single-binary" id="day-14-nim-assets-bundle-your-assets-into-single-binary"><h1>Day 14: Nim Assets (bundle your assets into single binary)</h1></a>
+<p>Today we will implement <code>nimassets</code> project heavily inspired by <a href="https://github.com/jteeuwen/go-bindata">go-bindata</a></p>
+<a class="header" href="day14_nimassets.html#nimassets" id="nimassets"><h2>nimassets</h2></a>
+<p>Typically while developing projects we have assets like (icons, images, template files, css, javascript..etc) and It can be annoying to distribute them with your application or even risk losing them or misconfiguring paths or messed-up packaging script, so packaging all of them into the same binary would be an interesting option to have. these concerns were the reason to have something like <code>go-bindata</code> or  <a href="http://doc.qt.io/qt-5/resources.html">Qt resource system</a></p>
+<a class="header" href="day14_nimassets.html#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
+<ul>
+<li>Having single binary that has the actually resources into the executable.</li>
+<li>Generating nim file out of the <code>resources</code> we want to bundle. Maybe something like <code>nimassets -d=templatesdir -o=assetsfile.nim</code></li>
+<li>Easy access to these bundled resources using <code>getAsset</code> proc</li>
+</ul>
+<pre><code class="language-Nimrod">import assetsfile
+
+echo assetsfile.getAsset(&quot;templatesdir/index.html&quot;)
+</code></pre>
+<a class="header" href="day14_nimassets.html#the-plan" id="the-plan"><h2>The plan</h2></a>
+<p>So from a very highlevel</p>
+<pre><code>[ Resource1 ]                                
+[ Resource2 ]   -&gt; converter (nimassets) -&gt;  [Nim file Represneting the resources list]
+[ Resource3 ]                                
+
+</code></pre>
+<p>The generated file should look like</p>
+<pre><code class="language-Nimrod">
+import os, tables, strformat, base64, ospaths
+
+var assets = initTable[string, string]()
+
+proc getAsset*(path: string): string = 
+  result = assets[path].decode()
+
+assets[RESOURCE1_PATH] = BASE64_ENCODE(RESOURCE1_CONTENT)
+assets[RESOURCE2_PATH] = BASE64_ENCODE(RESOURCE2_CONTENT)
+assets[RESOURCE3_PATH] = BASE64_ENCODE(RESOURCE3_CONTENT)
+...
+...
+...
+...
+
+</code></pre>
+<ul>
+<li>We store the resource path and its base64 encoded content in <code>assets</code> table</li>
+<li>We will expose 1 proc <code>getAsset</code> that takes <code>path</code> and returns the content by <code>decoding base64</code> content</li>
+</ul>
+<a class="header" href="day14_nimassets.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<p>Let's go top down approach for the implementation</p>
+<a class="header" href="day14_nimassets.html#command-line-arguments" id="command-line-arguments"><h3>Command line arguments</h3></a>
+<pre><code class="language-Nimrod">const buildBranchName* = staticExec(&quot;git rev-parse --abbrev-ref HEAD&quot;) ## \
+const buildCommit* = staticExec(&quot;git rev-parse HEAD&quot;)  ## \
+# const latestTag* = staticExec(&quot;git describe --abbrev=0 --tags&quot;) ## \
+
+const versionString* = fmt&quot;0.1.0 ({buildBranchName}/{buildCommit})&quot;
+
+proc writeHelp() = 
+    echo fmt&quot;&quot;&quot;
+nimassets {versionString} (Bundle your assets into nim file)
+    -h | --help         : show help
+    -v | --version      : show version
+    -o | --output       : output filename
+    -f | --fast         : faster generation
+    -d | --dir          : dir to include (recursively)
+&quot;&quot;&quot;
+
+proc writeVersion() =
+    echo fmt&quot;nimassets version {versionString}&quot;
+
+proc cli*() =
+  var 
+    compress, fast : bool = false
+    dirs = newSeq[string]()
+    output = &quot;assets.nim&quot;
+  
+  if paramCount() == 0:
+    writeHelp()
+    quit(0)
+  
+  for kind, key, val in getopt():
+    case kind
+    of cmdLongOption, cmdShortOption:
+        case key
+        of &quot;help&quot;, &quot;h&quot;: 
+            writeHelp()
+            quit()
+        of &quot;version&quot;, &quot;v&quot;:
+            writeVersion()
+            quit()
+        of &quot;fast&quot;, &quot;f&quot;: fast = true
+        of &quot;dir&quot;, &quot;d&quot;: dirs.add(val)
+        of &quot;output&quot;, &quot;o&quot;: output = val 
+        else:
+          discard
+    else:
+      discard 
+  for d in dirs:
+    if not dirExists(d):
+      echo fmt&quot;[-] Directory doesnt exist {d}&quot;
+      quit 2 # 2 means dir doesn't exist.
+  # echo fmt&quot;compress: {compress} fast: {fast} dirs:{dirs} output:{output}&quot;
+  createAssetsFile(dirs, output, fast, compress)
+
+when isMainModule:
+  cli()
+</code></pre>
+<p>Pretty simple, we accept list of directories (using <code>-d</code> or <code>--dir</code> flag) to bundle into a nim file defined using <code>output</code> flag (<code>assets.nim</code> by default)</p>
+<p><code>--fast</code> flag indicates if we should use threading or not to speed up a little
+<code>compress</code> used to allow compression we will pass it always as <code>false</code></p>
+<blockquote>
+<p>for version information (branch and commit id) we used some git commands combined with <code>staticExec</code> to ensure these values are available at compile time</p>
+</blockquote>
+<a class="header" href="day14_nimassets.html#createassetsfile" id="createassetsfile"><h3>createAssetsFile</h3></a>
+<p>this proc is the entry to our application as it receives seq of the directories we want to bundle, the output filename, code optimization, and will make use of compress flag in the future</p>
+<pre><code class="language-Nimrod">proc createAssetsFile(dirs:seq[string], outputfile=&quot;assets.nim&quot;, fast=false, compress=false) =
+  var generator: proc(s:string): string
+  var data = assetsFileHeader
+
+  if fast:
+    generator = generateDirAssetsSpawn
+  else:
+    generator = generateDirAssetsSimple
+
+  for d in dirs:
+    data &amp;= generator(d)
+  
+  writeFile(outputfile, data)
+
+</code></pre>
+<p>Here we write (the header of the assets file and the result of generating the bundle of each directory) to the <code>outputfile</code></p>
+<p>and either we bundle files one by one (using <code>generateDirAssetsSimple</code>) or separately (using <code>generateDirAssetsSpawn</code>)</p>
+<a class="header" href="day14_nimassets.html#generatedirassetssimple" id="generatedirassetssimple"><h3>generateDirAssetsSimple</h3></a>
+<pre><code class="language-Nimrod">proc generateDirAssetsSimple(dir:string): string =
+  var key, val, valString: string
+
+  for path in expandTilde(dir).walkDirRec():
+    key = path
+    val = readFile(path).encode()
+    valString = &quot; \&quot;\&quot;\&quot;&quot; &amp; val &amp; &quot;\&quot;\&quot;\&quot; &quot;
+    result &amp;= fmt&quot;&quot;&quot;assets.add(&quot;{path}&quot;, {valString})&quot;&quot;&quot; &amp; &quot;\n\n&quot;
+</code></pre>
+<p>We walk recursively on the directory using <code>walkDirRec</code> and write down the part <code>assets[RESOURECE_PATH] = ENCODE_BASE64(RESOURCE CONTENT)</code> for each file in the directory.</p>
+<a class="header" href="day14_nimassets.html#generatedirassetsspawn" id="generatedirassetsspawn"><h3>generateDirAssetsSpawn</h3></a>
+<pre><code class="language-Nimrod">proc handleFile(path:string): string {.thread.} =
+  var val, valString: string
+  val = readFile(path).encode()
+  valString = &quot; \&quot;\&quot;\&quot;&quot; &amp; val &amp; &quot;\&quot;\&quot;\&quot; &quot;
+  result = fmt&quot;&quot;&quot;assets.add(&quot;{path}&quot;, {valString})&quot;&quot;&quot; &amp; &quot;\n\n&quot;
+
+proc generateDirAssetsSpawn(dir: string): string = 
+  var results = newSeq[FlowVar[string]]()
+  for path in expandTilde(dir).walkDirRec():
+    results.add(spawn handleFile(path))
+
+  # wait till all of them are done.
+  for r in results:
+    result &amp;= ^r
+</code></pre>
+<p>the same but as <code>generateDirAssetsSimple</code> but using spawn to do generate the <code>assets table entry</code></p>
+<p>And that's basically it.</p>
+<a class="header" href="day14_nimassets.html#nimassets-1" id="nimassets-1"><h2>nimassets</h2></a>
+<p>All of the code is based on <a href="https://github.com/xmonader/nimassets">nimassets</a> project. Feel free to send a PR or report issues.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day13_redisclient.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day13_redisclient.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+            </nav>
+
+        </div>
+
+
+        <!-- Local fallback for Font Awesome -->
+        <script>
+            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
+                var link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.type = 'text/css';
+                link.href = '_FontAwesome/css/font-awesome.css';
+                document.head.insertBefore(link, document.head.firstChild)
+            }
+        </script>
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        
+
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS script -->
+        
+
+    </body>
+</html>
