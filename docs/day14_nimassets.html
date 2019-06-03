@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible">
+<html lang="en" class="sidebar-visible no-js">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -9,44 +9,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <base href="">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
-        <link rel="stylesheet" href="book.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
-        <link rel="shortcut icon" href="favicon.png">
-
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
+        <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
-        <!-- Custom theme -->
+        <!-- Custom theme stylesheets -->
         
 
         
-
-        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
-        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
-        <script>
-            if (typeof Clipboard == 'undefined') {
-                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
-            }
-        </script>
-
-        <noscript>
-            <style type="text/css">
-                .javascript-only {
-                    display: none;
-                }
-            </style>
-        </noscript>
-
     </head>
     <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script type="text/javascript">
             try {
@@ -69,7 +56,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
             if (theme === null || theme === undefined) { theme = 'light'; }
             document.body.className = theme;
-            document.querySelector('html').className = theme;
+            document.querySelector('html').className = theme + ' js';
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -85,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li><li class="affix"><a href="day13_redisclient.html">Day 13: Redis Client</a></li><li class="affix"><a href="day14_nimassets.html" class="active">Day 14: Nim-Assets</a></li></ol>
+            <ol class="chapter"><li><a href="day01_dmidecode.html"><strong aria-hidden="true">1.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">2.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">3.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">4.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">5.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">6.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">7.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">8.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">9.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">10.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">11.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">12.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">13.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html" class="active"><strong aria-hidden="true">14.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">15.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">16.</strong> Day 16: AsciiTables</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -94,7 +81,7 @@
                 
                 <div id="menu-bar" class="menu-bar">
                     <div id="menu-bar-sticky-container">
-                        <div class="left-buttons javascript-only">
+                        <div class="left-buttons">
                             <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                                 <i class="fa fa-bars"></i>
                             </button>
@@ -126,13 +113,15 @@
                 </div>
 
                 
-                <div id="searchbar-outer" class="searchbar-outer">
-                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
-                </div>
-                <div id="searchresults-outer" class="searchresults-outer">
-                    <div class="searchresults-header" id="searchresults-header"></div>
-                    <ul id="searchresults">
-                    </ul>
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
                 </div>
                 
 
@@ -147,11 +136,11 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="day14_nimassets.html#day-14-nim-assets-bundle-your-assets-into-single-binary" id="day-14-nim-assets-bundle-your-assets-into-single-binary"><h1>Day 14: Nim Assets (bundle your assets into single binary)</h1></a>
+                        <a class="header" href="#day-14-nim-assets-bundle-your-assets-into-single-binary" id="day-14-nim-assets-bundle-your-assets-into-single-binary"><h1>Day 14: Nim Assets (bundle your assets into single binary)</h1></a>
 <p>Today we will implement <code>nimassets</code> project heavily inspired by <a href="https://github.com/jteeuwen/go-bindata">go-bindata</a></p>
-<a class="header" href="day14_nimassets.html#nimassets" id="nimassets"><h2>nimassets</h2></a>
+<a class="header" href="#nimassets" id="nimassets"><h2>nimassets</h2></a>
 <p>Typically while developing projects we have assets like (icons, images, template files, css, javascript..etc) and It can be annoying to distribute them with your application or even risk losing them or misconfiguring paths or messed-up packaging script, so packaging all of them into the same binary would be an interesting option to have. these concerns were the reason to have something like <code>go-bindata</code> or  <a href="http://doc.qt.io/qt-5/resources.html">Qt resource system</a></p>
-<a class="header" href="day14_nimassets.html#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
+<a class="header" href="#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
 <ul>
 <li>Having single binary that has the actually resources into the executable.</li>
 <li>Generating nim file out of the <code>resources</code> we want to bundle. Maybe something like <code>nimassets -d=templatesdir -o=assetsfile.nim</code></li>
@@ -161,7 +150,7 @@
 
 echo assetsfile.getAsset(&quot;templatesdir/index.html&quot;)
 </code></pre>
-<a class="header" href="day14_nimassets.html#the-plan" id="the-plan"><h2>The plan</h2></a>
+<a class="header" href="#the-plan" id="the-plan"><h2>The plan</h2></a>
 <p>So from a very highlevel</p>
 <pre><code>[ Resource1 ]                                
 [ Resource2 ]   -&gt; converter (nimassets) -&gt;  [Nim file Represneting the resources list]
@@ -190,9 +179,9 @@ assets[RESOURCE3_PATH] = BASE64_ENCODE(RESOURCE3_CONTENT)
 <li>We store the resource path and its base64 encoded content in <code>assets</code> table</li>
 <li>We will expose 1 proc <code>getAsset</code> that takes <code>path</code> and returns the content by <code>decoding base64</code> content</li>
 </ul>
-<a class="header" href="day14_nimassets.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="#implementation" id="implementation"><h2>Implementation</h2></a>
 <p>Let's go top down approach for the implementation</p>
-<a class="header" href="day14_nimassets.html#command-line-arguments" id="command-line-arguments"><h3>Command line arguments</h3></a>
+<a class="header" href="#command-line-arguments" id="command-line-arguments"><h3>Command line arguments</h3></a>
 <pre><code class="language-Nimrod">const buildBranchName* = staticExec(&quot;git rev-parse --abbrev-ref HEAD&quot;) ## \
 const buildCommit* = staticExec(&quot;git rev-parse HEAD&quot;)  ## \
 # const latestTag* = staticExec(&quot;git describe --abbrev=0 --tags&quot;) ## \
@@ -255,7 +244,7 @@ when isMainModule:
 <blockquote>
 <p>for version information (branch and commit id) we used some git commands combined with <code>staticExec</code> to ensure these values are available at compile time</p>
 </blockquote>
-<a class="header" href="day14_nimassets.html#createassetsfile" id="createassetsfile"><h3>createAssetsFile</h3></a>
+<a class="header" href="#createassetsfile" id="createassetsfile"><h3>createAssetsFile</h3></a>
 <p>this proc is the entry to our application as it receives seq of the directories we want to bundle, the output filename, code optimization, and will make use of compress flag in the future</p>
 <pre><code class="language-Nimrod">proc createAssetsFile(dirs:seq[string], outputfile=&quot;assets.nim&quot;, fast=false, compress=false) =
   var generator: proc(s:string): string
@@ -274,7 +263,7 @@ when isMainModule:
 </code></pre>
 <p>Here we write (the header of the assets file and the result of generating the bundle of each directory) to the <code>outputfile</code></p>
 <p>and either we bundle files one by one (using <code>generateDirAssetsSimple</code>) or separately (using <code>generateDirAssetsSpawn</code>)</p>
-<a class="header" href="day14_nimassets.html#generatedirassetssimple" id="generatedirassetssimple"><h3>generateDirAssetsSimple</h3></a>
+<a class="header" href="#generatedirassetssimple" id="generatedirassetssimple"><h3>generateDirAssetsSimple</h3></a>
 <pre><code class="language-Nimrod">proc generateDirAssetsSimple(dir:string): string =
   var key, val, valString: string
 
@@ -285,7 +274,7 @@ when isMainModule:
     result &amp;= fmt&quot;&quot;&quot;assets.add(&quot;{path}&quot;, {valString})&quot;&quot;&quot; &amp; &quot;\n\n&quot;
 </code></pre>
 <p>We walk recursively on the directory using <code>walkDirRec</code> and write down the part <code>assets[RESOURECE_PATH] = ENCODE_BASE64(RESOURCE CONTENT)</code> for each file in the directory.</p>
-<a class="header" href="day14_nimassets.html#generatedirassetsspawn" id="generatedirassetsspawn"><h3>generateDirAssetsSpawn</h3></a>
+<a class="header" href="#generatedirassetsspawn" id="generatedirassetsspawn"><h3>generateDirAssetsSpawn</h3></a>
 <pre><code class="language-Nimrod">proc handleFile(path:string): string {.thread.} =
   var val, valString: string
   val = readFile(path).encode()
@@ -303,7 +292,7 @@ proc generateDirAssetsSpawn(dir: string): string =
 </code></pre>
 <p>the same but as <code>generateDirAssetsSimple</code> but using spawn to do generate the <code>assets table entry</code></p>
 <p>And that's basically it.</p>
-<a class="header" href="day14_nimassets.html#nimassets-1" id="nimassets-1"><h2>nimassets</h2></a>
+<a class="header" href="#nimassets-1" id="nimassets-1"><h2>nimassets</h2></a>
 <p>All of the code is based on <a href="https://github.com/xmonader/nimassets">nimassets</a> project. Feel free to send a PR or report issues.</p>
 
                     </main>
@@ -316,6 +305,10 @@ proc generateDirAssetsSpawn(dir: string): string =
                             </a>
                         
 
+                        
+                            <a rel="next" href="day15_tcprouter.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                         
 
                         <div style="clear: both"></div>
@@ -331,43 +324,33 @@ proc generateDirAssetsSpawn(dir: string): string =
                 
 
                 
+                    <a href="day15_tcprouter.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
             </nav>
 
         </div>
 
-
-        <!-- Local fallback for Font Awesome -->
-        <script>
-            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.type = 'text/css';
-                link.href = '_FontAwesome/css/font-awesome.css';
-                document.head.insertBefore(link, document.head.firstChild)
-            }
-        </script>
-
         
 
         
 
         
 
-        
-        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
-        
         
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
         
 
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
         
 
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
-
-        <!-- Custom JS script -->
         
 
     </body>

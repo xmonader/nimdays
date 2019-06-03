@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible">
+<html lang="en" class="sidebar-visible no-js">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -9,44 +9,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <base href="">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
-        <link rel="stylesheet" href="book.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
-        <link rel="shortcut icon" href="favicon.png">
-
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
+        <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
-        <!-- Custom theme -->
+        <!-- Custom theme stylesheets -->
         
 
         
-
-        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
-        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
-        <script>
-            if (typeof Clipboard == 'undefined') {
-                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
-            }
-        </script>
-
-        <noscript>
-            <style type="text/css">
-                .javascript-only {
-                    display: none;
-                }
-            </style>
-        </noscript>
-
     </head>
     <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script type="text/javascript">
             try {
@@ -69,7 +56,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
             if (theme === null || theme === undefined) { theme = 'light'; }
             document.body.className = theme;
-            document.querySelector('html').className = theme;
+            document.querySelector('html').className = theme + ' js';
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -85,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li><li class="affix"><a href="day13_redisclient.html" class="active">Day 13: Redis Client</a></li><li class="affix"><a href="day14_nimassets.html">Day 14: Nim-Assets</a></li></ol>
+            <ol class="chapter"><li><a href="day01_dmidecode.html"><strong aria-hidden="true">1.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">2.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">3.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">4.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">5.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">6.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">7.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">8.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">9.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">10.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">11.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">12.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html" class="active"><strong aria-hidden="true">13.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">14.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">15.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">16.</strong> Day 16: AsciiTables</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -94,7 +81,7 @@
                 
                 <div id="menu-bar" class="menu-bar">
                     <div id="menu-bar-sticky-container">
-                        <div class="left-buttons javascript-only">
+                        <div class="left-buttons">
                             <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                                 <i class="fa fa-bars"></i>
                             </button>
@@ -126,13 +113,15 @@
                 </div>
 
                 
-                <div id="searchbar-outer" class="searchbar-outer">
-                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
-                </div>
-                <div id="searchresults-outer" class="searchresults-outer">
-                    <div class="searchresults-header" id="searchresults-header"></div>
-                    <ul id="searchresults">
-                    </ul>
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
                 </div>
                 
 
@@ -147,14 +136,14 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="day13_redisclient.html#day-13-implementing-redis-client" id="day-13-implementing-redis-client"><h1>Day 13: Implementing Redis Client</h1></a>
+                        <a class="header" href="#day-13-implementing-redis-client" id="day-13-implementing-redis-client"><h1>Day 13: Implementing Redis Client</h1></a>
 <p>Today we will implement a redis client for Nim. Requires reading Day 12 to create redis parser</p>
-<a class="header" href="day13_redisclient.html#redisclient" id="redisclient"><h2>Redisclient</h2></a>
+<a class="header" href="#redisclient" id="redisclient"><h2>Redisclient</h2></a>
 <p>We want to create a client to communicate with redis servers</p>
 <blockquote>
 <p>As library designers we should keep in mind How people are going to use our library, specially if it's doing IO Operations and we need to make decisions about what kind of APIs are we going to support (blocking or nonblocking ones) or should we duplicate the functionality for both interfaces. Lucky us Nim is pretty neat when it comes to providing async, sync interfaces for your library.</p>
 </blockquote>
-<a class="header" href="day13_redisclient.html#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
+<a class="header" href="#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
 <ul>
 <li>Sync APIs: blocking APIs</li>
 </ul>
@@ -191,8 +180,8 @@
   
   echo $con.commitCommands()
 </code></pre>
-<a class="header" href="day13_redisclient.html#implementation" id="implementation"><h2>Implementation</h2></a>
-<a class="header" href="day13_redisclient.html#imports-and-constants" id="imports-and-constants"><h3>Imports and constants</h3></a>
+<a class="header" href="#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="#imports-and-constants" id="imports-and-constants"><h3>Imports and constants</h3></a>
 <p>Let's starts with main imports</p>
 <pre><code>import redisparser, strformat, tables, json, strutils, sequtils, hashes, net, asyncdispatch, asyncnet, os, strutils, parseutils, deques, options, net
 
@@ -203,7 +192,7 @@
 <li><code>asyncnet, asyncdispatch</code> for async sockets APIs</li>
 <li><code>net</code> for SSL and blocking APIs</li>
 </ul>
-<a class="header" href="day13_redisclient.html#data-types" id="data-types"><h3>Data types</h3></a>
+<a class="header" href="#data-types" id="data-types"><h3>Data types</h3></a>
 <p>Thinking of the expected APIs we talked about earlier we have some sort of client that has exactly the same operations with different blocking policies, so we can abstract it a bit</p>
 <pre><code class="language-Nimrod">type
   RedisBase[TSocket] = ref object of RootObj
@@ -225,7 +214,7 @@
 <pre><code class="language-Nimrod">  AsyncRedis* = ref object of RedisBase[asyncnet.AsyncSocket]
 </code></pre>
 <p>Same, but here we say the socket we use is non blocking of type <code>asyncnet.AsyncSocket</code></p>
-<a class="header" href="day13_redisclient.html#opening-connection" id="opening-connection"><h3>Opening Connection</h3></a>
+<a class="header" href="#opening-connection" id="opening-connection"><h3>Opening Connection</h3></a>
 <pre><code class="language-Nimrod">proc open*(host = &quot;localhost&quot;, port = 6379.Port, ssl=false, timeout=0): Redis =
   result = Redis(
     socket: newSocket(buffered = true),
@@ -250,7 +239,7 @@
 
 </code></pre>
 <p>Exactly the same thing for openAsync, but instead of returning <code>Redis</code> we return a <code>Future</code> of potential <code>AsyncRedis</code> object</p>
-<a class="header" href="day13_redisclient.html#executing-commands" id="executing-commands"><h3>Executing commands</h3></a>
+<a class="header" href="#executing-commands" id="executing-commands"><h3>Executing commands</h3></a>
 <p>Our APIs will be created around <code>execCommand</code> proc that will send some <code>command</code> with <code>arguments</code> formatted with <code>redis</code> protocol (using the redisparser library) to a server using Our socket and then read a complete parsable <code>RedisValue</code> back to the user (using <code>readForm</code> proc)</p>
 <ul>
 <li>Sync version</li>
@@ -284,7 +273,7 @@ proc execCommandAsync*(this: Redis|AsyncRedis, command: string, args:seq[string]
 
 </code></pre>
 <p>It'd be very annoying to do provide duplicate procs for every single API <code>get</code> and <code>asyncGet</code> ... etc</p>
-<a class="header" href="day13_redisclient.html#multisync-ftw" id="multisync-ftw"><h4>Multisync FTW!</h4></a>
+<a class="header" href="#multisync-ftw" id="multisync-ftw"><h4>Multisync FTW!</h4></a>
 <p>Nim provides a very neat feature <code>multisync</code> pragma that allows us to use the <code>async</code> definition in sync scopes</p>
 <p>Here is the details from <a href="https://github.com/nim-lang/Nim/blob/master/lib/pure/asyncmacro.nim#L430">nim</a></p>
 <blockquote>
@@ -302,7 +291,7 @@ proc execCommand*(this: Redis|AsyncRedis, command: string, args:seq[string]): Fu
   let val = decodeString(form)
   return val
 </code></pre>
-<a class="header" href="day13_redisclient.html#readers" id="readers"><h3>Readers</h3></a>
+<a class="header" href="#readers" id="readers"><h3>Readers</h3></a>
 <p><code>readForm</code> is the other main proc in our client. <code>readForm</code> is responsible for reading X amount of bytes from the socket until we have a complete <code>RedisValue</code> object.</p>
 <ul>
 <li><code>readMany</code> as the redis protocol encodes some information about the values lengths we can totally make use of that, so let's build a primitive <code>readMany</code> that reads X amount of the socket</li>
@@ -334,7 +323,7 @@ proc readMany(this:Redis|AsyncRedis, count:int=1): Future[string] {.multisync.} 
 <li><code>recv</code> has multiple versions one of them takes a <code>Timeout</code> <code>this.timeout</code> if the user wants to timeout after a while</li>
 <li><code>recvInto</code> is the <code>async</code> version and doesn't support timeouts</li>
 </ul>
-<a class="header" href="day13_redisclient.html#readform" id="readform"><h4>readForm</h4></a>
+<a class="header" href="#readform" id="readform"><h4>readForm</h4></a>
 <p><code>readForm</code> is used to retrieve a complete <code>RedisValue</code> from the server using the primitives we provided like 1readMany<code>or</code>receiveManaged`</p>
 <p>Remember how we decode strings into RedisValue objects?</p>
 <pre><code class="language-Nimrod">  echo decodeString(&quot;*3\r\n:1\r\n:2\r\n:3\r\n\r\n&quot;)
@@ -457,7 +446,7 @@ RESP Bulk Strings can also be used in order to signal non-existence of a value u
 </code></pre>
 <p>Arrays can be bit tricky. To encode an array we do <code>*</code> followed by array length then <code>\r\n</code> then encode each element then end the array encoding with <code>\r\n</code></p>
 <p>As the arrays encode their <code>length</code> we know how many inner <code>forms</code> or items we need to read from the socket while reading the array</p>
-<a class="header" href="day13_redisclient.html#pipelining" id="pipelining"><h3>Pipelining</h3></a>
+<a class="header" href="#pipelining" id="pipelining"><h3>Pipelining</h3></a>
 <p>From redis <a href="https://redis.io/topics/pipelining">pipelining</a> page</p>
 <pre><code>A Request/Response server can be implemented so that it is able to process new requests even if the client didn't already read the old responses. This way it is possible to send multiple commands to the server without waiting for the replies at all, and finally read the replies in a single step.
 
@@ -488,7 +477,7 @@ proc commitCommands*(this:Redis|AsyncRedis) : Future[RedisValue] {.multisync.} =
   return RedisValue(kind:vkArray, l:responses)
 
 </code></pre>
-<a class="header" href="day13_redisclient.html#higher-level-apis" id="higher-level-apis"><h3>Higher level APIs</h3></a>
+<a class="header" href="#higher-level-apis" id="higher-level-apis"><h3>Higher level APIs</h3></a>
 <p>are basically <code>proc</code>s around the <code>execCommand</code> proc and with using <code>multisync</code> pargma you can have them enabled for both <code>sync</code> and <code>async</code> execution</p>
 <pre><code class="language-nim">proc del*(this: Redis | AsyncRedis, keys: seq[string]): Future[RedisValue] {.multisync.} =
   ## Delete a key or multiple keys
@@ -500,7 +489,7 @@ proc exists*(this: Redis | AsyncRedis, key: string): Future[bool] {.multisync.} 
   let val = await this.execCommand(&quot;EXISTS&quot;, @[key])
   result = val.i == 1
 </code></pre>
-<a class="header" href="day13_redisclient.html#nim-redisclient" id="nim-redisclient"><h2>nim-redisclient</h2></a>
+<a class="header" href="#nim-redisclient" id="nim-redisclient"><h2>nim-redisclient</h2></a>
 <p>That day is based on <a href="https://github.com/xmonader/nim-redisclient">nim-redisclient</a> project which is using some higher level API code from <a href="https://github.com/nim-lang/redis">Nim/redis</a>. Feel free to send PRs or open issues</p>
 
                     </main>
@@ -540,39 +529,25 @@ proc exists*(this: Redis | AsyncRedis, key: string): Future[bool] {.multisync.} 
 
         </div>
 
-
-        <!-- Local fallback for Font Awesome -->
-        <script>
-            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.type = 'text/css';
-                link.href = '_FontAwesome/css/font-awesome.css';
-                document.head.insertBefore(link, document.head.firstChild)
-            }
-        </script>
-
         
 
         
 
         
 
-        
-        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
-        
         
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
         
 
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
         
 
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
-
-        <!-- Custom JS script -->
         
 
     </body>

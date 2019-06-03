@@ -1,3 +1,5 @@
+"use strict";
+
 // Fix back button cache problem
 window.onunload = function () { };
 
@@ -16,13 +18,30 @@ function playpen_text(playpen) {
 (function codeSnippets() {
     // Hide Rust code lines prepended with a specific character
     var hiding_character = "#";
-    var request = fetch("https://play.rust-lang.org/meta/crates", {
-        headers: {
-            'Content-Type': "application/json",
-        },
-        method: 'POST',
-        mode: 'cors',
-    });
+
+    function fetch_with_timeout(url, options, timeout = 6000) {
+        return Promise.race([
+            fetch(url, options),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), timeout))
+        ]);
+    }
+
+    var playpens = Array.from(document.querySelectorAll(".playpen"));
+    if (playpens.length > 0) {
+        fetch_with_timeout("https://play.rust-lang.org/meta/crates", {
+            headers: {
+                'Content-Type': "application/json",
+            },
+            method: 'POST',
+            mode: 'cors',
+        })
+        .then(response => response.json())
+        .then(response => {
+            // get list of crates available in the rust playground
+            let playground_crates = response.crates.map(item => item["id"]);
+            playpens.forEach(block => handle_crate_list_update(block, playground_crates));
+        });
+    }
 
     function handle_crate_list_update(playpen_block, playground_crates) {
         // update the play buttons after receiving the response
@@ -55,6 +74,7 @@ function playpen_text(playpen) {
         var txt = playpen_text(pre_block);
         var re = /extern\s+crate\s+([a-zA-Z_0-9]+)\s*;/g;
         var snippet_crates = [];
+        var item;
         while (item = re.exec(txt)) {
             snippet_crates.push(item[1]);
         }
@@ -83,32 +103,28 @@ function playpen_text(playpen) {
         let text = playpen_text(code_block);
 
         var params = {
-            channel: "stable",
-            mode: "debug",
-            crateType: "bin",
-            tests: false,
-            code: text,
-        }
+            version: "stable",
+            optimize: "0",
+            code: text
+        };
 
         if (text.indexOf("#![feature") !== -1) {
-            params.channel = "nightly";
+            params.version = "nightly";
         }
 
         result_block.innerText = "Running...";
 
-        var request = fetch("https://play.rust-lang.org/execute", {
+        fetch_with_timeout("https://play.rust-lang.org/evaluate.json", {
             headers: {
                 'Content-Type': "application/json",
             },
             method: 'POST',
             mode: 'cors',
             body: JSON.stringify(params)
-        });
-
-        request
-            .then(function (response) { return response.json(); })
-            .then(function (response) { result_block.innerText = response.success ? response.stdout : response.stderr; })
-            .catch(function (error) { result_block.innerText = "Playground communication" + error.message; });
+        })
+        .then(response => response.json())
+        .then(response => result_block.innerText = response.result)
+        .catch(error => result_block.innerText = "Playground Communication: " + error.message);
     }
 
     // Syntax highlighting Configuration
@@ -147,9 +163,11 @@ function playpen_text(playpen) {
         var lines = code_block.innerHTML.split("\n");
         var first_non_hidden_line = false;
         var lines_hidden = false;
+        var trimmed_line = "";
 
         for (var n = 0; n < lines.length; n++) {
-            if (lines[n].trim()[0] == hiding_character) {
+            trimmed_line = lines[n].trim();
+            if (trimmed_line[0] == hiding_character && trimmed_line[1] != hiding_character) {
                 if (first_non_hidden_line) {
                     lines[n] = "<span class=\"hidden\">" + "\n" + lines[n].replace(/(\s*)# ?/, "$1") + "</span>";
                 }
@@ -164,6 +182,9 @@ function playpen_text(playpen) {
             else {
                 first_non_hidden_line = true;
             }
+            if (trimmed_line[0] == hiding_character && trimmed_line[1] == hiding_character) {
+                lines[n] = lines[n].replace("##", "#")
+            }
         }
         code_block.innerHTML = lines.join("");
 
@@ -175,7 +196,7 @@ function playpen_text(playpen) {
         buttons.innerHTML = "<button class=\"fa fa-expand\" title=\"Show hidden lines\" aria-label=\"Show hidden lines\"></button>";
 
         // add expand button
-        pre_block.prepend(buttons);
+        pre_block.insertBefore(buttons, pre_block.firstChild);
 
         pre_block.querySelector('.buttons').addEventListener('click', function (e) {
             if (e.target.classList.contains('fa-expand')) {
@@ -213,7 +234,7 @@ function playpen_text(playpen) {
             if (!buttons) {
                 buttons = document.createElement('div');
                 buttons.className = 'buttons';
-                pre_block.prepend(buttons);
+                pre_block.insertBefore(buttons, pre_block.firstChild);
             }
 
             var clipButton = document.createElement('button');
@@ -222,7 +243,7 @@ function playpen_text(playpen) {
             clipButton.setAttribute('aria-label', clipButton.title);
             clipButton.innerHTML = '<i class=\"tooltiptext\"></i>';
 
-            buttons.prepend(clipButton);
+            buttons.insertBefore(clipButton, buttons.firstChild);
         }
     });
 
@@ -233,7 +254,7 @@ function playpen_text(playpen) {
         if (!buttons) {
             buttons = document.createElement('div');
             buttons.className = 'buttons';
-            pre_block.prepend(buttons);
+            pre_block.insertBefore(buttons, pre_block.firstChild);
         }
 
         var runCodeButton = document.createElement('button');
@@ -248,8 +269,8 @@ function playpen_text(playpen) {
         copyCodeClipboardButton.title = 'Copy to clipboard';
         copyCodeClipboardButton.setAttribute('aria-label', copyCodeClipboardButton.title);
 
-        buttons.prepend(runCodeButton);
-        buttons.prepend(copyCodeClipboardButton);
+        buttons.insertBefore(runCodeButton, buttons.firstChild);
+        buttons.insertBefore(copyCodeClipboardButton, buttons.firstChild);
 
         runCodeButton.addEventListener('click', function (e) {
             run_rust_code(pre_block);
@@ -262,7 +283,7 @@ function playpen_text(playpen) {
             undoChangesButton.title = 'Undo changes';
             undoChangesButton.setAttribute('aria-label', undoChangesButton.title);
 
-            buttons.prepend(undoChangesButton);
+            buttons.insertBefore(undoChangesButton, buttons.firstChild);
 
             undoChangesButton.addEventListener('click', function () {
                 let editor = window.ace.edit(code_block);
@@ -271,17 +292,6 @@ function playpen_text(playpen) {
             });
         }
     });
-
-    request
-        .then(function (response) { return response.json(); })
-        .then(function (response) {
-            // get list of crates available in the rust playground
-            let playground_crates = response.crates.map(function (item) { return item["id"]; });
-            Array.from(document.querySelectorAll(".playpen")).forEach(function (block) {
-                handle_crate_list_update(block, playground_crates);
-            });
-        });
-
 })();
 
 (function themes() {
@@ -290,9 +300,9 @@ function playpen_text(playpen) {
     var themePopup = document.getElementById('theme-list');
     var themeColorMetaTag = document.querySelector('meta[name="theme-color"]');
     var stylesheets = {
-        ayuHighlight: document.querySelector("[href='ayu-highlight.css']"),
-        tomorrowNight: document.querySelector("[href='tomorrow-night.css']"),
-        highlight: document.querySelector("[href='highlight.css']"),
+        ayuHighlight: document.querySelector("[href$='ayu-highlight.css']"),
+        tomorrowNight: document.querySelector("[href$='tomorrow-night.css']"),
+        highlight: document.querySelector("[href$='highlight.css']"),
     };
 
     function showThemes() {
@@ -373,7 +383,7 @@ function playpen_text(playpen) {
 
     themePopup.addEventListener('focusout', function(e) {
         // e.relatedTarget is null in Safari and Firefox on macOS (see workaround below)
-        if (!!e.relatedTarget && !themePopup.contains(e.relatedTarget)) {
+        if (!!e.relatedTarget && !themeToggleButton.contains(e.relatedTarget) && !themePopup.contains(e.relatedTarget)) {
             hideThemes();
         }
     });

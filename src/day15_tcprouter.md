@@ -273,6 +273,6 @@ runForever()
 
 ```
 
-This project is very simple, but helped us tackle multiple concepts like how to utilize `async/await` and `asyncCheck` interesting use cases. Of course, It can be extended to support something like forwarding TLS traffic based on [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication) So you can serve multiple backends (with domains) using a single Public IP :) 
+This project is very simple, but helped us tackle multiple concepts like how to utilize `async/await` and `asyncCheck` interesting use cases (literally @dom96 explained it to me). Of course, It can be extended to support something like forwarding TLS traffic based on [SNI](https://en.wikipedia.org/wiki/Server_Name_Indication) So you can serve multiple backends (with domains) using a single Public IP :) 
 
 Please feel free to contribute by opening PR or issue on the repo.

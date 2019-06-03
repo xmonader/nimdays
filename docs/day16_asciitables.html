@@ -1,0 +1,591 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 16: AsciiTables - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="day01_dmidecode.html"><strong aria-hidden="true">1.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">2.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">3.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">4.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">5.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">6.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">7.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">8.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">9.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">10.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">11.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">12.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">13.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">14.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">15.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html" class="active"><strong aria-hidden="true">16.</strong> Day 16: AsciiTables</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#day-16-ascii-tables" id="day-16-ascii-tables"><h1>Day 16: Ascii Tables</h1></a>
+<p>ASCII tables are everywhere, every time you issue SQL select or use tools like docker to see your beloved containers or seeing your todo list in a fancy terminal todo app</p>
+<a class="header" href="#what-to-expect" id="what-to-expect"><h2>What to expect</h2></a>
+<p>Being able to render tables in the terminal, control the widths and the rendering characters.</p>
+<pre><code class="language-nim"> var t = newAsciiTable()
+  t.tableWidth = 80
+  t.setHeaders(@[&quot;ID&quot;, &quot;Name&quot;, &quot;Date&quot;])
+  t.addRow(@[&quot;1&quot;, &quot;Aaaa&quot;, &quot;2018-10-2&quot;])
+  t.addRow(@[&quot;2&quot;, &quot;bbvbbba&quot;, &quot;2018-10-2&quot;])
+  t.addRow(@[&quot;399&quot;, &quot;CCC&quot;, &quot;1018-5-2&quot;])
+  printTable(t)
+
+</code></pre>
+<pre><code>+---------------------------+---------------------------+---------------------------+
+|ID                         |Name                       |Date                       |
++---------------------------+---------------------------+---------------------------+
+|1                          |Aaaa                       |2018-10-2                  |
++---------------------------+---------------------------+---------------------------+
+|2                          |bbvbbba                    |2018-10-2                  |
++---------------------------+---------------------------+---------------------------+
+|399                        |CCC                        |1018-5-2                   |
++---------------------------+---------------------------+---------------------------+
+
+
+</code></pre>
+<p>or let nim decides for you</p>
+<pre><code class="language-nim">  t.tableWidth = 0
+  printTable(t)
+</code></pre>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
++---+-------+---------+
+|2  |bbvbbba|2018-10-2|
++---+-------+---------+
+|399|CCC    |1018-5-2 |
++---+-------+---------+
+
+</code></pre>
+<p>or even remote the separators between the rows.</p>
+<pre><code class="language-nim">+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
+|2  |bbvbbba|2018-10-2|
+|399|CCC    |1018-5-2 |
++---+-------+---------+
+</code></pre>
+<a class="header" href="#why-not-to-do-it-manually" id="why-not-to-do-it-manually"><h3>Why not to do it manually?</h3></a>
+<p>Well if you want to write code like this</p>
+<pre><code class="language-nim">      var widths = @[0,0,0,0]  #id, name, ports, root
+      for k, v in info:
+        if len($v.id) &gt; widths[0]:
+          widths[0] = len($v.id)
+        if len($v.name) &gt; widths[1]:
+          widths[1] = len($v.name)
+        if len($v.ports) &gt; widths[2]:
+          widths[2] = len($v.ports)
+        if len($v.root) &gt; widths[3]:
+          widths[3] = len($v.root)
+      
+      var sumWidths = 0
+      for w in widths:
+        sumWidths += w
+      
+      echo &quot;-&quot;.repeat(sumWidths)
+
+      let extraPadding = 5
+      echo &quot;| ID&quot;  &amp; &quot; &quot;.repeat(widths[0]+ extraPadding-4) &amp; &quot;| Name&quot; &amp; &quot; &quot;.repeat(widths[1]+extraPadding-6) &amp; &quot;| Ports&quot; &amp; &quot; &quot;.repeat(widths[2]+extraPadding-6 ) &amp; &quot;| Root&quot; &amp;  &quot; &quot;.repeat(widths[3]-6)
+      echo &quot;-&quot;.repeat(sumWidths)
+  
+
+      for k, v in info:
+        let nroot = replace(v.root, &quot;https://hub.grid.tf/&quot;, &quot;&quot;).strip()
+        echo &quot;|&quot; &amp; $v.id &amp; &quot; &quot;.repeat(widths[0]-len($v.id)-1 + extraPadding) &amp; &quot;|&quot; &amp; v.name &amp; &quot; &quot;.repeat(widths[1]-len(v.name)-1 + extraPadding) &amp; &quot;|&quot; &amp; v.ports &amp; &quot; &quot;.repeat(widths[2]-len(v.ports)+extraPadding) &amp; &quot;|&quot; &amp; nroot &amp; &quot; &quot;.repeat(widths[3]-len(v.root)+ extraPadding-2) &amp; &quot;|&quot;
+        echo &quot;-&quot;.repeat(sumWidths)
+      result = &quot;&quot;
+</code></pre>
+<p>be my guest :)</p>
+<a class="header" href="#imports" id="imports"><h2>imports</h2></a>
+<p>Not much, but we will deal with lots of strings</p>
+<pre><code class="language-nim">import strformat, strutils
+
+</code></pre>
+<a class="header" href="#types" id="types"><h2>Types</h2></a>
+<p>Let's think a bit about the entities of a Table.</p>
+<p>well we have <code>Table</code>, <code>headers</code>, <code>rows</code>, <code>columns</code> and each row has a <code>cell</code></p>
+<a class="header" href="#cell" id="cell"><h3>Cell</h3></a>
+<pre><code class="language-nim">
+type Cell* = object
+  leftpad*: int
+  rightpad: int
+  pad*: int
+  text*: string
+
+</code></pre>
+<p>Describes the Cell and we define properties like <code>leftpad</code> and <code>rightpad</code> to set the padding around the text in the cell. Also, we used <code>pad</code> general property to create equal <code>leftpad</code> and <code>rightpad</code></p>
+<pre><code>proc newCell*(text: string, leftpad=1, rightpad=1, pad=0): ref Cell =
+  result = new Cell
+  result.pad = pad
+  if pad != 0:
+    result.leftpad = pad
+    result.rightpad = pad
+  else:
+    result.leftpad = leftpad
+    result.rightpad = rightpad
+  result.text = text
+</code></pre>
+<pre><code class="language-nim">proc len*(this:ref Cell): int =
+  result = this.leftpad + this.text.len + this.rightpad
+</code></pre>
+<p>Cell length is the length of the whitespaces in the paddings <code>left</code> and <code>right</code> + the text length.</p>
+<pre><code>proc `$`*(this:ref Cell): string =
+  result = &quot; &quot;.repeat(this.leftpad) &amp; this.text &amp; &quot; &quot;.repeat(this.rightpad)
+</code></pre>
+<p>String representation of our Cell.</p>
+<pre><code>proc newCellFromAnother(another: ref Cell): ref Cell =
+  result = newCell(text=another.text, leftpad=another.leftpad, rightpad=another.rightpad)
+
+</code></pre>
+<p>Little helper procedure to properties from a cell to another</p>
+<a class="header" href="#table" id="table"><h3>Table</h3></a>
+<p>Now let's talk a bit about the table</p>
+<pre><code class="language-nim">
+type AsciiTable* = object 
+  rows: seq[seq[string]]
+  headers: seq[ref Cell]
+  rowSeparator*: char
+  colSeparator*: char 
+  cellEdge*: char 
+  widths: seq[int]
+  suggestedWidths: seq[int]
+  tableWidth*: int
+  separateRows*: bool
+</code></pre>
+<p>AsciiTable describes a table.</p>
+<ul>
+<li>headers makes sense to a seq of strings <code>@[&quot;id&quot;, &quot;name&quot;, ...]</code> or a list of <code>Cell</code>s. we will describe it using a seq of <code>Cell</code>.</li>
+<li>tableWidth: you set the total size of the table.</li>
+<li>rowSeparator: character separates rows</li>
+<li>colSeparator: character separates columns</li>
+<li>cellEdge: character on the edge of each cell
+Remeber that's how our table looks</li>
+</ul>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
++---+-------+---------+
+|399|CCC    |1018-5-2 |
++---+-------+---------+
+
+</code></pre>
+<p>We see each row is separated by <code>rowSeparator</code> <code>-</code> line and <code>cellEdge</code> <code>+</code> on the edgeof every cell and the columns are separated by <code>colSeparator</code> <code>|</code></p>
+<ul>
+<li>separateRows property allows us to remove the separator between rows</li>
+</ul>
+<p>without separator</p>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
+|2  |bbvbbba|2018-10-2|
+|399|CCC    |1018-5-2 |
++---+-------+---------+
+
+</code></pre>
+<p>with separator</p>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
++---+-------+---------+
+|2  |bbvbbba|2018-10-2|
++---+-------+---------+
+|399|CCC    |1018-5-2 |
++---+-------+---------+
+</code></pre>
+<pre><code class="language-nim">proc newAsciiTable*(): ref AsciiTable =
+  result = new AsciiTable
+  result.rowSeparator='-'
+  result.colSeparator='|'
+  result.cellEdge='+'
+  result.tableWidth=0
+  result.separateRows=true
+  result.widths = newSeq[int]()
+  result.suggestedWidths = newSeq[int]()
+  result.rows = newSeq[seq[string]]()
+  result.headers = newSeq[ref Cell]()
+</code></pre>
+<p>Helper to initialize the table.</p>
+<pre><code class="language-nim">proc columnsCount*(this: ref AsciiTable): int =
+  result = this.headers.len
+</code></pre>
+<p>helper to get the number of columns.</p>
+<pre><code class="language-nim">proc setHeaders*(this: ref AsciiTable, headers:seq[string]) =
+  for s in headers:
+    var cell = newCell(s)
+    this.headers.add(cell)
+
+proc setHeaders*(this: ref AsciiTable, headers: seq[ref Cell]) = 
+  this.headers = headers
+
+</code></pre>
+<p>Allow the usage of strings directly as for headers or customized Cells</p>
+<pre><code class="language-nim">proc setRows*(this: ref AsciiTable, rows:seq[seq[string]]) =
+  this.rows = rows
+
+proc addRow*(this: ref AsciiTable, row:seq[string]) =
+  this.rows.add(row)
+
+</code></pre>
+<p>Helpers to add rows to the table <code>data structure</code></p>
+<pre><code class="language-nim">proc printTable*(this: ref AsciiTable) =
+  echo(this.render())
+</code></pre>
+<p>this will print the <code>rendered</code> table which is prepared using <code>render</code> proc.</p>
+<pre><code class="language-nim">proc reset*(this:ref AsciiTable) =
+  this.rowSeparator='-'
+  this.colSeparator='|'
+  this.cellEdge='+'
+  this.tableWidth=0
+  this.separateRows=true
+  this.widths = newSeq[int]()
+  this.suggestedWidths = newSedq[int]()
+  this.rows = newSeq[seq[string]]()
+  this.headers = newSeq[ref Cell]()
+</code></pre>
+<p>Resets table defaults.</p>
+<a class="header" href="#rendering-the-table" id="rendering-the-table"><h4>Rendering the table.</h4></a>
+<p>Let's assume for a second that <code>widths</code> property has all the information about the size of each column based on its index
+e.g <code>widths =&gt; [5, 10, 20]</code> means</p>
+<ul>
+<li>column 0 can hold maximum of 5 char cell.</li>
+<li>column 1 can hold maximum of 10 chars cell.</li>
+<li>column 2 can hold maximum of 20 chars cell.</li>
+</ul>
+<p>the column <code>cells</code> size can't be varied so we set the size to the <code>LONGEST</code> item in the column.
+it's bit tedious so we will get back to it later.</p>
+<pre><code class="language-nim">proc oneLine(this: ref AsciiTable): string =
+  result &amp;= this.cellEdge
+  for w in this.widths:
+    result &amp;= this.rowSeparator.repeat(w) &amp; this.cellEdge
+  result &amp;= &quot;\n&quot;
+</code></pre>
+<p>oneLine helps in creating such line</p>
+<pre><code>+---+-------+---------+
+</code></pre>
+<p>So how does it work?
+1- add the <code>cellEdge</code> <code>+</code> on the left
+2- add <code>colSeparator</code> <code>-</code> until you consume the size of the width of the column you are at and then add <code>cellEdge</code> again.
+3- add new line. <code>\n</code></p>
+<p>Steps for each width.</p>
+<pre><code>+
++---+
++---+-------+
++---+-------+---------+
+</code></pre>
+<pre><code class="language-nim">proc render*(this: ref AsciiTable): string =
+  this.calculateWidths()
+</code></pre>
+<p>We start by calling our magic function <code>calculateWidths</code></p>
+<pre><code class="language-nim">  # top border
+  result &amp;= this.oneline()
+</code></pre>
+<p>Generate the top border line of the table.</p>
+<pre><code class="language-nim">  # headers
+  for colidx, h in this.headers:
+    result &amp;= this.colSeparator &amp; $h &amp; &quot; &quot;.repeat(this.widths[colidx]-len(h) )
+  
+  result &amp;= this.colSeparator
+  result &amp;= &quot;\n&quot;
+  # finish headers 
+
+  # line after headers
+</code></pre>
+<p>Now the headers</p>
+<pre><code>|ID |Name   |Date     |
+</code></pre>
+<p>So we start with <code>colSeparator</code> <code>|</code> for each header defined in <code>this.headers</code> the print the content of the header (which is a cell so we print the leftpad + text + rightpad ) and add <code>colSeparator</code> <code>|</code> to the end of the items</p>
+<pre><code class="language-nim">  result &amp;= this.oneline()
+
+</code></pre>
+<p>Add another line, So our table looks like this now.</p>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+</code></pre>
+<pre><code class="language-nim">  # start rows
+  for r in this.rows:
+    # start row
+    for colidx, c in r:
+      let cell = newCell(c, leftpad=this.headers[colidx].leftpad, rightpad=this.headers[colidx].rightpad)
+      result &amp;= this.colSeparator &amp; $cell &amp; &quot; &quot;.repeat(this.widths[colidx]-len(cell)) 
+    result &amp;= this.colSeparator
+    result &amp;= &quot;\n&quot;
+</code></pre>
+<p>Now exactly the same for each row, we get the row and print it the same way we printed the headers and follow it by a new line.</p>
+<p>Our table looks like this now</p>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
+</code></pre>
+<pre><code class="language-nim">    if this.separateRows: 
+        result &amp;= this.oneLine()
+    # finish row
+</code></pre>
+<p>Now we need to decide: are all the rows have line separating them or they don't.
+In case if they have separators we finish the row by adding another <code>oneLine</code></p>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
++---+-------+---------+
+</code></pre>
+<p>or if it doesn't have separators and we want our table to look like this in the end</p>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
+|2  |bbvbbba|2018-10-2|
+
+</code></pre>
+<p>we don't add <code>oneLine</code></p>
+<pre><code>  # don't duplicate the finishing line if it's already printed in case of this.separateRows
+  if not this.separateRows:
+      result &amp;= this.oneLine()
+  return result
+</code></pre>
+<p>if we don't separateRows we add the final <code>oneLine</code> to the table</p>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
+|2  |bbvbbba|2018-10-2|
++---+-------+---------+   &lt;- the final oneLine
+</code></pre>
+<p>if we do separateRows we shouldn't add another <code>oneLine</code> or our table will be rendered like</p>
+<pre><code>+---+-------+---------+
+|ID |Name   |Date     |
++---+-------+---------+
+|1  |Aaaa   |2018-10-2|
++---+-------+---------+
+|2  |bbvbbba|2018-10-2|
++---+-------+---------+
++---+-------+---------+
+</code></pre>
+<a class="header" href="#now-back-to-calculating-widths" id="now-back-to-calculating-widths"><h3>Now back to calculating widths</h3></a>
+<p>Back to the magic function. To be honest, it's not magical it's just bit tedious.
+So the basic idea is:</p>
+<pre><code class="language-nim">proc calculateWidths(this: ref AsciiTable) =
+  var colsWidths = newSeq[int]()
+
+</code></pre>
+<p>a list of column widths</p>
+<pre><code>  if this.suggestedWidths.len == 0:
+    for h in this.headers:
+      colsWidths.add(h.len) 
+  else:
+    colsWidths = this.suggestedWidths
+</code></pre>
+<p>the user might suggest some widths via <code>suggestedWidths</code> property, so can use them for guidance.</p>
+<pre><code class="language-nim">
+  for row in this.rows:
+    for colpos, c in row:
+      var acell = newCellFromAnother(this.headers[colpos])
+      acell.text = c
+      if len(acell) &gt; colsWidths[colpos]:
+        colsWidths[colpos] = len(acell)
+</code></pre>
+<p>we get the size <code>length</code> of each column by iterating on all the rows and find the <code>max</code> item (the cell with the longest size) in the position of the column in every row and that <code>max</code> will be the column width.</p>
+<p>We support other options like <code>totalWidth</code> of the Table and that will make equal column sizes if the user didn't <code>suggest widths</code></p>
+<pre><code class="language-nim">  let sizeForCol = (this.tablewidth/len(this.headers)).toInt()
+  var lenHeaders = 0
+  for w in colsWidths:
+    lenHeaders += w 
+</code></pre>
+<p>Here we calculate the length of each header <code>equally</code> using table width specified by the user divided by the number of columns <code>headers</code></p>
+<pre><code class="language-nim">  if this.tablewidth &gt; lenHeaders:
+    if this.suggestedWidths.len == 0:
+      for colpos, c in colsWidths:
+        colsWidths[colpos] += sizeForCol - c
+</code></pre>
+<p>if the user didn't suggest any widths then he wants the table columns of equal length</p>
+<pre><code class="language-nim">  if this.suggestedWidths.len != 0:
+    var sumSuggestedWidths = 0
+    for s in this.suggestedWidths:
+      sumSuggestedWidths += s
+
+    if lenHeaders &gt; sumSuggestedWidths:
+      raise newException(ValueError, fmt&quot;sum of {this.suggestedWidths} = {sumSuggestedWidths} and it's less than required length {lenHeaders}&quot;)      
+</code></pre>
+<p>if the user suggested some widths we caculate the sum of what user suggested and check if <code>greater than</code> the calculated <code>lenHeaders</code> and if it's not we raise an exception.</p>
+<pre><code class="language-nim">  this.widths = colsWidths
+</code></pre>
+<p>Phew! We finally set the widths property now</p>
+<a class="header" href="#nim-asciitable" id="nim-asciitable"><h2>nim-asciitable</h2></a>
+<p>this day is based on my project <a href="https://github.com/xmonader/nim-asciitables">nim-asciitables</a> and it's superseded by <a href="https://github.com/xmonader/nim-terminaltables">nim-terminaltables</a> which provides more customizable styles and unicode box drawing support.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day15_tcprouter.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day15_tcprouter.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

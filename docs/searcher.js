@@ -1,15 +1,24 @@
+"use strict";
 window.search = window.search || {};
 (function search(search) {
     // Search functionality
     //
     // You can use !hasFocus() to prevent keyhandling in your key
-    // event handlers while the user is typing his search.
+    // event handlers while the user is typing their search.
 
     if (!Mark || !elasticlunr) {
         return;
     }
-    
-    var searchbar = document.getElementById('searchbar'),
+
+    //IE 11 Compatibility from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/startsWith
+    if (!String.prototype.startsWith) {
+        String.prototype.startsWith = function(search, pos) {
+            return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
+        };
+    }
+
+    var search_wrap = document.getElementById('search-wrapper'),
+        searchbar = document.getElementById('searchbar'),
         searchbar_outer = document.getElementById('searchbar-outer'),
         searchresults = document.getElementById('searchresults'),
         searchresults_outer = document.getElementById('searchresults-outer'),
@@ -18,11 +27,14 @@ window.search = window.search || {};
         content = document.getElementById('content'),
 
         searchindex = null,
-        searchoptions = {
-            bool: "AND",
-            expand: true,
+        doc_urls = [],
+        results_options = {
             teaser_word_count: 30,
             limit_results: 30,
+        },
+        search_options = {
+            bool: "AND",
+            expand: true,
             fields: {
                 title: {boost: 1},
                 body: {boost: 1},
@@ -128,12 +140,12 @@ window.search = window.search || {};
         teaser_count++;
 
         // The ?URL_MARK_PARAM= parameter belongs inbetween the page and the #heading-anchor
-        var url = result.ref.split("#");
+        var url = doc_urls[result.ref].split("#");
         if (url.length == 1) { // no anchor found
             url.push("");
         }
 
-        return '<a href="' + url[0] + '?' + URL_MARK_PARAM + '=' + searchterms + '#' + url[1]
+        return '<a href="' + path_to_root + url[0] + '?' + URL_MARK_PARAM + '=' + searchterms + '#' + url[1]
             + '" aria-details="teaser_' + teaser_count + '">' + result.doc.breadcrumbs + '</a>'
             + '<span class="teaser" id="teaser_' + teaser_count + '" aria-label="Search Result Teaser">' 
             + teaser + '</span>';
@@ -185,7 +197,7 @@ window.search = window.search || {};
         }
 
         var window_weight = [];
-        var window_size = Math.min(weighted.length, searchoptions.teaser_word_count);
+        var window_size = Math.min(weighted.length, results_options.teaser_word_count);
 
         var cur_sum = 0;
         for (var wordindex = 0; wordindex < window_size; wordindex++) {
@@ -235,16 +247,21 @@ window.search = window.search || {};
         return teaser_split.join('');
     }
 
-    function init() {
-        searchoptions = window.search.searchoptions;
-        searchindex = elasticlunr.Index.load(window.search.index);
+    function init(config) {
+        results_options = config.results_options;
+        search_options = config.search_options;
+        searchbar_outer = config.searchbar_outer;
+        doc_urls = config.doc_urls;
+        searchindex = elasticlunr.Index.load(config.index);
 
         // Set up events
         searchicon.addEventListener('click', function(e) { searchIconClickHandler(); }, false);
         searchbar.addEventListener('keyup', function(e) { searchbarKeyUpHandler(); }, false);
-        document.addEventListener('keydown', function (e) { globalKeyHandler(e); }, false);
+        document.addEventListener('keydown', function(e) { globalKeyHandler(e); }, false);
         // If the user uses the browser buttons, do the same as if a reload happened
         window.onpopstate = function(e) { doSearchOrMarkFromUrl(); };
+        // Suppress "submit" events so the page doesn't reload when the user presses Enter
+        document.addEventListener('submit', function(e) { e.preventDefault(); }, false);
 
         // If reloaded, do the search or mark again, depending on the current url parameters
         doSearchOrMarkFromUrl();
@@ -294,94 +311,84 @@ window.search = window.search || {};
     
     // Eventhandler for keyevents on `document`
     function globalKeyHandler(e) {
-        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) { return; }
+        if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.target.type === 'textarea') { return; }
 
-        if (e.keyCode == ESCAPE_KEYCODE) {
+        if (e.keyCode === ESCAPE_KEYCODE) {
             e.preventDefault();
             searchbar.classList.remove("active");
             setSearchUrlParameters("",
-                (searchbar.value.trim() != "") ? "push" : "replace");
+                (searchbar.value.trim() !== "") ? "push" : "replace");
             if (hasFocus()) {
                 unfocusSearchbar();
             }
             showSearch(false);
             marker.unmark();
-            return;
-        }
-        if (!hasFocus() && e.keyCode == SEARCH_HOTKEY_KEYCODE) {
+        } else if (!hasFocus() && e.keyCode === SEARCH_HOTKEY_KEYCODE) {
             e.preventDefault();
             showSearch(true);
             window.scrollTo(0, 0);
-            searchbar.focus();
-            return;
-        }
-        if (hasFocus() && e.keyCode == DOWN_KEYCODE) {
+            searchbar.select();
+        } else if (hasFocus() && e.keyCode === DOWN_KEYCODE) {
             e.preventDefault();
             unfocusSearchbar();
-            searchresults.children('li').first().classList.add("focus");
-            return;
-        }
-        if (!hasFocus() && (e.keyCode == DOWN_KEYCODE
-                            || e.keyCode == UP_KEYCODE
-                            || e.keyCode == SELECT_KEYCODE)) {
+            searchresults.firstElementChild.classList.add("focus");
+        } else if (!hasFocus() && (e.keyCode === DOWN_KEYCODE
+                                || e.keyCode === UP_KEYCODE
+                                || e.keyCode === SELECT_KEYCODE)) {
             // not `:focus` because browser does annoying scrolling
-            var current_focus = search.searchresults.find("li.focus");
-            if (current_focus.length == 0) return;
+            var focused = searchresults.querySelector("li.focus");
+            if (!focused) return;
             e.preventDefault();
-            if (e.keyCode == DOWN_KEYCODE) {
-                var next = current_focus.next()
-                if (next.length > 0) {
-                    current_focus.classList.remove("focus");
+            if (e.keyCode === DOWN_KEYCODE) {
+                var next = focused.nextElementSibling;
+                if (next) {
+                    focused.classList.remove("focus");
                     next.classList.add("focus");
                 }
-            } else if (e.keyCode == UP_KEYCODE) {
-                current_focus.classList.remove("focus");
-                var prev = current_focus.prev();
-                if (prev.length == 0) {
-                    searchbar.focus();
-                } else {
+            } else if (e.keyCode === UP_KEYCODE) {
+                focused.classList.remove("focus");
+                var prev = focused.previousElementSibling;
+                if (prev) {
                     prev.classList.add("focus");
+                } else {
+                    searchbar.select();
                 }
-            } else {
-                window.location = current_focus.children('a').attr('href');
+            } else { // SELECT_KEYCODE
+                window.location.assign(focused.querySelector('a'));
             }
         }
     }
     
     function showSearch(yes) {
         if (yes) {
-            searchbar_outer.style.display = 'block';
-            content.style.display = 'none';
+            search_wrap.classList.remove('hidden');
             searchicon.setAttribute('aria-expanded', 'true');
         } else {
-            content.style.display = 'block';
-            searchbar_outer.style.display = 'none';
-            searchresults_outer.style.display = 'none';
-            searchbar.value = '';
-            removeChildren(searchresults);
+            search_wrap.classList.add('hidden');
             searchicon.setAttribute('aria-expanded', 'false');
+            var results = searchresults.children;
+            for (var i = 0; i < results.length; i++) {
+                results[i].classList.remove("focus");
+            }
         }
     }
 
     function showResults(yes) {
         if (yes) {
-            searchbar_outer.style.display = 'block';
-            content.style.display = 'none';
-            searchresults_outer.style.display = 'block';
+            searchresults_outer.classList.remove('hidden');
         } else {
-            content.style.display = 'block';
-            searchresults_outer.style.display = 'none';
+            searchresults_outer.classList.add('hidden');
         }
     }
 
     // Eventhandler for search icon
     function searchIconClickHandler() {
-        if (searchbar_outer.style.display === 'block') {
-            showSearch(false);
-        } else {
+        if (search_wrap.classList.contains('hidden')) {
             showSearch(true);
             window.scrollTo(0, 0);
-            searchbar.focus();
+            searchbar.select();
+        } else {
+            showSearch(false);
         }
     }
     
@@ -436,8 +443,8 @@ window.search = window.search || {};
         if (searchindex == null) { return; }
 
         // Do the actual search
-        var results = searchindex.search(searchterm, searchoptions);
-        var resultcount = Math.min(results.length, searchoptions.limit_results);
+        var results = searchindex.search(searchterm, search_options);
+        var resultcount = Math.min(results.length, results_options.limit_results);
 
         // Display search metrics
         searchresults_header.innerText = formatSearchMetric(resultcount, searchterm);
@@ -455,7 +462,16 @@ window.search = window.search || {};
         showResults(true);
     }
 
-    init();
+    fetch(path_to_root + 'searchindex.json')
+        .then(response => response.json())
+        .then(json => init(json))        
+        .catch(error => { // Try to load searchindex.js if fetch failed
+            var script = document.createElement('script');
+            script.src = path_to_root + 'searchindex.js';
+            script.onload = () => init(window.search);
+            document.head.appendChild(script);
+        });
+
     // Exported functions
     search.hasFocus = hasFocus;
 })(window.search);

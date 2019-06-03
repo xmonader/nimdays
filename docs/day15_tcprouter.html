@@ -1,0 +1,439 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 15: TCP Router - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="day01_dmidecode.html"><strong aria-hidden="true">1.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">2.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">3.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">4.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">5.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">6.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">7.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">8.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">9.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">10.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">11.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">12.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">13.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">14.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html" class="active"><strong aria-hidden="true">15.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">16.</strong> Day 16: AsciiTables</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#day-15-tcp-router-routing-tcp-traffic" id="day-15-tcp-router-routing-tcp-traffic"><h1>Day 15: TCP Router (Routing TCP traffic)</h1></a>
+<p>Today we will implement a <code>tcp router</code> or tcp portforwarder as it works against only 1 endpoint.</p>
+<a class="header" href="#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
+<pre><code class="language-nim">let opts = ForwardOptions(listenAddr:&quot;127.0.0.1&quot;, listenPort:11000.Port, toAddr:&quot;127.0.0.1&quot;, toPort:6379.Port)
+var f = newForwarder(opts)
+asyncCheck f.serve()
+runForever()
+
+</code></pre>
+<p>and then you can do</p>
+<pre><code>redis-client -p 11000
+&gt; PING
+PONG
+
+</code></pre>
+<a class="header" href="#the-plan" id="the-plan"><h2>The plan</h2></a>
+<ul>
+<li>Listen on <code>listenPort</code> on address <code>listenAddr</code> and accept connections.</li>
+<li>On every new connection (incoming)
+<ul>
+<li>open a socket to <code>toPort</code> on <code>toAddr</code> (outgoing)</li>
+<li>whenever data is ready on any of both ends write the data to the other one</li>
+</ul>
+</li>
+</ul>
+<a class="header" href="#how-ready" id="how-ready"><h3>How ready?</h3></a>
+<p>Linux provides APIs like select, poll to <code>watch</code> or <code>monitor</code> set of file descriptors and allows you to <code>do</code> some action on whatever <code>ready</code> file descriptor for reading or writing.</p>
+<blockquote>
+<p>The select() function gives you a way to simultaneously check multiple sockets to see if they have data waiting to be recv()d, or if you can send() data to them without blocking, or if some exception has occurred.</p>
+</blockquote>
+<p>Please check <a href="https://beej.us/guide/bgnet/html/multi/selectman.html">Beej's guide to network programming</a> for more on that</p>
+<a class="header" href="#imports" id="imports"><h2>Imports</h2></a>
+<pre><code class="language-nim">import  strformat, tables, json, strutils, sequtils, hashes, net, asyncdispatch, asyncnet, os, strutils, parseutils, deques, options, net
+</code></pre>
+<a class="header" href="#types" id="types"><h2>Types</h2></a>
+<p>Options for the server specifying on which address to listen and where to forward the traffic.</p>
+<pre><code class="language-nim">type ForwardOptions = object
+  listenAddr*: string
+  listenPort*: Port
+  toAddr*: string
+  toPort*: Port
+</code></pre>
+<pre><code>type Forwarder = object of RootObj
+  options*: ForwardOptions
+
+
+proc newForwarder(opts: ForwardOptions): ref Forwarder =
+  result = new(Forwarder)
+  result.options = opts
+
+</code></pre>
+<p>Represents the server <code>the forwarder</code></p>
+<p>and <code>newForwarder</code> creates a forwader and sets its options</p>
+<a class="header" href="#server-setup" id="server-setup"><h2>Server setup</h2></a>
+<pre><code class="language-nim">proc serve(this: ref Forwarder) {.async.} =
+  var server = newAsyncSocket(buffered=false)
+  server.setSockOpt(OptReuseAddr, true)
+  server.bindAddr(this.options.listenPort, this.options.listenAddr)
+  echo fmt&quot;Started tcp server... {this.options.listenAddr}:{this.options.listenPort} &quot;
+  server.listen()
+  
+  while true:
+    let client = await server.accept()
+    echo &quot;..Got connection &quot;
+
+    asyncCheck this.processClient(client)
+</code></pre>
+<p>We will utilize async/await features of nim to build our server.</p>
+<ul>
+<li>
+<p>Create a new socket with <code>newAsyncSocket</code> (make sure to set buffered to false so Nim doesn't try to read all requested data)</p>
+</li>
+<li>
+<p><code>setSockOpts</code> allows you to make the socket reusable</p>
+</li>
+</ul>
+<blockquote>
+<p>SO_REUSEADDR is used in servers mainly because it's common that you need to restart the server for the sake of trying or changing configurations (some use SIGHUP to update the configuration as a pattern) and if there were active connections the next time you start the server will fail.</p>
+</blockquote>
+<ul>
+<li><code>bindAddr</code> binds the server to certian address and port <code>listenAddr</code> and <code>listenPort</code></li>
+<li>then we start a loop to recieve connections.</li>
+<li>we should call <code>await processClient</code> right? why <code>asyncCheck processClient</code></li>
+</ul>
+<a class="header" href="#await-vs-asynccheck" id="await-vs-asynccheck"><h3>await vs asyncCheck</h3></a>
+<ul>
+<li><code>await</code> means execute that async action and <code>block</code> the execution until you get a result.</li>
+<li><code>asyncCheck</code> means execute async action and <code>don't block</code> a suitable name might be <code>discard</code> or <code>discardAsync</code></li>
+</ul>
+<p>No we can answer the question why call <code>asyncCheck processClient</code> instead of <code>await processClient</code> is because we will block the event machine until <code>processClient</code> completely executes which defeats the purpose of concurrency and accepting/handling multiple clients.</p>
+<a class="header" href="#process-a-client" id="process-a-client"><h2>Process a client</h2></a>
+<a class="header" href="#establish-the-connection" id="establish-the-connection"><h3>Establish the connection</h3></a>
+<pre><code class="language-nim">proc processClient(this: ref Forwarder, client: AsyncSocket) {.async.} =
+  let remote = newAsyncSocket(buffered=false)
+  await remote.connect(this.options.toAddr, this.options.toPort)
+  ...
+</code></pre>
+<p>First thing is to get a socket to the endpoint where we forward the traffic defined in the <code>ForwardOptions</code> <code>toAddr</code> and <code>toPort</code></p>
+<p>No we could've established a loop and reading data from the <code>client</code> socket and write it to the <code>remote</code> socket</p>
+<p>Problem is we may get out of sync, sometimes the remote sends data once a client connects to it before reading anything from the client. Maybe the remote sends information like server version or some metadata or instructions on protocol and it may not we can't be sure that it's waiting on recieving data always as the first step. So what we can do is <code>watch</code> the file descriptors and whoever has data we write to the other one.</p>
+<p>e.g</p>
+<ul>
+<li>remote has data: we read <code>recv</code> it and write <code>send</code> it to the client.</li>
+<li>client has data: we read <code>recv</code> it and write <code>send</code> it to the remote.</li>
+</ul>
+<a class="header" href="#the-remote-has-data" id="the-remote-has-data"><h3>The remote has data</h3></a>
+<pre><code class="language-nim">  proc remoteHasData() {.async.} =
+    while not remote.isClosed and not remote.isClosed:
+      echo &quot; in remote has data loop&quot;
+      let data = await remote.recv(1024)
+      echo &quot;got data: &quot; &amp; data
+      await client.send(data)
+    client.close()
+    remote.close()
+</code></pre>
+<a class="header" href="#the-client-has-data" id="the-client-has-data"><h3>The client has data</h3></a>
+<pre><code class="language-nim">  proc clientHasData() {.async.} =
+    while not client.isClosed and not remote.isClosed:
+      echo &quot;in client has data loop&quot;
+      let data = await client.recv(1024)
+      echo &quot;got data: &quot; &amp; data
+      await remote.send(data)
+    client.close()
+    remote.close()
+</code></pre>
+<a class="header" href="#run-the-data-processors" id="run-the-data-processors"><h3>Run the data processors</h3></a>
+<p>Now let's register <code>clientHasData</code> and <code>remoteHasData</code> procs to the event machine and <code>LET'S NOT BLOCK</code> on any of them (remember if you don't want to block then you need <code>asyncCheck</code>)</p>
+<pre><code class="language-nim">  try:
+    asyncCheck clientHasData()
+    asyncCheck remoteHasData()
+  except:
+    echo getCurrentExceptionMsg()
+</code></pre>
+<p>So now our <code>processClient</code> should look like</p>
+<pre><code class="language-nim">
+proc processClient(this: ref Forwarder, client: AsyncSocket) {.async.} =
+  let remote = newAsyncSocket(buffered=false)
+  await remote.connect(this.options.toAddr, this.options.toPort)
+
+  proc clientHasData() {.async.} =
+    while not client.isClosed and not remote.isClosed:
+      echo &quot;in client has data loop&quot;
+      let data = await client.recv(1024)
+      echo &quot;got data: &quot; &amp; data
+      await remote.send(data)
+    client.close()
+    remote.close()
+
+  proc remoteHasData() {.async.} =
+    while not remote.isClosed and not remote.isClosed:
+      echo &quot; in remote has data loop&quot;
+      let data = await remote.recv(1024)
+      echo &quot;got data: &quot; &amp; data
+      await client.send(data)
+    client.close()
+    remote.close()
+  
+  try:
+    asyncCheck clientHasData()
+    asyncCheck remoteHasData()
+  except:
+    echo getCurrentExceptionMsg()
+</code></pre>
+<a class="header" href="#lets-forward-to-redis" id="lets-forward-to-redis"><h2>Let's forward to redis</h2></a>
+<pre><code class="language-nim">
+let opts = ForwardOptions(listenAddr:&quot;127.0.0.1&quot;, listenPort:11000.Port, toAddr:&quot;127.0.0.1&quot;, toPort:6379.Port)
+var f = newForwarder(opts)
+asyncCheck f.serve()
+runForever()
+
+</code></pre>
+<p><code>runForever</code> begins a never ending global dispatch poll loop</p>
+<p>our full code</p>
+<pre><code class="language-nim"># This is just an example to get you started. A typical binary package
+# uses this file as the main entry point of the application.
+
+import  strformat, tables, json, strutils, sequtils, hashes, net, asyncdispatch, asyncnet, os, strutils, parseutils, deques, options, net
+
+type ForwardOptions = object
+  listenAddr*: string
+  listenPort*: Port
+  toAddr*: string
+  toPort*: Port
+
+type Forwarder = object of RootObj
+  options*: ForwardOptions
+
+proc processClient(this: ref Forwarder, client: AsyncSocket) {.async.} =
+  let remote = newAsyncSocket(buffered=false)
+  await remote.connect(this.options.toAddr, this.options.toPort)
+
+  proc clientHasData() {.async.} =
+    while not client.isClosed and not remote.isClosed:
+      echo &quot;in client has data loop&quot;
+      let data = await client.recv(1024)
+      echo &quot;got data: &quot; &amp; data
+      await remote.send(data)
+    client.close()
+    remote.close()
+
+  proc remoteHasData() {.async.} =
+    while not remote.isClosed and not remote.isClosed:
+      echo &quot; in remote has data loop&quot;
+      let data = await remote.recv(1024)
+      echo &quot;got data: &quot; &amp; data
+      await client.send(data)
+    client.close()
+    remote.close()
+  
+  try:
+    asyncCheck clientHasData()
+    asyncCheck remoteHasData()
+  except:
+    echo getCurrentExceptionMsg()
+
+proc serve(this: ref Forwarder) {.async.} =
+  var server = newAsyncSocket(buffered=false)
+  server.setSockOpt(OptReuseAddr, true)
+  server.bindAddr(this.options.listenPort, this.options.listenAddr)
+  echo fmt&quot;Started tcp server... {this.options.listenAddr}:{this.options.listenPort} &quot;
+  server.listen()
+  
+  while true:
+    let client = await server.accept()
+    echo &quot;..Got connection &quot;
+
+    asyncCheck this.processClient(client)
+
+proc newForwarder(opts: ForwardOptions): ref Forwarder =
+  result = new(Forwarder)
+  result.options = opts
+
+let opts = ForwardOptions(listenAddr:&quot;127.0.0.1&quot;, listenPort:11000.Port, toAddr:&quot;127.0.0.1&quot;, toPort:6379.Port)
+var f = newForwarder(opts)
+asyncCheck f.serve()
+runForever()
+
+</code></pre>
+<p>This project is very simple, but helped us tackle multiple concepts like how to utilize <code>async/await</code> and <code>asyncCheck</code> interesting use cases (literally @dom96 explained it to me). Of course, It can be extended to support something like forwarding TLS traffic based on <a href="https://en.wikipedia.org/wiki/Server_Name_Indication">SNI</a> So you can serve multiple backends (with domains) using a single Public IP :)</p>
+<p>Please feel free to contribute by opening PR or issue on the repo.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day14_nimassets.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="day16_asciitables.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day14_nimassets.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="day16_asciitables.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

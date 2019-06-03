@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible">
+<html lang="en" class="sidebar-visible no-js">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -9,44 +9,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <base href="">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
-        <link rel="stylesheet" href="book.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
-        <link rel="shortcut icon" href="favicon.png">
-
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
+        <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
-        <!-- Custom theme -->
+        <!-- Custom theme stylesheets -->
         
 
         
-
-        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
-        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
-        <script>
-            if (typeof Clipboard == 'undefined') {
-                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
-            }
-        </script>
-
-        <noscript>
-            <style type="text/css">
-                .javascript-only {
-                    display: none;
-                }
-            </style>
-        </noscript>
-
     </head>
     <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script type="text/javascript">
             try {
@@ -69,7 +56,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
             if (theme === null || theme === undefined) { theme = 'light'; }
             document.body.className = theme;
-            document.querySelector('html').className = theme;
+            document.querySelector('html').className = theme + ' js';
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -85,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html" class="active">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li><li class="affix"><a href="day13_redisclient.html">Day 13: Redis Client</a></li><li class="affix"><a href="day14_nimassets.html">Day 14: Nim-Assets</a></li></ol>
+            <ol class="chapter"><li><a href="day01_dmidecode.html"><strong aria-hidden="true">1.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">2.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">3.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">4.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">5.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html" class="active"><strong aria-hidden="true">6.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">7.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">8.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">9.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">10.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">11.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">12.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">13.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">14.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">15.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">16.</strong> Day 16: AsciiTables</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -94,7 +81,7 @@
                 
                 <div id="menu-bar" class="menu-bar">
                     <div id="menu-bar-sticky-container">
-                        <div class="left-buttons javascript-only">
+                        <div class="left-buttons">
                             <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                                 <i class="fa fa-bars"></i>
                             </button>
@@ -126,13 +113,15 @@
                 </div>
 
                 
-                <div id="searchbar-outer" class="searchbar-outer">
-                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
-                </div>
-                <div id="searchresults-outer" class="searchresults-outer">
-                    <div class="searchresults-header" id="searchresults-header"></div>
-                    <ul id="searchresults">
-                    </ul>
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
                 </div>
                 
 
@@ -147,9 +136,9 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="day06_nistow.html#day-6-manage-your-dotfiles-easily-with-nistow" id="day-6-manage-your-dotfiles-easily-with-nistow"><h1>Day 6: Manage your dotfiles easily with nistow</h1></a>
+                        <a class="header" href="#day-6-manage-your-dotfiles-easily-with-nistow" id="day-6-manage-your-dotfiles-easily-with-nistow"><h1>Day 6: Manage your dotfiles easily with nistow</h1></a>
 <p>Today we will create a tool to manage our dotfiles easily.</p>
-<a class="header" href="day06_nistow.html#dotfiles-layout" id="dotfiles-layout"><h2>Dotfiles layout</h2></a>
+<a class="header" href="#dotfiles-layout" id="dotfiles-layout"><h2>Dotfiles layout</h2></a>
 <pre><code>        i3
         `-- .config
             `-- i3
@@ -159,7 +148,7 @@
 <blockquote>
 <p>Home directory is the default destination.</p>
 </blockquote>
-<a class="header" href="day06_nistow.html#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
+<a class="header" href="#what-do-we-expect" id="what-do-we-expect"><h2>What do we expect?</h2></a>
 <pre><code>➜  ~ nistow --help
     Stow 0.1.0
         -h | --help     : show help
@@ -177,7 +166,7 @@
 </ul>
 <pre><code>nistow --app=/home/striky/wspace/dotfiles/localdir --dest=/tmp/tmpconf --verbose
 </code></pre>
-<a class="header" href="day06_nistow.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="#implementation" id="implementation"><h2>Implementation</h2></a>
 <pre><code class="language-Nimrod">proc writeHelp() = 
     echo &quot;&quot;&quot;
 Stow 0.1.0 (Manage your dotfiles easily)
@@ -369,39 +358,25 @@ __________________apppath________                _____dest____
 
         </div>
 
-
-        <!-- Local fallback for Font Awesome -->
-        <script>
-            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.type = 'text/css';
-                link.href = '_FontAwesome/css/font-awesome.css';
-                document.head.insertBefore(link, document.head.firstChild)
-            }
-        </script>
-
         
 
         
 
         
 
-        
-        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
-        
         
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
         
 
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
         
 
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
-
-        <!-- Custom JS script -->
         
 
     </body>

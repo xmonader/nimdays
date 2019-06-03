@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html lang="en" class="sidebar-visible">
+<html lang="en" class="sidebar-visible no-js">
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
@@ -9,44 +9,31 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff" />
 
-        <base href="">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
 
-        <link rel="stylesheet" href="book.css">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
         <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
 
-        <link rel="shortcut icon" href="favicon.png">
-
-        <!-- Font Awesome -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
+        <!-- Highlight.js Stylesheets -->
         <link rel="stylesheet" href="highlight.css">
         <link rel="stylesheet" href="tomorrow-night.css">
         <link rel="stylesheet" href="ayu-highlight.css">
 
-        <!-- Custom theme -->
+        <!-- Custom theme stylesheets -->
         
 
         
-
-        <!-- Fetch Clipboard.js from CDN but have a local fallback -->
-        <script src="https://cdn.jsdelivr.net/clipboard.js/1.6.1/clipboard.min.js"></script>
-        <script>
-            if (typeof Clipboard == 'undefined') {
-                document.write(unescape("%3Cscript src='clipboard.min.js'%3E%3C/script%3E"));
-            }
-        </script>
-
-        <noscript>
-            <style type="text/css">
-                .javascript-only {
-                    display: none;
-                }
-            </style>
-        </noscript>
-
     </head>
     <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
         <!-- Work around some values being stored in localStorage wrapped in quotes -->
         <script type="text/javascript">
             try {
@@ -69,7 +56,7 @@
             try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
             if (theme === null || theme === undefined) { theme = 'light'; }
             document.body.className = theme;
-            document.querySelector('html').className = theme;
+            document.querySelector('html').className = theme + ' js';
         </script>
 
         <!-- Hide / unhide sidebar before it is displayed -->
@@ -85,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li class="affix"><a href="day01_dmidecode.html">Day 1 DMIDecode</a></li><li class="affix"><a href="day02_bencode.html">Day 2: Parsing Bencode</a></li><li class="affix"><a href="day03_libmagic.html">Day 3: FFI and Libmagic</a></li><li class="affix"><a href="day04_asynclinkschecker.html">Day 4: Async LinksChecker</a></li><li class="affix"><a href="day05_iniparser.html">Day 5: INI Parser</a></li><li class="affix"><a href="day06_nistow.html">Day 6: Nistow (Dotfiles Manager)</a></li><li class="affix"><a href="day07_shorturl.html">Day 7: URL Shortening Service</a></li><li class="affix"><a href="day08_minitest.html">Day 8: MiniTest framework</a></li><li class="affix"><a href="day09_tictactoe_cli.html" class="active">Day 9: TicTacToe CLI</a></li><li class="affix"><a href="day10_tictactoe_gui.html">Day 10: TicTacToe GUI</a></li><li class="affix"><a href="day11_buildsystem.html">Day 11: Bake build system</a></li><li class="affix"><a href="day12_resp.html">Day 12: Redis Protocol</a></li><li class="affix"><a href="day13_redisclient.html">Day 13: Redis Client</a></li><li class="affix"><a href="day14_nimassets.html">Day 14: Nim-Assets</a></li></ol>
+            <ol class="chapter"><li><a href="day01_dmidecode.html"><strong aria-hidden="true">1.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">2.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">3.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">4.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">5.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">6.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">7.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">8.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html" class="active"><strong aria-hidden="true">9.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">10.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">11.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">12.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">13.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">14.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">15.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">16.</strong> Day 16: AsciiTables</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -94,7 +81,7 @@
                 
                 <div id="menu-bar" class="menu-bar">
                     <div id="menu-bar-sticky-container">
-                        <div class="left-buttons javascript-only">
+                        <div class="left-buttons">
                             <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
                                 <i class="fa fa-bars"></i>
                             </button>
@@ -126,13 +113,15 @@
                 </div>
 
                 
-                <div id="searchbar-outer" class="searchbar-outer">
-                    <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
-                </div>
-                <div id="searchresults-outer" class="searchresults-outer">
-                    <div class="searchresults-header" id="searchresults-header"></div>
-                    <ul id="searchresults">
-                    </ul>
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
                 </div>
                 
 
@@ -147,27 +136,27 @@
 
                 <div id="content" class="content">
                     <main>
-                        <a class="header" href="day09_tictactoe_cli.html#day-9-tic-tac-toe" id="day-9-tic-tac-toe"><h1>Day 9: Tic tac toe</h1></a>
+                        <a class="header" href="#day-9-tic-tac-toe" id="day-9-tic-tac-toe"><h1>Day 9: Tic tac toe</h1></a>
 <p>Who didn't play <a href="https://en.wikipedia.org/wiki/Tic-tac-toe">Tic tac toe</a> with his friends? :)</p>
-<a class="header" href="day09_tictactoe_cli.html#what-to-expect" id="what-to-expect"><h2>What to expect</h2></a>
+<a class="header" href="#what-to-expect" id="what-to-expect"><h2>What to expect</h2></a>
 <p>Today we will implement tic tac toe game in Nim, with 2 modes</p>
 <ul>
 <li>Human vs Human</li>
 <li>Human vs AI</li>
 </ul>
-<a class="header" href="day09_tictactoe_cli.html#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="#implementation" id="implementation"><h2>Implementation</h2></a>
 <p>So, let's get it. The winner in the game is the first one who manages to get 3 cells on the board to be the same in the same column or row or diagonally first.</p>
-<a class="header" href="day09_tictactoe_cli.html#imports" id="imports"><h3>imports</h3></a>
+<a class="header" href="#imports" id="imports"><h3>imports</h3></a>
 <pre><code class="language-Nimrod">import sequtils, tables, strutils, strformat, random, os, parseopt2
 
 randomize()
 </code></pre>
-<a class="header" href="day09_tictactoe_cli.html#constraints-and-objects" id="constraints-and-objects"><h3>Constraints and objects</h3></a>
+<a class="header" href="#constraints-and-objects" id="constraints-and-objects"><h3>Constraints and objects</h3></a>
 <p>As the game allow turns we should have a way to keep track of the next player</p>
 <pre><code>let NEXT_PLAYER = {&quot;X&quot;:&quot;O&quot;, &quot;O&quot;:&quot;X&quot;}.toTable
 </code></pre>
 <p>Here we use a table to tell us the next player</p>
-<a class="header" href="day09_tictactoe_cli.html#board" id="board"><h4>Board</h4></a>
+<a class="header" href="#board" id="board"><h4>Board</h4></a>
 <pre><code class="language-Nimrod">type 
   Board = ref object of RootObj
     list: seq[string]
@@ -191,7 +180,7 @@ randomize()
   return b
 </code></pre>
 <p>this is the initializer of the board and sets the cell value to the string represention  of its index</p>
-<a class="header" href="day09_tictactoe_cli.html#winning" id="winning"><h5>Winning</h5></a>
+<a class="header" href="#winning" id="winning"><h5>Winning</h5></a>
 <pre><code class="language-Nimrod">proc done(this: Board): (bool, string) =
     for w in WINS:
         if this.list[w[0]] == this.list[w[1]] and this.list[w[1]]  == this.list[w[2]]:
@@ -221,7 +210,7 @@ randomize()
     return emptyindices
 </code></pre>
 <p>Here we have a simple helper function that returns the empty spots indices <code>the spots that doesn't have X or O in it</code>, remember all the cells are initialized to the string representation of their indices.</p>
-<a class="header" href="day09_tictactoe_cli.html#game" id="game"><h4>Game</h4></a>
+<a class="header" href="#game" id="game"><h4>Game</h4></a>
 <pre><code class="language-Nimrod">type
   Game = ref object of RootObj
     currentPlayer*: string
@@ -252,7 +241,7 @@ proc newGame(aiPlayer:string=&quot;&quot;, difficulty:int=9): Game =
   this.currentPlayer = NEXT_PLAYER[this.currentPlayer]   
 </code></pre>
 <p>Simple procedure to switch turns between players</p>
-<a class="header" href="day09_tictactoe_cli.html#start-the-game" id="start-the-game"><h4>Start the game</h4></a>
+<a class="header" href="#start-the-game" id="start-the-game"><h4>Start the game</h4></a>
 <pre><code class="language-Nimrod">
 proc startGame*(this:Game): void=
     while true:
@@ -274,7 +263,7 @@ proc startGame*(this:Game): void=
 
 </code></pre>
 <p>Here if we don't have <code>aiPlayer</code> if not set it's just a game with 2 humans switching turns and checking for the winner after each move</p>
-<a class="header" href="day09_tictactoe_cli.html#minmax-and-ai-support" id="minmax-and-ai-support"><h3>Minmax and AI support</h3></a>
+<a class="header" href="#minmax-and-ai-support" id="minmax-and-ai-support"><h3>Minmax and AI support</h3></a>
 <p><a href="https://en.wikipedia.org/wiki/Minimax">Minmax</a> is an algorithm mainly used to predict the possible moves in the future and how to minimize the losses and maximize the chances of winning</p>
 <ul>
 <li>https://www.youtube.com/watch?v=6ELUvkSkCts</li>
@@ -372,7 +361,7 @@ X O O
 
 </code></pre>
 <p>Here we allow the game to use difficulty which means when does the AI starts calculating the moves and making the tree? from the beginning 9 cells left or when there're 4 cells left? you can set it the way you want it, and until u reach the starting difficulty situation AI will use random guesses (from the available <code>emptyspots</code>) instead of calculating</p>
-<a class="header" href="day09_tictactoe_cli.html#cli-entry" id="cli-entry"><h3>CLI entry</h3></a>
+<a class="header" href="#cli-entry" id="cli-entry"><h3>CLI entry</h3></a>
 <pre><code class="language-Nimrod">proc writeHelp() = 
   echo &quot;&quot;&quot;
 TicTacToe 0.1.0 (MinMax version)
@@ -450,39 +439,25 @@ when isMainModule:
 
         </div>
 
-
-        <!-- Local fallback for Font Awesome -->
-        <script>
-            if (getComputedStyle(document.querySelector(".fa")).fontFamily !== "FontAwesome") {
-                var link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.type = 'text/css';
-                link.href = '_FontAwesome/css/font-awesome.css';
-                document.head.insertBefore(link, document.head.firstChild)
-            }
-        </script>
-
         
 
         
 
         
 
-        
-        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
-        
         
         <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
         
 
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
         
 
-        <script src="highlight.js"></script>
-        <script src="book.js"></script>
-
-        <!-- Custom JS script -->
         
 
     </body>
