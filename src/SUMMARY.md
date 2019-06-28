@@ -2,6 +2,7 @@
 
 Documenting my days with The Nim Programming language.
 
+- [Intro](book_intro.md)
 - [Day 1 DMIDecode](day01_dmidecode.md)
 - [Day 2: Parsing Bencode](day02_bencode.md)
 - [Day 3: FFI and Libmagic](day03_libmagic.md)
