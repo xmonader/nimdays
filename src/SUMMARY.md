@@ -18,4 +18,5 @@ Documenting my days with The Nim Programming language.
 - [Day 13: Redis Client](day13_redisclient.md)
 - [Day 14: Nim-Assets](day14_nimassets.md)
 - [Day 15: TCP Router](day15_tcprouter.md)
-- [Day 16: AsciiTables](day16_asciitables.md)
+- [Day 16: AsciiTables](day16_asciitables.md) 
+- [Day 17: Sonic-Client](day17_nimsonicclient.md)

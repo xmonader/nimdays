@@ -1,0 +1,766 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 17: Sonic-Client - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="book_intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li><a href="day01_dmidecode.html"><strong aria-hidden="true">2.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">3.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">4.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">5.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">6.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">7.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">8.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">9.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">10.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">11.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">12.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">13.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">14.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">15.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">16.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">17.</strong> Day 16: AsciiTables</a></li><li><a href="day17_nimsonicclient.html" class="active"><strong aria-hidden="true">18.</strong> Day 17: Sonic-Client</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#day-17-nim-sonic-client-nim-and-rust-can-be-friends" id="day-17-nim-sonic-client-nim-and-rust-can-be-friends"><h1>Day 17: Nim-Sonic-Client: Nim and Rust can be friends!</h1></a>
+<p><a href="https://github.com/valeriansaliou/sonic">sonic</a>  is a fast, lightweight and schema-less search backend. It ingests search texts and identifier tuples that can then be queried against in a microsecond's time, and it's implemented in rust. Sonic can be used as a simple alternative to super-heavy and full-featured search backends such as Elasticsearch in some use-cases. It is capable of normalizing natural language search queries, auto-completing a search query and providing the most relevant results for a query. Sonic is an identifier index, rather than a document index; when queried, it returns IDs that can then be used to refer to the matched documents in an external database. We use it heavily in all of our projects currently using <a href="https://github.com/xmonader/python-sonic-client">python client</a>, but we are here today to talk about nim.</p>
+<a class="header" href="#what-to-expect-" id="what-to-expect-"><h2>What to expect ?</h2></a>
+<a class="header" href="#ingest" id="ingest"><h3>Ingest</h3></a>
+<p>We should be able to push data over tcp from nim to sonic</p>
+<pre><code class="language-nim">    var cl = open(&quot;127.0.0.1&quot;, 1491, &quot;dmdm&quot;, SonicChannel.Ingest)
+    echo $cl.execCommand(&quot;PING&quot;)
+
+    echo cl.ping()
+    echo cl.protocol
+    echo cl.bufsize
+    echo cl.push(&quot;wiki&quot;, &quot;articles&quot;, &quot;article-1&quot;,
+                  &quot;for the love of god hell&quot;)
+    echo cl.push(&quot;wiki&quot;, &quot;articles&quot;, &quot;article-2&quot;,
+                  &quot;for the love of satan heaven&quot;)
+    echo cl.push(&quot;wiki&quot;, &quot;articles&quot;, &quot;article-3&quot;,
+                  &quot;for the love of lorde hello&quot;)
+    echo cl.push(&quot;wiki&quot;, &quot;articles&quot;, &quot;article-4&quot;,
+                  &quot;for the god of loaf helmet&quot;)
+</code></pre>
+<pre><code>PONG
+true
+0
+0
+true
+2
+0
+true
+true
+true
+</code></pre>
+<a class="header" href="#search" id="search"><h3>Search</h3></a>
+<p>We should be able to search/complete data from nim client using sonic</p>
+<pre><code class="language-nim">
+    var cl = open(&quot;127.0.0.1&quot;, 1491, &quot;dmdm&quot;, SonicChannel.Search)
+    echo $cl.execCommand(&quot;PING&quot;)
+
+    echo cl.ping()
+    echo cl.query(&quot;wiki&quot;, &quot;articles&quot;, &quot;for&quot;)
+    echo cl.query(&quot;wiki&quot;, &quot;articles&quot;, &quot;love&quot;)
+    echo cl.suggest(&quot;wiki&quot;, &quot;articles&quot;, &quot;hell&quot;)
+    echo cl.suggest(&quot;wiki&quot;, &quot;articles&quot;, &quot;lo&quot;)
+</code></pre>
+<pre><code>PONG
+true
+@[]
+@[&quot;article-3&quot;, &quot;article-2&quot;]
+@[]
+@[&quot;loaf&quot;, &quot;lorde&quot;, &quot;love&quot;]
+
+</code></pre>
+<a class="header" href="#sonic-specification" id="sonic-specification"><h2>Sonic specification</h2></a>
+<p>If you go to their <a href="https://github.com/valeriansaliou/sonic/blob/master/PROTOCOL.md">wire protocol page</a> you will find some examples using telnet. I'll copy some in the following section</p>
+<a class="header" href="#a2-sonic-channel-uninitialized" id="a2-sonic-channel-uninitialized"><h3>2️⃣ Sonic Channel (uninitialized)</h3></a>
+<ul>
+<li><code>START &lt;mode&gt; &lt;password&gt;</code>: select mode to use for connection (either: <code>search</code> or <code>ingest</code>). The password is found in the <code>config.cfg</code> file at <code>channel.auth_password</code>.</li>
+</ul>
+<p><em>Issuing any other command — eg. <code>QUIT</code> — in this mode will abort the TCP connection, effectively resulting in a <code>QUIT</code> with the <code>ENDED not_recognized</code> response.</em></p>
+<hr />
+<a class="header" href="#a3-sonic-channel-search-mode" id="a3-sonic-channel-search-mode"><h3>3️⃣ Sonic Channel (Search mode)</h3></a>
+<p><em>The Sonic Channel Search mode is used for querying the search index. Once in this mode, you cannot switch to other modes or gain access to commands from other modes.</em></p>
+<p><strong>➡️ Available commands:</strong></p>
+<ul>
+<li><code>QUERY</code>: query database (syntax: <code>QUERY &lt;collection&gt; &lt;bucket&gt; &quot;&lt;terms&gt;&quot; [LIMIT(&lt;count&gt;)]? [OFFSET(&lt;count&gt;)]? [LANG(&lt;locale&gt;)]?</code>; time complexity: <code>O(1)</code> if enough exact word matches or <code>O(N)</code> if not enough exact matches where <code>N</code> is the number of alternate words tried, in practice it approaches <code>O(1)</code>)</li>
+<li><code>SUGGEST</code>: auto-completes word (syntax: <code>SUGGEST &lt;collection&gt; &lt;bucket&gt; &quot;&lt;word&gt;&quot; [LIMIT(&lt;count&gt;)]?</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>PING</code>: ping server (syntax: <code>PING</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>HELP</code>: show help (syntax: <code>HELP [&lt;manual&gt;]?</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>QUIT</code>: stop connection (syntax: <code>QUIT</code>; time complexity: <code>O(1)</code>)</li>
+</ul>
+<p><strong>⏩ Syntax terminology:</strong></p>
+<ul>
+<li><code>&lt;collection&gt;</code>: index collection (ie. what you search in, eg. <code>messages</code>, <code>products</code>, etc.);</li>
+<li><code>&lt;bucket&gt;</code>: index bucket name (ie. user-specific search classifier in the collection if you have any eg. <code>user-1, user-2, ..</code>, otherwise use a common bucket name eg. <code>generic, default, common, ..</code>);</li>
+<li><code>&lt;terms&gt;</code>: text for search terms (between quotes);</li>
+<li><code>&lt;count&gt;</code>: a positive integer number; set within allowed maximum &amp; minimum limits;</li>
+<li><code>&lt;locale&gt;</code>: an ISO 639-3 locale code eg. <code>eng</code> for English (if set, the locale must be a valid ISO 639-3 code; if set to <code>none</code>, lexing will be disabled; if not set, the locale will be guessed from text);</li>
+<li><code>&lt;manual&gt;</code>: help manual to be shown (available manuals: <code>commands</code>);</li>
+</ul>
+<p><em>Notice: the <code>bucket</code> terminology may confuse some Sonic users. As we are well-aware Sonic may be used in an environment where end-users may each hold their own search index in a given <code>collection</code>, we made it possible to manage per-end-user search indexes with <code>bucket</code>. If you only have a single index per <code>collection</code> (most Sonic users will), we advise you use a static generic name for your <code>bucket</code>, for instance: <code>default</code>.</em></p>
+<p><strong>⬇️ Search flow example (via <code>telnet</code>):</strong></p>
+<pre><code class="language-bash">T1: telnet sonic.local 1491
+T2: Trying ::1...
+T3: Connected to sonic.local.
+T4: Escape character is '^]'.
+T5: CONNECTED &lt;sonic-server v1.0.0&gt;
+T6: START search SecretPassword
+T7: STARTED search protocol(1) buffer(20000)
+T8: QUERY messages user:0dcde3a6 &quot;valerian saliou&quot; LIMIT(10)
+T9: PENDING Bt2m2gYa
+T10: EVENT QUERY Bt2m2gYa conversation:71f3d63b conversation:6501e83a
+T11: QUERY helpdesk user:0dcde3a6 &quot;gdpr&quot; LIMIT(50)
+T12: PENDING y57KaB2d
+T13: QUERY helpdesk user:0dcde3a6 &quot;law&quot; LIMIT(50) OFFSET(200)
+T14: PENDING CjPvE5t9
+T15: PING
+T16: PONG
+T17: EVENT QUERY CjPvE5t9
+T18: EVENT QUERY y57KaB2d article:28d79959
+T19: SUGGEST messages user:0dcde3a6 &quot;val&quot;
+T20: PENDING z98uDE0f
+T21: EVENT SUGGEST z98uDE0f valerian valala
+T22: QUIT
+T23: ENDED quit
+T24: Connection closed by foreign host.
+</code></pre>
+<p><em>Notes on what happens:</em></p>
+<ul>
+<li><strong>T6:</strong> we enter <code>search</code> mode (this is required to enable <code>search</code> commands);</li>
+<li><strong>T8:</strong> we query collection <code>messages</code>, in bucket for platform user <code>user:0dcde3a6</code> with search terms <code>valerian saliou</code> and a limit of <code>10</code> on returned results;</li>
+<li><strong>T9:</strong> Sonic received the query and stacked it for processing with marker <code>Bt2m2gYa</code> (the marker is used to track the asynchronous response);</li>
+<li><strong>T10:</strong> Sonic processed search query of T8 with marker <code>Bt2m2gYa</code> and sends 2 search results (those are conversation identifiers, that refer to a primary key in an external database);</li>
+<li><strong>T11 + T13:</strong> we query collection <code>helpdesk</code> twice (in the example, this one is heavy, so processing of results takes more time);</li>
+<li><strong>T17 + T18:</strong> we receive search results for search queries of T11 + T13 (this took a while!);</li>
+</ul>
+<hr />
+<a class="header" href="#a4-sonic-channel-ingest-mode" id="a4-sonic-channel-ingest-mode"><h3>4️⃣ Sonic Channel (Ingest mode)</h3></a>
+<p><em>The Sonic Channel Ingest mode is used for altering the search index (push, pop and flush). Once in this mode, you cannot switch to other modes or gain access to commands from other modes.</em></p>
+<p><strong>➡️ Available commands:</strong></p>
+<ul>
+<li><code>PUSH</code>: Push search data in the index (syntax: <code>PUSH &lt;collection&gt; &lt;bucket&gt; &lt;object&gt; &quot;&lt;text&gt;&quot; [LANG(&lt;locale&gt;)]?</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>POP</code>: Pop search data from the index (syntax: <code>POP &lt;collection&gt; &lt;bucket&gt; &lt;object&gt; &quot;&lt;text&gt;&quot;</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>COUNT</code>: Count indexed search data (syntax: <code>COUNT &lt;collection&gt; [&lt;bucket&gt; [&lt;object&gt;]?]?</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>FLUSHC</code>: Flush all indexed data from a collection (syntax: <code>FLUSHC &lt;collection&gt;</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>FLUSHB</code>: Flush all indexed data from a bucket in a collection (syntax: <code>FLUSHB &lt;collection&gt; &lt;bucket&gt;</code>; time complexity: <code>O(N)</code> where <code>N</code> is the number of bucket objects)</li>
+<li><code>FLUSHO</code>: Flush all indexed data from an object in a bucket in collection (syntax: <code>FLUSHO &lt;collection&gt; &lt;bucket&gt; &lt;object&gt;</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>PING</code>: ping server (syntax: <code>PING</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>HELP</code>: show help (syntax: <code>HELP [&lt;manual&gt;]?</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>QUIT</code>: stop connection (syntax: <code>QUIT</code>; time complexity: <code>O(1)</code>)</li>
+</ul>
+<p><strong>⏩ Syntax terminology:</strong></p>
+<ul>
+<li><code>&lt;collection&gt;</code>: index collection (ie. what you search in, eg. <code>messages</code>, <code>products</code>, etc.);</li>
+<li><code>&lt;bucket&gt;</code>: index bucket name (ie. user-specific search classifier in the collection if you have any eg. <code>user-1, user-2, ..</code>, otherwise use a common bucket name eg. <code>generic, default, common, ..</code>);</li>
+<li><code>&lt;object&gt;</code>: object identifier that refers to an entity in an external database, where the searched object is stored (eg. you use Sonic to index CRM contacts by name; full CRM contact data is stored in a MySQL database; in this case the object identifier in Sonic will be the MySQL primary key for the CRM contact);</li>
+<li><code>&lt;text&gt;</code>: search text to be indexed (can be a single word, or a longer text; within maximum length safety limits; between quotes);</li>
+<li><code>&lt;locale&gt;</code>: an ISO 639-3 locale code eg. <code>eng</code> for English (if set, the locale must be a valid ISO 639-3 code; if set to <code>none</code>, lexing will be disabled; if not set, the locale will be guessed from text);</li>
+<li><code>&lt;manual&gt;</code>: help manual to be shown (available manuals: <code>commands</code>);</li>
+</ul>
+<p><em>Notice: the <code>bucket</code> terminology may confuse some Sonic users. As we are well-aware Sonic may be used in an environment where end-users may each hold their own search index in a given <code>collection</code>, we made it possible to manage per-end-user search indexes with <code>bucket</code>. If you only have a single index per <code>collection</code> (most Sonic users will), we advise you use a static generic name for your <code>bucket</code>, for instance: <code>default</code>.</em></p>
+<p><strong>⬇️ Ingest flow example (via <code>telnet</code>):</strong></p>
+<pre><code class="language-bash">T1: telnet sonic.local 1491
+T2: Trying ::1...
+T3: Connected to sonic.local.
+T4: Escape character is '^]'.
+T5: CONNECTED &lt;sonic-server v1.0.0&gt;
+T6: START ingest SecretPassword
+T7: STARTED ingest protocol(1) buffer(20000)
+T8: PUSH messages user:0dcde3a6 conversation:71f3d63b Hey Valerian
+T9: ERR invalid_format(PUSH &lt;collection&gt; &lt;bucket&gt; &lt;object&gt; &quot;&lt;text&gt;&quot;)
+T10: PUSH messages user:0dcde3a6 conversation:71f3d63b &quot;Hello Valerian Saliou, how are you today?&quot;
+T11: OK
+T12: COUNT messages user:0dcde3a6
+T13: RESULT 43
+T14: COUNT messages user:0dcde3a6 conversation:71f3d63b
+T15: RESULT 1
+T16: FLUSHO messages user:0dcde3a6 conversation:71f3d63b
+T17: RESULT 1
+T18: FLUSHB messages user:0dcde3a6
+T19: RESULT 42
+T20: PING
+T21: PONG
+T22: QUIT
+T23: ENDED quit
+T24: Connection closed by foreign host.
+</code></pre>
+<p><em>Notes on what happens:</em></p>
+<ul>
+<li><strong>T6:</strong> we enter <code>ingest</code> mode (this is required to enable <code>ingest</code> commands);</li>
+<li><strong>T8:</strong> we try to push text <code>Hey Valerian</code> to the index, in collection <code>messages</code>, bucket <code>user:0dcde3a6</code> and object <code>conversation:71f3d63b</code> (the syntax that was used is invalid);</li>
+<li><strong>T9:</strong> Sonic refuses the command we issued in T8, and provides us with the correct command format (notice that <code>&lt;text&gt;</code> should be quoted);</li>
+<li><strong>T10:</strong> we attempt to push another text in the same collection, bucket and object as in T8;</li>
+<li><strong>T11:</strong> this time, our push command in T10 was valid (Sonic acknowledges the push commit to the search index);</li>
+<li><strong>T12:</strong> we count the number of indexed terms in collection <code>messages</code> and bucket <code>user:0dcde3a6</code>;</li>
+<li><strong>T13:</strong> there are 43 terms (ie. words) in index for query in T12;</li>
+<li><strong>T18:</strong> we flush all index data from collection <code>messages</code> and bucket <code>user:0dcde3a6</code>;</li>
+<li><strong>T19:</strong> 42 terms have been flushed from index for command in T18;</li>
+</ul>
+<hr />
+<a class="header" href="#a5-sonic-channel-control-mode" id="a5-sonic-channel-control-mode"><h3>5️⃣ Sonic Channel (Control mode)</h3></a>
+<p><em>The Sonic Channel Control mode is used for administration purposes. Once in this mode, you cannot switch to other modes or gain access to commands from other modes.</em></p>
+<p><strong>➡️ Available commands:</strong></p>
+<ul>
+<li><code>TRIGGER</code>: trigger an action (syntax: <code>TRIGGER [&lt;action&gt;]? [&lt;data&gt;]?</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>INFO</code>: get server information (syntax: <code>INFO</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>PING</code>: ping server (syntax: <code>PING</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>HELP</code>: show help (syntax: <code>HELP [&lt;manual&gt;]?</code>; time complexity: <code>O(1)</code>)</li>
+<li><code>QUIT</code>: stop connection (syntax: <code>QUIT</code>; time complexity: <code>O(1)</code>)</li>
+</ul>
+<p><strong>⏩ Syntax terminology:</strong></p>
+<ul>
+<li><code>&lt;action&gt;</code>: action to be triggered (available actions: <code>consolidate</code>, <code>backup</code>, <code>restore</code>);</li>
+<li><code>&lt;data&gt;</code>: additional data to provide to the action (required for: <code>backup</code>, <code>restore</code>);</li>
+<li><code>&lt;manual&gt;</code>: help manual to be shown (available manuals: <code>commands</code>);</li>
+</ul>
+<p><strong>⬇️ Control flow example (via <code>telnet</code>):</strong></p>
+<pre><code class="language-bash">T1: telnet sonic.local 1491
+T2: Trying ::1...
+T3: Connected to sonic.local.
+T4: Escape character is '^]'.
+T5: CONNECTED &lt;sonic-server v1.0.0&gt;
+T6: START control SecretPassword
+T7: STARTED control protocol(1) buffer(20000)
+T8: TRIGGER consolidate
+T9: OK
+T10: PING
+T11: PONG
+T12: QUIT
+T13: ENDED quit
+T14: Connection closed by foreign host.
+</code></pre>
+<p><em>Notes on what happens:</em></p>
+<ul>
+<li><strong>T6:</strong> we enter <code>control</code> mode (this is required to enable <code>control</code> commands);</li>
+<li><strong>T8:</strong> we trigger a database consolidation (instead of waiting for the next automated consolidation tick);</li>
+</ul>
+<a class="header" href="#implementation" id="implementation"><h2>Implementation</h2></a>
+<a class="header" href="#imports" id="imports"><h3>imports</h3></a>
+<p>these are the imports that we will use because we will be dealing with networks, some data parsing, .. etc</p>
+<pre><code class="language-nim">import strformat, tables, json, strutils, sequtils, hashes, net, asyncdispatch, asyncnet, os, strutils, parseutils, deques, options, net
+</code></pre>
+<a class="header" href="#types" id="types"><h3>Types</h3></a>
+<p>As we said earlier there're three channels</p>
+<pre><code class="language-nim">type 
+  SonicChannel* {.pure.} = enum
+   Ingest
+   Search
+   Control
+</code></pre>
+<p>Generic sonic exception</p>
+<pre><code class="language-nim">type 
+  SonicServerError = object of Exception
+</code></pre>
+<p>Now for the base connection</p>
+<pre><code class="language-nim">type
+  SonicBase[TSocket] = ref object of RootObj
+   socket: TSocket
+   host: string
+   port: int
+   password: string
+   connected: bool
+   timeout*: int
+   protocol*: int
+   bufSize*: int
+   channel*: SonicChannel
+
+  Sonic* = ref object of SonicBase[net.Socket]
+  AsyncSonic* = ref object of SonicBase[asyncnet.AsyncSocket]
+</code></pre>
+<p>we require</p>
+<ul>
+<li>host: sonic server running on</li>
+<li>password: for sonic server</li>
+<li>connected: flag for connected or none</li>
+<li>timeout: timeout in seconds</li>
+<li>protocol: information sent to us on connecting to sonic server</li>
+<li>bufsize: how big is the data buffer u can use</li>
+<li>channel: to indicate the current mode.</li>
+</ul>
+<a class="header" href="#helpers" id="helpers"><h3>Helpers</h3></a>
+<pre><code class="language-nim">
+proc quoteText(text:string): string =
+  ## Quote text and normalize it in sonic protocol context.
+  ##  - text str  text to quote/escape
+  ##  Returns:
+  ##    str  quoted text
+
+  return '&quot;' &amp; text.replace('&quot;', '\&quot;').replace(&quot;\r\n&quot;, &quot;&quot;) &amp; '&quot;'
+</code></pre>
+<p>quoteText used to escape quotes and replace newline</p>
+<pre><code class="language-nim">proc isError(response: string): bool =
+  ## Check if the response is Error or not in sonic context.
+  ## Errors start with `ERR`
+  ##  - response   response string
+  ##  Returns:
+  ##    bool  true if response is an error.
+
+  response.startsWith(&quot;ERR &quot;)
+</code></pre>
+<p>isError checks if the response represents and error</p>
+<pre><code class="language-nim">proc raiseForError(response:string): string =
+  ## Raise SonicServerError in case of error response.
+  ##  - response message to check if it's error or not.
+  ##  Returns:
+  ##    str the response message
+  if isError(response):
+    raise newException(SonicServerError, response)
+  return response
+</code></pre>
+<p>raiseError a short circuit for raising errors if response is an errror or returning response</p>
+<a class="header" href="#making-a-connection" id="making-a-connection"><h3>Making a connection</h3></a>
+<pre><code class="language-nim">proc open*(host = &quot;localhost&quot;, port = 1491, password=&quot;&quot;, channel:SonicChannel, ssl=false, timeout=0): Sonic =
+  result = Sonic(
+   socket: newSocket(buffered = true),
+   host: host,
+   port: port,
+   password: password,
+   channel: channel
+  )
+  result.timeout = timeout
+  result.channel = channel
+  when defined(ssl):
+   if ssl == true:
+     SSLifySonicConnectionNoVerify(result)
+  result.socket.connect(host, port.Port)
+
+  result.startSession()
+
+proc openAsync*(host = &quot;localhost&quot;, port = 1491, password=&quot;&quot;, channel:SonicChannel, ssl=false, timeout=0): Future[AsyncSonic] {.async.} =
+  ## Open an asynchronous connection to a Sonic server.
+  result = AsyncSonic(
+   socket: newAsyncSocket(buffered = true),
+   channel: channel
+  )
+  when defined(ssl):
+   if ssl == true:
+     SSLifySonicConnectionNoVerify(result)
+  result.timeout = timeout
+  await result.socket.connect(host, port.Port)
+  await result.startSession()
+
+</code></pre>
+<p>Here we support to APIs async/sync APIs for opening connection and as soon as we do the connection we call <code>startSession</code></p>
+<a class="header" href="#startsession" id="startsession"><h3>startSession</h3></a>
+<pre><code class="language-nim">
+proc startSession*(this:Sonic|AsyncSonic): Future[void] {.multisync.} =
+  let resp = await this.socket.recvLine()
+
+  if &quot;CONNECTED&quot; in resp:
+   this.connected = true
+
+  var channelName = &quot;&quot;
+  case this.channel:
+   of SonicChannel.Ingest:  channelName = &quot;ingest&quot;
+   of SonicChannel.Search:  channelName = &quot;search&quot;
+   of SonicChannel.COntrol: channelName = &quot;control&quot;
+
+  let msg = fmt&quot;START {channelName} {this.password} \r\n&quot;
+  await this.socket.send(msg)  #### start
+  discard await this.socket.recvLine()  #### started. FIXME extract protocol bufsize
+  ## TODO: this.parseSessionMeta(line)
+</code></pre>
+<ul>
+<li>we use multisync pragma to support async, sync APIs (check redisclient chapter for more info).
+according to wire protocol we just send the raw string <code>START</code> <code>SPACE</code> <code>CHANNEL_NAME</code> <code>SONIC_PASSWORD</code> and terminate that with <code>\r\n</code></li>
+<li>when we recieve data we should parse protocol version and the bufsize and set it in our SonicClient <code>this</code></li>
+</ul>
+<a class="header" href="#sendingreceiving-data" id="sendingreceiving-data"><h3>Sending/Receiving data</h3></a>
+<pre><code class="language-nim">proc receiveManaged*(this:Sonic|AsyncSonic, size=1): Future[string] {.multisync.} =
+  when this is Sonic:
+   if this.timeout == 0:
+     result = this.socket.recvLine()
+   else:
+     result = this.socket.recvLine(timeout=this.timeout)
+  else:
+   result = await this.socket.recvLine()
+
+  result = raiseForError(result.strip())
+
+proc execCommand*(this: Sonic|AsyncSonic, command: string, args:seq[string]): Future[string] {.multisync.} =
+  let cmdArgs = concat(@[command], args)
+  let cmdStr = join(cmdArgs, &quot; &quot;).strip()
+  await this.socket.send(cmdStr &amp; &quot;\r\n&quot;)
+  result = await this.receiveManaged()
+
+proc execCommand*(this: Sonic|AsyncSonic, command: string): Future[string] {.multisync.} =
+  result = await this.execCommand(command, @[&quot;&quot;])
+
+</code></pre>
+<p>here we have couple helpers to send data on the wire <code>execCommand</code> and receiving data <code>receiveManaged</code></p>
+<ul>
+<li>we only support timeout for sync client (there's a <a href="https://nim-lang.org/docs/asyncdispatch.html#withTimeout%2CFuture%5BT%5D%2Cint">withTimeout</a> for async the user can try to implement )</li>
+</ul>
+<p>Now we have everything we need to interact with sonic server, but not with userfriendly API, we can do better by converting the results to nim data structures or booleans when suitable</p>
+<a class="header" href="#user-friendly-apis" id="user-friendly-apis"><h3>User-friendly APIs</h3></a>
+<a class="header" href="#ping" id="ping"><h4>Ping</h4></a>
+<p>checks the server endpoint</p>
+<pre><code class="language-nim">proc ping*(this: Sonic|AsyncSonic): Future[bool] {.multisync.} =
+  ## Send ping command to the server
+  ## Returns:
+  ## bool  True if successfully reaching the server.
+  result = (await this.execCommand(&quot;PING&quot;)) == &quot;PONG&quot;
+</code></pre>
+<a class="header" href="#quit" id="quit"><h4>Quit</h4></a>
+<p>Ends the connection</p>
+<pre><code class="language-nim">proc quit*(this: Sonic|AsyncSonic): Future[string] {.multisync.} =
+   ## Quit the channel and closes the connection.
+   result = await this.execCommand(&quot;QUIT&quot;)
+   this.socket.close()
+</code></pre>
+<a class="header" href="#push" id="push"><h4>Push</h4></a>
+<p>Pushes search data into the index</p>
+<pre><code class="language-nim">proc push*(this: Sonic|AsyncSonic, collection, bucket, objectName, text: string, lang=&quot;&quot;): Future[bool] {.multisync.} =
+   ## Push search data in the index
+   ##   - collection: index collection (ie. what you search in, eg. messages, products, etc.)
+   ##   - bucket: index bucket name (ie. user-specific search classifier in the collection if you have any eg. user-1, user-2, .., otherwise use a common bucket name eg. generic, procault, common, ..)
+   ##   - objectName: object identifier that refers to an entity in an external database, where the searched object is stored (eg. you use Sonic to index CRM contacts by name; full CRM contact data is stored in a MySQL database; in this case the object identifier in Sonic will be the MySQL primary key for the CRM contact)
+   ##   - text: search text to be indexed can be a single word, or a longer text; within maximum length safety limits
+   ##   - lang: ISO language code
+   ##   Returns:
+   ##     bool  True if search data are pushed in the index. 
+   var langString = &quot;&quot;
+   if lang != &quot;&quot;:
+     langString = fmt&quot;LANG({lang})&quot;
+   let text = quoteText(text)
+   result = (await this.execCommand(&quot;PUSH&quot;, @[collection, bucket, objectName, text, langString]))==&quot;OK&quot;
+
+
+</code></pre>
+<a class="header" href="#pop" id="pop"><h4>Pop</h4></a>
+<p>Pops search data from the index</p>
+<pre><code class="language-nim">proc pop*(this: Sonic|AsyncSonic, collection, bucket, objectName, text: string): Future[int] {.multisync.} =
+   ## Pop search data from the index
+   ##   - collection: index collection (ie. what you search in, eg. messages, products, etc.)
+   ##   - bucket: index bucket name (ie. user-specific search classifier in the collection if you have any eg. user-1, user-2, .., otherwise use a common bucket name eg. generic, procault, common, ..)
+   ##   - objectName: object identifier that refers to an entity in an external database, where the searched object is stored (eg. you use Sonic to index CRM contacts by name; full CRM contact data is stored in a MySQL database; in this case the object identifier in Sonic will be the MySQL primary key for the CRM contact)
+   ##   - text: search text to be indexed can be a single word, or a longer text; within maximum length safety limits
+   ##   Returns:
+   ##     int 
+   let text = quoteText(text)
+   let resp = await this.execCommand(&quot;POP&quot;, @[collection, bucket, objectName, text])
+   result = resp.split()[^1].parseInt()
+</code></pre>
+<a class="header" href="#count" id="count"><h4>Count</h4></a>
+<p>Count the indexed data</p>
+<pre><code class="language-nim">proc count*(this: Sonic|AsyncSonic, collection, bucket, objectName: string): Future[int] {.multisync.} =
+   ## Count indexed search data
+   ##   - collection: index collection (ie. what you search in, eg. messages, products, etc.)
+   ##   - bucket: index bucket name (ie. user-specific search classifier in the collection if you have any eg. user-1, user-2, .., otherwise use a common bucket name eg. generic, procault, common, ..)
+   ##   - objectName: object identifier that refers to an entity in an external database, where the searched object is stored (eg. you use Sonic to index CRM contacts by name; full CRM contact data is stored in a MySQL database; in this case the object identifier in Sonic will be the MySQL primary key for the CRM contact)
+   ## Returns:
+   ## int  count of index search data.
+
+   var bucketString = &quot;&quot;
+   if bucket != &quot;&quot;:
+     bucketString = bucket
+   var objectNameString = &quot;&quot;
+   if objectName != &quot;&quot;:
+     objectNameString = objectName
+   result = parseInt(await this.execCommand(&quot;COUNT&quot;, @[collection, bucket, objectName]))
+
+</code></pre>
+<a class="header" href="#flush" id="flush"><h4>flush</h4></a>
+<p>Generic flush to be called from flushCollection, flushBucket, flushObject</p>
+<pre><code class="language-nim">proc flush*(this: Sonic|AsyncSonic, collection: string, bucket=&quot;&quot;, objectName=&quot;&quot;): Future[int] {.multisync.} =
+   ## Flush indexed data in a collection, bucket, or in an object.
+   ##   - collection: index collection (ie. what you search in, eg. messages, products, etc.)
+   ##   - bucket: index bucket name (ie. user-specific search classifier in the collection if you have any eg. user-1, user-2, .., otherwise use a common bucket name eg. generic, procault, common, ..)
+   ##   - objectName: object identifier that refers to an entity in an external database, where the searched object is stored (eg. you use Sonic to index CRM contacts by name; full CRM contact data is stored in a MySQL database; in this case the object identifier in Sonic will be the MySQL primary key for the CRM contact)
+   ##   Returns:
+   ##     int  number of flushed data
+   if bucket == &quot;&quot; and objectName==&quot;&quot;:
+      result = await this.flushCollection(collection)
+   elif bucket != &quot;&quot; and objectName == &quot;&quot;:
+      result = await this.flushBucket(collection, bucket)
+   elif objectName != &quot;&quot; and bucket != &quot;&quot;:
+      result = await this.flushObject(collection, bucket, objectName)
+</code></pre>
+<a class="header" href="#flushcollection" id="flushcollection"><h4>flushCollection</h4></a>
+<p>Flushes all the indexed data from a collection</p>
+<pre><code class="language-nim">proc flushCollection*(this: Sonic|AsyncSonic, collection: string): Future[int] {.multisync.} =
+   ## Flush all indexed data from a collection
+   ##  - collection index collection (ie. what you search in, eg. messages, products, etc.)
+   ##   Returns:
+   ##     int  number of flushed data
+   result = (await this.execCommand(&quot;FLUSHC&quot;, @[collection])).parseInt
+</code></pre>
+<a class="header" href="#flushbucket" id="flushbucket"><h4>flushBucket</h4></a>
+<p>flushes all indexd data from a bucket in a collection</p>
+<pre><code class="language-nim">proc flushBucket*(this: Sonic|AsyncSonic, collection, bucket: string): Future[int] {.multisync.} =
+   ## Flush all indexed data from a bucket in a collection
+   ##   - collection: index collection (ie. what you search in, eg. messages, products, etc.)
+   ##   - bucket: index bucket name (ie. user-specific search classifier in the collection if you have any eg. user-1, user-2, .., otherwise use a common bucket name eg. generic, procault, common, ..)
+   ##   Returns:
+   ##    int  number of flushed data
+   result = (await this.execCommand(&quot;FLUSHB&quot;, @[collection, bucket])).parseInt
+</code></pre>
+<a class="header" href="#flushobject" id="flushobject"><h4>flushObject</h4></a>
+<p>Flushes all indexed data from an object in a bucket in collection</p>
+<pre><code class="language-nim">proc flushObject*(this: Sonic|AsyncSonic, collection, bucket, objectName: string): Future[int] {.multisync.} =
+   ## Flush all indexed data from an object in a bucket in collection
+   ##   - collection: index collection (ie. what you search in, eg. messages, products, etc.)
+   ##   - bucket: index bucket name (ie. user-specific search classifier in the collection if you have any eg. user-1, user-2, .., otherwise use a common bucket name eg. generic, procault, common, ..)
+   ##   - objectName: object identifier that refers to an entity in an external database, where the searched object is stored (eg. you use Sonic to index CRM contacts by name; full CRM contact data is stored in a MySQL database; in this case the object identifier in Sonic will be the MySQL primary key for the CRM contact)
+   ##   Returns:
+   ##     int  number of flushed data
+   result = (await this.execCommand(&quot;FLUSHO&quot;, @[collection, bucket, objectName])).parseInt
+</code></pre>
+<a class="header" href="#query" id="query"><h4>Query</h4></a>
+<p>Queries sonic and returns a list of results.</p>
+<pre><code class="language-nim">proc query*(this: Sonic|AsyncSonic, collection, bucket, terms: string, limit=10, offset: int=0, lang=&quot;&quot;): Future[seq[string]] {.multisync.} =
+  ## Query the database
+  ##  - collection index collection (ie. what you search in, eg. messages, products, etc.)
+  ##  - bucket index bucket name (ie. user-specific search classifier in the collection if you have any eg. user-1, user-2, .., otherwise use a common bucket name eg. generic, procault, common, ..)
+  ##  - terms text for search terms
+  ##  - limit a positive integer number; set within allowed maximum &amp; minimum limits
+  ##  - offset a positive integer number; set within allowed maximum &amp; minimum limits
+  ##  - lang an ISO 639-3 locale code eg. eng for English (if set, the locale must be a valid ISO 639-3 code; if not set, the locale will be guessed from text).
+  ##  Returns:
+  ##    list  list of objects ids.
+  let limitString = fmt&quot;LIMIT({limit})&quot;
+  var langString = &quot;&quot;
+  if lang != &quot;&quot;:
+   langString = fmt&quot;LANG({lang})&quot;
+  let offsetString = fmt&quot;OFFSET({offset})&quot;
+
+  let termsString = quoteText(terms)
+  discard await this.execCommand(&quot;QUERY&quot;, @[collection, bucket, termsString, limitString, offsetString, langString])
+  let resp = await this.receiveManaged()
+  result = resp.splitWhitespace()[3..^1]
+</code></pre>
+<a class="header" href="#suggest" id="suggest"><h4>Suggest</h4></a>
+<p>autocompletes a word using a collection and a bucket.</p>
+<pre><code class="language-nim">proc suggest*(this: Sonic|AsyncSonic, collection, bucket, word: string, limit=10): Future[seq[string]] {.multisync.} =
+   ## auto-completes word.
+   ##   - collection index collection (ie. what you search in, eg. messages, products, etc.)
+   ##   - bucket index bucket name (ie. user-specific search classifier in the collection if you have any eg. user-1, user-2, .., otherwise use a common bucket name eg. generic, procault, common, ..)
+   ##   - word word to autocomplete
+   ##   - limit a positive integer number; set within allowed maximum &amp; minimum limits (procault: {None})
+   ##   Returns:
+   ##     list list of suggested words.
+   var limitString = fmt&quot;LIMIT({limit})&quot; 
+   let wordString = quoteText(word)
+   discard await this.execCommand(&quot;SUGGEST&quot;, @[collection, bucket, wordString, limitString])
+   let resp = await this.receiveManaged()
+   result = resp.splitWhitespace()[3..^1]
+
+
+</code></pre>
+<a class="header" href="#test-code-to-use" id="test-code-to-use"><h3>Test code to use</h3></a>
+<pre><code class="language-nim">when isMainModule:
+
+  proc testIngest() =
+   var cl = open(&quot;127.0.0.1&quot;, 1491, &quot;dmdm&quot;, SonicChannel.Ingest)
+   echo $cl.execCommand(&quot;PING&quot;)
+
+   echo cl.ping()
+   echo cl.protocol
+   echo cl.bufsize
+   echo cl.push(&quot;wiki&quot;, &quot;articles&quot;, &quot;article-1&quot;,
+              &quot;for the love of god hell&quot;)
+   echo cl.pop(&quot;wiki&quot;, &quot;articles&quot;, &quot;article-1&quot;,
+              &quot;for the love of god hell&quot;)
+   echo cl.pop(&quot;wikis&quot;, &quot;articles&quot;, &quot;article-1&quot;,
+              &quot;for the love of god hell&quot;)
+   echo cl.push(&quot;wiki&quot;, &quot;articles&quot;, &quot;article-2&quot;,
+              &quot;for the love of satan heaven&quot;)
+   echo cl.push(&quot;wiki&quot;, &quot;articles&quot;, &quot;article-3&quot;,
+              &quot;for the love of lorde hello&quot;)
+   echo cl.push(&quot;wiki&quot;, &quot;articles&quot;, &quot;article-4&quot;,
+              &quot;for the god of loaf helmet&quot;)
+
+  proc testSearch() =
+
+   var cl = open(&quot;127.0.0.1&quot;, 1491, &quot;dmdm&quot;, SonicChannel.Search)
+   echo $cl.execCommand(&quot;PING&quot;)
+
+   echo cl.ping()
+   echo cl.query(&quot;wiki&quot;, &quot;articles&quot;, &quot;for&quot;)
+   echo cl.query(&quot;wiki&quot;, &quot;articles&quot;, &quot;love&quot;)
+   echo cl.suggest(&quot;wiki&quot;, &quot;articles&quot;, &quot;hell&quot;)
+   echo cl.suggest(&quot;wiki&quot;, &quot;articles&quot;, &quot;lo&quot;)
+
+  proc testControl() =
+   var cl = open(&quot;127.0.0.1&quot;, 1491, &quot;dmdm&quot;, SonicChannel.Control)
+   echo $cl.execCommand(&quot;PING&quot;)
+
+   echo cl.ping()
+   echo cl.trigger(&quot;consolidate&quot;)
+
+
+  testIngest()
+  testSearch()
+  testControl()
+
+</code></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day16_asciitables.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day16_asciitables.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
