@@ -221,6 +221,8 @@ proc stow(linkables: seq[LinkInfo], simulate: bool=true, verbose: bool=true, for
           if verbose:
             echo(fmt("Skipping linking {filepath} -> {linkpath}"))
 ```
-Stow is pretty easy procedure, it takes in a list of `LinksInfo` that has all the information (original filename and destination symlink) and does the symlinking based on if it's not a simulation and prints the messages if verbose is set to true
+stow is pretty easy procedure, it takes in a list of `LinksInfo` that has all the information (original filename and destination symlink) and does the symlinking based on if it's not a simulation and prints the messages if verbose is set to true
 
 Feel free to send improvements to this tutorial or nistow :)
+
+[Complete source code](https://github.com/xmonader/nistow) available here https://github.com/xmonader/nistow
