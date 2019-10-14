@@ -137,7 +137,7 @@
                 <div id="content" class="content">
                     <main>
                         <a class="header" href="#day-17-nim-sonic-client-nim-and-rust-can-be-friends" id="day-17-nim-sonic-client-nim-and-rust-can-be-friends"><h1>Day 17: Nim-Sonic-Client: Nim and Rust can be friends!</h1></a>
-<p><a href="https://github.com/valeriansaliou/sonic">sonic</a>  is a fast, lightweight and schema-less search backend. It ingests search texts and identifier tuples that can then be queried against in a microsecond's time, and it's implemented in rust. Sonic can be used as a simple alternative to super-heavy and full-featured search backends such as Elasticsearch in some use-cases. It is capable of normalizing natural language search queries, auto-completing a search query and providing the most relevant results for a query. Sonic is an identifier index, rather than a document index; when queried, it returns IDs that can then be used to refer to the matched documents in an external database. We use it heavily in all of our projects currently using <a href="https://github.com/xmonader/python-sonic-client">python client</a>, but we are here today to talk about nim.</p>
+<p><a href="https://github.com/valeriansaliou/sonic">sonic</a>  is a fast, lightweight and schema-less search backend. It ingests search texts and identifier tuples that can then be queried against in a microsecond's time, and it's implemented in rust. Sonic can be used as a simple alternative to super-heavy and full-featured search backends such as Elasticsearch in some use-cases. It is capable of normalizing natural language search queries, auto-completing a search query and providing the most relevant results for a query. Sonic is an identifier index, rather than a document index; when queried, it returns IDs that can then be used to refer to the matched documents in an external database. We use it heavily in all of our projects currently using <a href="https://github.com/xmonader/python-sonic-client">python client</a>, but we are here today to talk about nim. Please make sure to check sonic website for more info on how start the server and its configurations</p>
 <a class="header" href="#what-to-expect-" id="what-to-expect-"><h2>What to expect ?</h2></a>
 <a class="header" href="#ingest" id="ingest"><h3>Ingest</h3></a>
 <p>We should be able to push data over tcp from nim to sonic</p>
@@ -711,6 +711,7 @@ proc execCommand*(this: Sonic|AsyncSonic, command: string): Future[string] {.mul
   testControl()
 
 </code></pre>
+<p>Code is available on <a href="https://github.com/xmonader/nim-sonic-client">xmonader/nim-sonic-client</a>. Feel free to send me a PR or open an issue.</p>
 
                     </main>
 

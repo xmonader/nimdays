@@ -1459,8 +1459,9 @@ __________________apppath________                _____dest____
           if verbose:
             echo(fmt(&quot;Skipping linking {filepath} -&gt; {linkpath}&quot;))
 </code></pre>
-<p>Stow is pretty easy procedure, it takes in a list of <code>LinksInfo</code> that has all the information (original filename and destination symlink) and does the symlinking based on if it's not a simulation and prints the messages if verbose is set to true</p>
+<p>stow is pretty easy procedure, it takes in a list of <code>LinksInfo</code> that has all the information (original filename and destination symlink) and does the symlinking based on if it's not a simulation and prints the messages if verbose is set to true</p>
 <p>Feel free to send improvements to this tutorial or nistow :)</p>
+<p><a href="https://github.com/xmonader/nistow">Complete source code</a> available here https://github.com/xmonader/nistow</p>
 <a class="header" href="#day-7-shorturl-service" id="day-7-shorturl-service"><h1>Day 7: Shorturl service</h1></a>
 <p>Today, we will develop a url shortening service like <code>bit.ly</code> or something</p>
 <a class="header" href="#imports-1" id="imports-1"><h2>imports</h2></a>
@@ -3968,7 +3969,7 @@ So the basic idea is:</p>
 <a class="header" href="#nim-asciitable" id="nim-asciitable"><h2>nim-asciitable</h2></a>
 <p>this day is based on my project <a href="https://github.com/xmonader/nim-asciitables">nim-asciitables</a> and it's superseded by <a href="https://github.com/xmonader/nim-terminaltables">nim-terminaltables</a> which provides more customizable styles and unicode box drawing support.</p>
 <a class="header" href="#day-17-nim-sonic-client-nim-and-rust-can-be-friends" id="day-17-nim-sonic-client-nim-and-rust-can-be-friends"><h1>Day 17: Nim-Sonic-Client: Nim and Rust can be friends!</h1></a>
-<p><a href="https://github.com/valeriansaliou/sonic">sonic</a>  is a fast, lightweight and schema-less search backend. It ingests search texts and identifier tuples that can then be queried against in a microsecond's time, and it's implemented in rust. Sonic can be used as a simple alternative to super-heavy and full-featured search backends such as Elasticsearch in some use-cases. It is capable of normalizing natural language search queries, auto-completing a search query and providing the most relevant results for a query. Sonic is an identifier index, rather than a document index; when queried, it returns IDs that can then be used to refer to the matched documents in an external database. We use it heavily in all of our projects currently using <a href="https://github.com/xmonader/python-sonic-client">python client</a>, but we are here today to talk about nim.</p>
+<p><a href="https://github.com/valeriansaliou/sonic">sonic</a>  is a fast, lightweight and schema-less search backend. It ingests search texts and identifier tuples that can then be queried against in a microsecond's time, and it's implemented in rust. Sonic can be used as a simple alternative to super-heavy and full-featured search backends such as Elasticsearch in some use-cases. It is capable of normalizing natural language search queries, auto-completing a search query and providing the most relevant results for a query. Sonic is an identifier index, rather than a document index; when queried, it returns IDs that can then be used to refer to the matched documents in an external database. We use it heavily in all of our projects currently using <a href="https://github.com/xmonader/python-sonic-client">python client</a>, but we are here today to talk about nim. Please make sure to check sonic website for more info on how start the server and its configurations</p>
 <a class="header" href="#what-to-expect--3" id="what-to-expect--3"><h2>What to expect ?</h2></a>
 <a class="header" href="#ingest" id="ingest"><h3>Ingest</h3></a>
 <p>We should be able to push data over tcp from nim to sonic</p>
@@ -4542,6 +4543,7 @@ proc execCommand*(this: Sonic|AsyncSonic, command: string): Future[string] {.mul
   testControl()
 
 </code></pre>
+<p>Code is available on <a href="https://github.com/xmonader/nim-sonic-client">xmonader/nim-sonic-client</a>. Feel free to send me a PR or open an issue.</p>
 
                     </main>
 
