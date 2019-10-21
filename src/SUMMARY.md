@@ -20,4 +20,4 @@ Documenting my days with The Nim Programming language.
 - [Day 15: TCP Router](day15_tcprouter.md)
 - [Day 16: AsciiTables](day16_asciitables.md) 
 - [Day 17: Sonic-Client](day17_nimsonicclient.md)
-- [Day 18: From socket to a webframework](day18_webframework.md)
+- [Day 18: Webframework](day18_webframework.md)

@@ -1,4 +1,4 @@
-# Day 18: From socket to a Webframework
+# Day 18: From a socket to a Webframework
 
 Today we will be focusing on building a webframework starting from a socket :)
 
@@ -378,8 +378,7 @@ the code above is taken from `pure/http` in nim stdlib
 
 another abstraction we need is the headers list. Headers in http aren't just key=value, but key=[value] so key can has a list of values. 
 
-```
-
+```nim
 type HttpHeaders* = ref object
       table*: TableRef[string, seq[string]]
 
@@ -1102,6 +1101,3 @@ we provide a simple function to add a handler to a route setting the method type
 ## What's next?
 We didn't talk about templates, cookies, sessions, dates, sending files and for sure that's not a complete [HTTP ref](https://www.w3.org/Protocols/rfc2616/rfc2616.html) implementation by any means. [Jester](https://github.com/dom96/jester) is a great option to check.
 Thank you for going through this day and please feel free to send PR or open issue on [nim-servy](https://github.com/xmonader/nim-servy/) repository 
-
-
-- 
