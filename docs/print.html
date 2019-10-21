@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="book_intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li><a href="day01_dmidecode.html"><strong aria-hidden="true">2.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">3.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">4.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">5.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">6.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">7.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">8.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">9.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">10.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">11.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">12.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">13.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">14.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">15.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">16.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">17.</strong> Day 16: AsciiTables</a></li><li><a href="day17_nimsonicclient.html"><strong aria-hidden="true">18.</strong> Day 17: Sonic-Client</a></li></ol>
+            <ol class="chapter"><li><a href="book_intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li><a href="day01_dmidecode.html"><strong aria-hidden="true">2.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">3.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">4.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">5.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">6.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">7.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">8.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">9.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">10.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">11.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">12.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">13.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">14.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">15.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">16.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">17.</strong> Day 16: AsciiTables</a></li><li><a href="day17_nimsonicclient.html"><strong aria-hidden="true">18.</strong> Day 17: Sonic-Client</a></li><li><a href="day18_webframework.html"><strong aria-hidden="true">19.</strong> Day 18: From socket to a webframework</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -4544,6 +4544,977 @@ proc execCommand*(this: Sonic|AsyncSonic, command: string): Future[string] {.mul
 
 </code></pre>
 <p>Code is available on <a href="https://github.com/xmonader/nim-sonic-client">xmonader/nim-sonic-client</a>. Feel free to send me a PR or open an issue.</p>
+<a class="header" href="#day-18-from-socket-to-a-webframework" id="day-18-from-socket-to-a-webframework"><h1>Day 18: From socket to a Webframework</h1></a>
+<p>Today we will be focusing on building a webframework starting from a socket :)</p>
+<a class="header" href="#what-to-expect-6" id="what-to-expect-6"><h2>What to expect</h2></a>
+<pre><code class="language-nim">proc main() =
+    var router = newRouter()
+
+
+
+    let loggingMiddleware = proc(request: var Request): (ref Response, bool) =
+      let path = request.path
+      let headers = request.headers
+      echo &quot;===============================&quot;
+      echo &quot;from logger handler&quot;
+      echo &quot;path: &quot; &amp; path
+      echo &quot;headers: &quot; &amp; $headers
+      echo &quot;===============================&quot;
+      return (newResponse(), true)
+
+    let trimTrailingSlash = proc(request: var Request): (ref Response, bool) =
+      let path = request.path
+      if path.endswith(&quot;/&quot;):
+        request.path = path[0..^2]
+
+      echo &quot;===============================&quot;
+      echo &quot;from slash trimmer &quot;
+      echo &quot;path was : &quot; &amp; path
+      echo &quot;path: &quot; &amp; request.path
+      echo &quot;===============================&quot;
+      return (newResponse(), true)
+      
+    proc handleHello(req:var Request): ref Response =
+      result = newResponse()
+      result.code = Http200
+      result.content = &quot;hello world from handler /hello&quot; &amp; $req 
+    router.addRoute(&quot;/hello&quot;, handleHello)
+
+    let assertJwtFieldExists =  proc(request: var Request): (ref Response, bool) =
+        echo $request.headers
+        let jwtHeaderVals = request.headers.getOrDefault(&quot;jwt&quot;, @[&quot;&quot;])
+        let jwt = jwtHeaderVals[0]
+        echo &quot;================\n\njwt middleware&quot;
+        if jwt.len != 0:
+          echo fmt&quot;bye bye {jwt} &quot;
+        else:
+          echo fmt&quot;sure bye but i didn't get ur name&quot;
+        echo &quot;===================\n\n&quot;
+        return (newResponse(), true)
+
+    router.addRoute(&quot;/bye&quot;, handleHello, HttpGet, @[assertJwtFieldExists])
+    
+    proc handleGreet(req:var Request): ref Response =
+      result = newResponse()
+      result.code = Http200
+      result.content = &quot;generic greet&quot; &amp; $req 
+
+        
+    router.addRoute(&quot;/greet&quot;, handleGreet, HttpGet, @[])
+    router.addRoute(&quot;/greet/:username&quot;, handleGreet, HttpGet, @[])
+    router.addRoute(&quot;/greet/:first/:second/:lang&quot;, handleGreet, HttpGet, @[])
+
+    let opts = ServerOptions(address:&quot;127.0.0.1&quot;, port:9000.Port)
+    var s = newServy(opts, router, @[loggingMiddleware, trimTrailingSlash])
+    asyncCheck s.serve()
+    echo &quot;servy started...&quot;
+    runForever()
+  
+  main()
+
+</code></pre>
+<a class="header" href="#defining-a-handler-and-wiring-to-to-a-pattern-or-more" id="defining-a-handler-and-wiring-to-to-a-pattern-or-more"><h3>defining a handler and wiring to to a pattern or more</h3></a>
+<pre><code class="language-nim">    proc handleHello(req:var Request): ref Response =
+      result = newResponse()
+      result.code = Http200
+      result.content = &quot;hello world from handler /hello&quot; &amp; $req 
+    router.addRoute(&quot;/hello&quot;, handleHello)
+
+    proc handleGreet(req:var Request): ref Response =
+      result = newResponse()
+      result.code = Http200
+      result.content = &quot;generic greet&quot; &amp; $req 
+
+    router.addRoute(&quot;/greet&quot;, handleGreet, HttpGet, @[])
+    router.addRoute(&quot;/greet/:username&quot;, handleGreet, HttpGet, @[])
+    router.addRoute(&quot;/greet/:first/:second/:lang&quot;, handleGreet, HttpGet, @[])
+
+
+</code></pre>
+<a class="header" href="#definingregistering-middlewares-on-the-server-globally" id="definingregistering-middlewares-on-the-server-globally"><h3>defining/registering middlewares on the server globally</h3></a>
+<pre><code class="language-nim">    let loggingMiddleware = proc(request: var Request): (ref Response, bool) =
+      let path = request.path
+      let headers = request.headers
+      echo &quot;===============================&quot;
+      echo &quot;from logger handler&quot;
+      echo &quot;path: &quot; &amp; path
+      echo &quot;headers: &quot; &amp; $headers
+      echo &quot;===============================&quot;
+      return (newResponse(), true)
+
+    let trimTrailingSlash = proc(request: var Request): (ref Response, bool) =
+      let path = request.path
+      if path.endswith(&quot;/&quot;):
+        request.path = path[0..^2]
+
+      echo &quot;===============================&quot;
+      echo &quot;from slash trimmer &quot;
+      echo &quot;path was : &quot; &amp; path
+      echo &quot;path: &quot; &amp; request.path
+      echo &quot;===============================&quot;
+      return (newResponse(), true)
+
+    var s = newServy(opts, router, @[loggingMiddleware, trimTrailingSlash])
+
+
+</code></pre>
+<a class="header" href="#defining-middlewares-request-filters-on-certain-routes" id="defining-middlewares-request-filters-on-certain-routes"><h3>defining middlewares (request filters on certain routes)</h3></a>
+<pre><code class="language-nim">    router.addRoute(&quot;/bye&quot;, handleHello, HttpGet, @[assertJwtFieldExists])
+</code></pre>
+<p>Sounds like a lot. Let's get to it.</p>
+<a class="header" href="#implementation-14" id="implementation-14"><h2>Implementation</h2></a>
+<a class="header" href="#the-big-picture" id="the-big-picture"><h3>The big picture</h3></a>
+<pre><code class="language-nim">
+
+proc newServy(options: ServerOptions, router:ref Router, middlewares:seq[MiddlewareFunc]): ref Servy =
+  result = new Servy
+  result.options = options
+  result.router = router
+  result.middlewares = middlewares
+
+  result.sock = newAsyncSocket()
+  result.sock.setSockOpt(OptReuseAddr, true)
+</code></pre>
+<p>we have a server listening on a socket/address (should be configurable) and has a router that knows which pattern should be handled by which handler and a set of middlewares to be used.</p>
+<pre><code class="language-nim">proc serve(s: ref Servy) {.async.} =
+  s.sock.bindAddr(s.options.port)
+  s.sock.listen()
+  while true:
+    let client = await s.sock.accept()
+    asyncCheck s.handleClient(client)
+
+  runForever()
+
+</code></pre>
+<p>we receive a connection and pass it to <code>handleClient</code> proc</p>
+<pre><code class="language-nim">proc handleClient(s: ref Servy, client: AsyncSocket) {.async.} =
+  ## code to read request from the user
+  var req = await s.parseRequestFromConnection(client)
+  
+  ...
+  echo &quot;received request from client: &quot; &amp; $req
+
+  ## code to get the route handler
+  let (routeHandler, params) = s.router.getByPath(req.path)
+  req.urlParams = params
+  let handler = routeHandler.handlerFunc
+
+  ..
+  ## call the handler and return response in valid http protocol format
+  let resp = handler(req)
+  echo &quot;reached the handler safely.. and executing now.&quot;
+  await client.send(resp.format())
+  echo $req.formData
+
+</code></pre>
+<p>handleClient reads the data from the wire in <a href="https://www.w3.org/Protocols/rfc2616/rfc2616.html">HTTP protocol</a> and finds the route or requested path handler and then formats a valid http response and write it on the wire.
+Cool? Awesome!</p>
+<a class="header" href="#example-http-requests-and-responses" id="example-http-requests-and-responses"><h3>Example HTTP requests and responses</h3></a>
+<p>when you execute <code>curl httpbin.org/get -v</code> the following (http formatted request) is sent to <code>httpbin.org</code> webserver</p>
+<pre><code>GET /get HTTP/1.1
+Host: httpbin.org
+User-Agent: curl/7.62.0-DEV
+</code></pre>
+<p>That is called a <code>Request</code> that has a request line <code>METHOD PATH HTTPVERSION</code> e.g <code>GET /get HTTP/1.1</code>. Followed by a list of headers <code>lines with colon in it</code> representing key values
+e.g</p>
+<ul>
+<li><code>Host: httpbin.org</code> a header is a line of <code>Key: value</code></li>
+<li><code>User-Agent: curl/7.62.0-DEV</code> a header indicating the client type</li>
+</ul>
+<p>As soon as the server receives that request it'll handle it as it was told to</p>
+<pre><code>HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Mon, 21 Oct 2019 18:28:13 GMT
+Server: nginx
+Content-Length: 206
+
+{
+  &quot;args&quot;: {}, 
+  &quot;headers&quot;: {
+    &quot;Accept&quot;: &quot;*/*&quot;, 
+    &quot;Host&quot;: &quot;httpbin.org&quot;, 
+    &quot;User-Agent&quot;: &quot;curl/7.62.0-DEV&quot;
+  }, 
+  &quot;origin&quot;: &quot;197.52.178.58, 197.52.178.58&quot;, 
+  &quot;url&quot;: &quot;https://httpbin.org/get&quot;
+}
+
+</code></pre>
+<p>This is called a Response, response consists of</p>
+<ul>
+<li>status line: <code>HTTPVER STATUS_CODE STATUS_MESSAGE</code> e.g <code>HTTP/1.1 200 OK</code></li>
+<li>list of headers
+<ul>
+<li><code>Content-Type</code>: <code>application/json</code> type of content</li>
+<li><code>Date</code>: <code>Mon, 21 Oct 2019 18:28:13 GMT</code> date of the response</li>
+<li><code>Server</code>: nginx <code>server name</code></li>
+<li><code>Content-Length</code>: 206 length of the upcoming body</li>
+</ul>
+</li>
+</ul>
+<p>Now let's go over the abstractions needed</p>
+<a class="header" href="#http-version" id="http-version"><h3>Http Version</h3></a>
+<p>There're multiple http specifications <code>0.9</code>, <code>1.0</code>, <code>1.1</code>, ..</p>
+<p>so let's start with that. a Simple enum should be enough</p>
+<pre><code class="language-nim">type
+  HttpVersion* = enum
+    HttpVer11,
+    HttpVer10
+
+
+proc `$`(ver:HttpVersion): string = 
+      case ver
+      of HttpVer10: result=&quot;HTTP/1.0&quot;
+      of HttpVer11: result=&quot;HTTP/1.1&quot;
+
+
+</code></pre>
+<a class="header" href="#httpmethods" id="httpmethods"><h3>HttpMethods</h3></a>
+<p>We all know <code>GET</code>, <code>POST</code>, <code>HEAD</code>, .. methods, again can be represented by a Simple enum</p>
+<pre><code class="language-nim">type
+  HttpMethod* = enum  ## the requested HttpMethod
+    HttpHead,         ## Asks for the response identical to the one that would
+                      ## correspond to a GET request, but without the response
+                      ## body.
+    HttpGet,          ## Retrieves the specified resource.
+    HttpPost,         ## Submits data to be processed to the identified
+                      ## resource. The data is included in the body of the
+                      ## request.
+    HttpPut,          ## Uploads a representation of the specified resource.
+    HttpDelete,       ## Deletes the specified resource.
+    HttpTrace,        ## Echoes back the received request, so that a client
+                      ## can see what intermediate servers are adding or
+                      ## changing in the request.
+    HttpOptions,      ## Returns the HTTP methods that the server supports
+                      ## for specified address.
+    HttpConnect,      ## Converts the request connection to a transparent
+                      ## TCP/IP tunnel, usually used for proxies.
+    HttpPatch         ## Applies partial modifications to a resource.
+
+
+
+proc httpMethodFromString(txt: string):  Option[HttpMethod] = 
+    let s2m = {&quot;GET&quot;: HttpGet, &quot;POST&quot;: HttpPost, &quot;PUT&quot;:HttpPut, &quot;PATCH&quot;: HttpPatch, &quot;DELETE&quot;: HttpDelete, &quot;HEAD&quot;:HttpHead}.toTable
+    if txt in s2m:
+        result = some(s2m[txt.toUpper])
+    else:
+        result = none(HttpMethod)
+</code></pre>
+<p>Also we add <code>httpMethodFromString</code> that takes a string and returns option[HttpMethod] value.</p>
+<a class="header" href="#http-code" id="http-code"><h3>Http Code</h3></a>
+<p>HTTP specifications specifies certain code responses (status codes) to indicate the state for the request</p>
+<ul>
+<li>20X -&gt; it's fine</li>
+<li>30X -&gt; redirections</li>
+<li>40X -&gt; client messed up</li>
+<li>50X -&gt; server messed up</li>
+</ul>
+<pre><code class="language-nim">
+  HttpCode* = distinct range[0 .. 599]
+
+const
+  Http200* = HttpCode(200)
+  Http201* = HttpCode(201)
+  Http202* = HttpCode(202)
+  Http203* = HttpCode(203)
+  ...
+  Http300* = HttpCode(300)
+  Http301* = HttpCode(301)
+  Http302* = HttpCode(302)
+  Http303* = HttpCode(303)
+  ..
+  Http400* = HttpCode(400)
+  Http401* = HttpCode(401)
+  Http403* = HttpCode(403)
+  Http404* = HttpCode(404)
+  Http405* = HttpCode(405)
+  Http406* = HttpCode(406)
+  ...
+  Http451* = HttpCode(451)
+  Http500* = HttpCode(500)
+  ...
+
+
+proc `$`*(code: HttpCode): string =
+    ## Converts the specified ``HttpCode`` into a HTTP status.
+    ##
+    ## For example:
+    ##
+    ##   .. code-block:: nim
+    ##       doAssert($Http404 == &quot;404 Not Found&quot;)
+    case code.int
+    ..
+    of 200: &quot;200 OK&quot;
+    of 201: &quot;201 Created&quot;
+    of 202: &quot;202 Accepted&quot;
+    of 204: &quot;204 No Content&quot;
+    of 205: &quot;205 Reset Content&quot;
+    ...
+    of 301: &quot;301 Moved Permanently&quot;
+    of 302: &quot;302 Found&quot;
+    of 303: &quot;303 See Other&quot;
+    ..
+    of 400: &quot;400 Bad Request&quot;
+    of 401: &quot;401 Unauthorized&quot;
+    of 403: &quot;403 Forbidden&quot;
+    of 404: &quot;404 Not Found&quot;
+    of 405: &quot;405 Method Not Allowed&quot;
+    of 406: &quot;406 Not Acceptable&quot;
+    of 408: &quot;408 Request Timeout&quot;
+    of 409: &quot;409 Conflict&quot;
+    of 410: &quot;410 Gone&quot;
+    of 411: &quot;411 Length Required&quot;
+    of 413: &quot;413 Request Entity Too Large&quot;
+    of 414: &quot;414 Request-URI Too Long&quot;
+    of 415: &quot;415 Unsupported Media Type&quot;
+    of 416: &quot;416 Requested Range Not Satisfiable&quot;
+    of 429: &quot;429 Too Many Requests&quot;
+    ...
+    of 500: &quot;500 Internal Server Error&quot;
+    of 501: &quot;501 Not Implemented&quot;
+    of 502: &quot;502 Bad Gateway&quot;
+    of 503: &quot;503 Service Unavailable&quot;
+    of 504: &quot;504 Gateway Timeout&quot;
+    ...
+    else: $(int(code))
+
+</code></pre>
+<p>the code above is taken from <code>pure/http</code> in nim stdlib</p>
+<a class="header" href="#headers" id="headers"><h3>headers</h3></a>
+<p>another abstraction we need is the headers list. Headers in http aren't just key=value, but key=[value] so key can has a list of values.</p>
+<pre><code>
+type HttpHeaders* = ref object
+      table*: TableRef[string, seq[string]]
+
+type HttpHeaderValues* =  seq[string]
+
+proc newHttpHeaders*(): HttpHeaders =
+  new result
+  result.table = newTable[string, seq[string]]()
+
+proc newHttpHeaders*(keyValuePairs:
+    seq[tuple[key: string, val: string]]): HttpHeaders =
+  var pairs: seq[tuple[key: string, val: seq[string]]] = @[]
+  for pair in keyValuePairs:
+    pairs.add((pair.key.toLowerAscii(), @[pair.val]))
+  new result
+  result.table = newTable[string, seq[string]](pairs)
+
+proc `$`*(headers: HttpHeaders): string =
+  return $headers.table
+
+proc clear*(headers: HttpHeaders) =
+  headers.table.clear()
+
+proc `[]`*(headers: HttpHeaders, key: string): HttpHeaderValues =
+  ## Returns the values associated with the given ``key``. If the returned
+  ## values are passed to a procedure expecting a ``string``, the first
+  ## value is automatically picked. If there are
+  ## no values associated with the key, an exception is raised.
+  ##
+  ## To access multiple values of a key, use the overloaded ``[]`` below or
+  ## to get all of them access the ``table`` field directly.
+  return headers.table[key.toLowerAscii].HttpHeaderValues
+
+# converter toString*(values: HttpHeaderValues): string =
+#   return seq[string](values)[0]
+
+proc `[]`*(headers: HttpHeaders, key: string, i: int): string =
+  ## Returns the ``i``'th value associated with the given key. If there are
+  ## no values associated with the key or the ``i``'th value doesn't exist,
+  ## an exception is raised.
+  return headers.table[key.toLowerAscii][i]
+
+proc `[]=`*(headers: HttpHeaders, key, value: string) =
+  ## Sets the header entries associated with ``key`` to the specified value.
+  ## Replaces any existing values.
+  headers.table[key.toLowerAscii] = @[value]
+
+proc `[]=`*(headers: HttpHeaders, key: string, value: seq[string]) =
+  ## Sets the header entries associated with ``key`` to the specified list of
+  ## values.
+  ## Replaces any existing values.
+  headers.table[key.toLowerAscii] = value
+
+proc add*(headers: HttpHeaders, key, value: string) =
+  ## Adds the specified value to the specified key. Appends to any existing
+  ## values associated with the key.
+  if not headers.table.hasKey(key.toLowerAscii):
+    headers.table[key.toLowerAscii] = @[value]
+  else:
+    headers.table[key.toLowerAscii].add(value)
+
+proc del*(headers: HttpHeaders, key: string) =
+  ## Delete the header entries associated with ``key``
+  headers.table.del(key.toLowerAscii)
+
+iterator pairs*(headers: HttpHeaders): tuple[key, value: string] =
+  ## Yields each key, value pair.
+  for k, v in headers.table:
+    for value in v:
+      yield (k, value)
+
+proc contains*(values: HttpHeaderValues, value: string): bool =
+  ## Determines if ``value`` is one of the values inside ``values``. Comparison
+  ## is performed without case sensitivity.
+  for val in seq[string](values):
+    if val.toLowerAscii == value.toLowerAscii: return true
+
+proc hasKey*(headers: HttpHeaders, key: string): bool =
+  return headers.table.hasKey(key.toLowerAscii())
+
+proc getOrDefault*(headers: HttpHeaders, key: string,
+    default = @[&quot;&quot;].HttpHeaderValues): HttpHeaderValues =
+  ## Returns the values associated with the given ``key``. If there are no
+  ## values associated with the key, then ``default`` is returned.
+  if headers.hasKey(key):
+    return headers[key]
+  else:
+    return default
+
+proc len*(headers: HttpHeaders): int = return headers.table.len
+
+proc parseList(line: string, list: var seq[string], start: int): int =
+  var i = 0
+  var current = &quot;&quot;
+  while start+i &lt; line.len and line[start + i] notin {'\c', '\l'}:
+    i += line.skipWhitespace(start + i)
+    i += line.parseUntil(current, {'\c', '\l', ','}, start + i)
+    list.add(current)
+    if start+i &lt; line.len and line[start + i] == ',':
+      i.inc # Skip ,
+    current.setLen(0)
+
+proc parseHeader*(line: string): tuple[key: string, value: seq[string]] =
+  ## Parses a single raw header HTTP line into key value pairs.
+  ##
+  ## Used by ``asynchttpserver`` and ``httpclient`` internally and should not
+  ## be used by you.
+  result.value = @[]
+  var i = 0
+  i = line.parseUntil(result.key, ':')
+  inc(i) # skip :
+  if i &lt; len(line):
+    i += parseList(line, result.value, i)
+  elif result.key.len &gt; 0:
+    result.value = @[&quot;&quot;]
+  else:
+    result.value = @[]
+</code></pre>
+<p>So we have the abstraction now over the headers. very nice.</p>
+<a class="header" href="#request" id="request"><h3>Request</h3></a>
+<pre><code class="language-nim">type Request = object 
+  httpMethod*: HTTPMethod
+  httpVersion*: HttpVersion
+  headers*: HTTPHeaders
+  path*: string
+  body*: string
+  queryParams*: TableRef[string, string]
+  formData*: TableRef[string, string]
+  urlParams*: TableRef[string, string]
+</code></pre>
+<p>request is a type that keeps track of</p>
+<ul>
+<li>http version: from the client request</li>
+<li>request method: get, post, .. etc</li>
+<li>requested path: if the url is <code>localhost:9000/users/myfile</code> the requested path would be <code>/users/myfile</code></li>
+<li>headers: request headers</li>
+<li>body: body</li>
+<li>formData: submitted form data</li>
+<li>queryParams: if the url is <code>/users/search?name=xmon&amp;age=50</code> the queryParams will be Table {&quot;name&quot;:&quot;xmon&quot;, &quot;age&quot;:50}</li>
+<li>urlParams: are the captured variables by the router
+if we have a route to handle <code>/users/:username/:language</code> and we received request with path <code>/users/xmon/ar</code> it will bind <code>username</code> to <code>xmon</code> and <code>language</code> to <code>ar</code> and make that available on the request object to be used later on by the handler.</li>
+</ul>
+<a class="header" href="#building-the-request" id="building-the-request"><h4>Building the request</h4></a>
+<p>remember the <code>handleClient</code> that we mentioned in the big picture section?</p>
+<pre><code class="language-nim">
+proc handleClient(s: ref Servy, client: AsyncSocket) {.async.} =
+  var req = await s.parseRequestFromConnection(client)
+  ...
+</code></pre>
+<p>So let's implement <code>parseRequestFromConnection</code></p>
+<pre><code class="language-nim">
+
+proc parseRequestFromConnection(s: ref Servy, conn:AsyncSocket): Future[Request] {.async.} = 
+
+    result.queryParams = newTable[string, string]()
+    result.formData = newTable[string, string]()
+    result.urlParams = newTable[string, string]()
+
+    let requestline = $await conn.recvLine(maxLength=maxLine)
+    var  meth, path, httpver: string
+    var parts = requestLine.splitWhitespace()
+    meth = parts[0]
+    path = parts[1]
+    httpver = parts[2]
+    var contentLength = 0
+    echo meth, path, httpver
+    let m = httpMethodFromString(meth)
+    if m.isSome:
+        result.httpMethod = m.get()
+    else:
+        echo meth
+        raise newException(OSError, &quot;invalid httpmethod&quot;)
+    if &quot;1.1&quot; in httpver:
+        result.httpVersion = HttpVer11
+    elif &quot;1.0&quot; in httpver:
+        result.httpVersion = HttpVer10
+  
+    result.path = path
+
+    if &quot;?&quot; in path:
+      # has query params
+      result.queryParams = parseQueryParams(path) 
+    
+</code></pre>
+<p>First we parse the request line <code>METHOD PATH HTTPVER</code> e.g <code>GET /users HTTP/1.1</code> so if we split on spaces we get the method, path, and http version</p>
+<p>Also if there's <code>?</code> like in <code>/users?username=xmon</code> in the request path, we should parse the Query Parameters</p>
+<pre><code class="language-nim">
+proc parseQueryParams(content: string): TableRef[string, string] =
+  result = newTable[string, string]()
+  var consumed = 0
+  if &quot;?&quot; notin content and &quot;=&quot; notin content:
+    return
+  if &quot;?&quot; in content:
+    consumed += content.skipUntil({'?'}, consumed)
+
+  inc consumed # skip ? now.
+
+  while consumed &lt; content.len:
+    if &quot;=&quot; notin content[consumed..^1]:
+      break
+
+    var key = &quot;&quot;
+    var val = &quot;&quot;
+    consumed += content.parseUntil(key, &quot;=&quot;, consumed)
+    inc consumed # =
+    consumed += content.parseUntil(val, &quot;&amp;&quot;, consumed)
+    inc consumed
+    # result[decodeUrl(key)] = result[decodeUrl(val)]
+    result.add(decodeUrl(key), decodeUrl(val))
+    echo &quot;consumed:&quot; &amp; $consumed
+    echo &quot;contentlen:&quot; &amp; $content.len
+
+
+</code></pre>
+<p>Next should be the headers</p>
+<pre><code class="language-nim">    result.headers = newHttpHeaders()
+
+
+    # parse headers
+    var line = &quot;&quot;
+    line = $(await conn.recvLine(maxLength=maxLine))
+    echo fmt&quot;line: &gt;{line}&lt; &quot;
+    while line != &quot;\r\n&quot;:
+      # a header line
+      let kv = parseHeader(line)
+      result.headers[kv.key] = kv.value
+      if kv.key.toLowerAscii == &quot;content-length&quot;:
+        contentLength = parseInt(kv.value[0])
+      line = $(await conn.recvLine(maxLength=maxLine))
+      # echo fmt&quot;line: &gt;{line}&lt; &quot;
+
+</code></pre>
+<p>We receive the headers and figure out the body length from <code>content-length</code> header to know how much to consume from the socket after we're done with the headers.</p>
+<pre><code class="language-nim">    if contentLength &gt; 0:
+      result.body = await conn.recv(contentLength)
+
+    discard result.parseFormData()
+</code></pre>
+<p>Now that we know how much to consume (<code>contentLength</code>) from socket we can capture the request's body.
+Notice that <code>parseFormData</code> handles the form submitted in the request, let's take a look at that next.</p>
+<a class="header" href="#submitting-data" id="submitting-data"><h5>Submitting data.</h5></a>
+<p>In HTTP there are different <code>Content-Type(s)</code> to submit (post) data: <code>application/x-www-form-urlencoded</code> and <code>multipart/form-data</code>.</p>
+<p>Quoting stackoverflow <a href="https://stackoverflow.com/questions/4007969/application-x-www-form-urlencoded-or-multipart-form-data">answer</a></p>
+<pre><code>The purpose of both of those types of requests is to send a list of name/value pairs to the server. Depending on the type and amount of data being transmitted, one of the methods will be more efficient than the other. To understand why, you have to look at what each is doing under the covers.
+
+For application/x-www-form-urlencoded, the body of the HTTP message sent to the server is essentially one giant query string -- name/value pairs are separated by the ampersand (&amp;), and names are separated from values by the equals symbol (=). An example of this would be: 
+
+MyVariableOne=ValueOne&amp;MyVariableTwo=ValueTwo
+
+
+That means that for each non-alphanumeric byte that exists in one of our values, it's going to take three bytes to represent it. For large binary files, tripling the payload is going to be highly inefficient.
+
+That's where multipart/form-data comes in. With this method of transmitting name/value pairs, each pair is represented as a &quot;part&quot; in a MIME message (as described by other answers). Parts are separated by a particular string boundary (chosen specifically so that this boundary string does not occur in any of the &quot;value&quot; payloads). Each part has its own set of MIME headers like Content-Type, and particularly Content-Disposition, which can give each part its &quot;name.&quot; The value piece of each name/value pair is the payload of each part of the MIME message. The MIME spec gives us more options when representing the value payload -- we can choose a more efficient encoding of binary data to save bandwidth (e.g. base 64 or even raw binary).
+</code></pre>
+<p>e.g:</p>
+<p>If you want to send the following data to the web server:</p>
+<pre><code>name = John
+age = 12
+</code></pre>
+<p>using <code>application/x-www-form-urlencoded</code> would be like this:</p>
+<pre><code>name=John&amp;age=12
+</code></pre>
+<p>As you can see, the server knows that parameters are separated by an ampersand &amp;. If &amp; is required for a parameter value then it must be encoded.</p>
+<p>So how does the server know where a parameter value starts and ends when it receives an HTTP request using multipart/form-data?</p>
+<p>Using the boundary, similar to &amp;.</p>
+<p>For example:</p>
+<pre><code>--XXX
+Content-Disposition: form-data; name=&quot;name&quot;
+
+John
+--XXX
+Content-Disposition: form-data; name=&quot;age&quot;
+
+12
+--XXX--
+</code></pre>
+<p><a href="https://stackoverflow.com/questions/3508338/what-is-the-boundary-in-multipart-form-data">reference</a> of the above explanation</p>
+<pre><code class="language-nim">
+type FormPart = object
+      name*: string
+      headers*: HttpHeaders
+      body*: string
+
+proc newFormPart(): ref FormPart = 
+  new result
+  result.headers = newHttpHeaders()
+
+proc `$`(this:ref FormPart): string = 
+  result = fmt&quot;partname: {this.name} partheaders: {this.headers} partbody: {this.body}&quot; 
+
+type FormMultiPart = object
+  parts*: TableRef[string, ref FormPart]
+
+proc newFormMultiPart(): ref FormMultiPart = 
+  new result
+  result.parts = newTable[string, ref FormPart]()
+
+proc `$`(this: ref FormMultiPart): string = 
+  return fmt&quot;parts: {this.parts}&quot;
+</code></pre>
+<p>So that's our abstraction for multipart form.</p>
+<pre><code>proc parseFormData(r: Request): ref FormMultiPart =
+
+
+  discard &quot;&quot;&quot;
+received request from client: (httpMethod: HttpPost, requestURI: &quot;&quot;, httpVersion: HTTP/1.1, headers: {&quot;accept&quot;: @[&quot;*/*&quot;], &quot;content-length&quot;: @[&quot;241&quot;], &quot;content-type&quot;: @[&quot;multipart/form-data; boundary=------------------------95909933ebe184f2&quot;], &quot;host&quot;: @[&quot;127.0.0.1:9000&quot;], &quot;user-agent&quot;: @[&quot;curl/7.62.0-DEV&quot;]}, path: &quot;/post&quot;, body: &quot;--------------------------95909933ebe184f2\c\nContent-Disposition: form-data; name=\&quot;who\&quot;\c\n\c\nhamada\c\n--------------------------95909933ebe184f2\c\nContent-Disposition: form-data; name=\&quot;next\&quot;\c\n\c\nhome\c\n--------------------------95909933ebe184f2--\c\n&quot;, raw_body: &quot;&quot;, queryParams: {:})
+  &quot;&quot;&quot;
+
+  result = newFormMultiPart()
+  
+  let contenttype = r.headers.getOrDefault(&quot;content-type&quot;)[0]
+  let body = r.body
+  
+  if &quot;form-urlencoded&quot; in contenttype.toLowerAscii():
+    # query params are the post body
+    let postBodyAsParams = parseQueryParams(body)
+    for k, v in postBodyAsParams.pairs:
+      r.queryParams.add(k, v)     
+
+</code></pre>
+<p>if the content-type has the word <code>form-urlencoded</code> we parse he body as if it was queryParams</p>
+<pre><code class="language-nim">
+  elif contenttype.startsWith(&quot;multipart/&quot;) and &quot;boundary&quot; in contenttype:
+    var boundaryName = contenttype[contenttype.find(&quot;boundary=&quot;)+&quot;boundary=&quot;.len..^1]
+    echo &quot;boundayName: &quot; &amp; boundaryName
+    for partString in body.split(boundaryName &amp; &quot;\c\L&quot;):
+      var part = newFormPart()
+      var partName = &quot;&quot;
+
+      var totalParsedLines = 1
+      let bodyLines = body.split(&quot;\c\L&quot;)[1..^1] # at the boundary line
+      for line in bodyLines:
+        if line.strip().len != 0:
+          let splitted = line.split(&quot;: &quot;)
+          if len(splitted) == 2:
+            part.headers.add(splitted[0], splitted[1])
+          elif len(splitted) == 1:
+            part.headers.add(splitted[0], &quot;&quot;)
+          
+          if &quot;content-disposition&quot; in line.toLowerAscii and &quot;name&quot; in line.toLowerAscii:
+            # Content-Disposition: form-data; name=&quot;next&quot;
+            var consumed = line.find(&quot;name=&quot;)+&quot;name=&quot;.len
+            discard line.skip(&quot;\&quot;&quot;, consumed) 
+            inc consumed
+            consumed += line.parseUntil(partName, &quot;\&quot;&quot;, consumed)
+
+        else:
+          break # done with headers now for the body.
+
+        inc totalParsedLines
+      
+      let content = join(bodyLines[totalParsedLines..^1], &quot;\c\L&quot;)
+      part.body = content
+      part.name = partName
+      result.parts.add(partName, part)
+      echo $result.parts
+
+</code></pre>
+<p>if it's not <code>form-urlencoded</code> then it's a multipart then we need to figure out the boundary and split the body on that boundary text</p>
+<a class="header" href="#response" id="response"><h3>Response</h3></a>
+<p>Now that we can parse the client request we need to be able to build a correctly formatted response.
+Response keeps track of</p>
+<ul>
+<li>http version</li>
+<li>response status code</li>
+<li>response content</li>
+<li>response headers</li>
+</ul>
+<pre><code class="language-nim">type Response = object
+  headers: HttpHeaders
+  httpver: HttpVersion
+  code: HttpCode
+  content: string
+</code></pre>
+<a class="header" href="#formatting-response" id="formatting-response"><h4>Formatting response</h4></a>
+<pre><code class="language-nim">
+proc formatStatusLine(code: HttpCode, httpver: HttpVersion) : string =
+  return fmt&quot;{httpver} {code}&quot; &amp; &quot;\r\n&quot;
+
+</code></pre>
+<p>Here we build status line which is <code>HTTPVERSION STATUS_CODE STATUS_MSG\r\n</code> e.g <code>HTTP/1.1 200 OK</code></p>
+<pre><code class="language-nim">proc formatResponse(code:HttpCode, httpver:HttpVersion, content:string, headers:HttpHeaders): string = 
+  result &amp;= formatStatusLine(code, httpver)
+  if headers.len &gt; 0:
+    for k,v in headers.pairs:
+      result &amp;= fmt&quot;{k}: {v}&quot; &amp; &quot;\r\n&quot;
+  result &amp;= fmt&quot;Content-Length: {content.len}&quot; &amp; &quot;\r\n\r\n&quot;
+  result &amp;= content
+  echo &quot;will send&quot;
+  echo result
+  
+
+proc format(resp: ref Response) : string = 
+  result = formatResponse(resp.code, resp.httpver, resp.content, resp.headers)
+
+
+</code></pre>
+<p>To format a complete response we need</p>
+<ul>
+<li>building status line</li>
+<li>headers to string</li>
+<li>content length to be the length for the body</li>
+<li>the body itself</li>
+</ul>
+<a class="header" href="#handling-client-request" id="handling-client-request"><h3>Handling client request</h3></a>
+<p>so every handler function should take a <code>Request</code> object and return a Response to be sent on the wire. Right?</p>
+<pre><code class="language-nim">
+
+proc handleClient(s: ref Servy, client: AsyncSocket) {.async.} =
+  var req = await s.parseRequestFromConnection(client)
+  ...
+  let (routeHandler, params) = s.router.getByPath(req.path)
+  req.urlParams = params
+  let handler = routeHandler.handlerFunc
+  ...
+  let resp = handler(req)
+  await client.send(resp.format())
+
+</code></pre>
+<p>Very cool the router will magically return to us a suitable route handler or 404 handler if not found using its <code>getByPath</code> proc</p>
+<ul>
+<li>We get the handler</li>
+<li>apply it to the request to get a valid http response</li>
+<li>send the response to the client on the wire.</li>
+</ul>
+<p>Let's get to the Handler Function example definition again</p>
+<pre><code class="language-nim">
+    proc handleHello(req:var Request): ref Response =
+      result = newResponse()
+      result.code = Http200
+      result.content = &quot;hello world from handler /hello&quot; &amp; $req 
+</code></pre>
+<p>so it takes a request and returns a response, how about we create an alias for that?</p>
+<pre><code class="language-nim">type HandlerFunc = proc(req: var Request):ref Response {.nimcall.}
+</code></pre>
+<a class="header" href="#middlewares" id="middlewares"><h3>Middlewares</h3></a>
+<p>It's typical in many frameworks to apply certain set of checks or functions on the incoming request before sending it to any handler, like logging the request first, or trimming the trailing slashes, or checking for a certain header</p>
+<p>How can we implement that? Remember our <code>handleClient</code>? they need to be applied before the request reach the handler so should be above <code>handler(req)</code></p>
+<pre><code class="language-nim">
+proc handleClient(s: ref Servy, client: AsyncSocket) {.async.} =
+  var req = await s.parseRequestFromConnection(client)
+  ### HERE SHOULD BE MIDDLEWARE Code
+  ###
+  ###
+
+
+  let (routeHandler, params) = s.router.getByPath(req.path)
+  req.urlParams = params
+  let handler = routeHandler.handlerFunc
+  ...
+  let resp = handler(req)
+  await client.send(resp.format())
+</code></pre>
+<p>So let's get to the implementation</p>
+<pre><code class="language-nim">
+proc handleClient(s: ref Servy, client: AsyncSocket) {.async.} =
+  var req = await s.parseRequestFromConnection(client)
+  
+  for  m in s.middlewares:
+    let (resp, usenextmiddleware) = m(req)
+    if not usenextmiddleware:
+      echo &quot;early return from middleware...&quot;
+      await client.send(resp.format())
+      return
+  ...
+  let handler = routeHandler.handlerFunc
+  ...
+  let resp = handler(req)
+  await client.send(resp.format())
+
+</code></pre>
+<p>here we loop over all registered middlewares</p>
+<ul>
+<li>middleware should return a response to be sent if it needs to terminate the handling immediately</li>
+<li>should tell us if we should continue applying middlewares or terminate immediately</li>
+</ul>
+<p>That's why the definition of a middleware is like that</p>
+<pre><code class="language-nim">
+    let loggingMiddleware = proc(request: var Request): (ref Response, bool) =
+      let path = request.path
+      let headers = request.headers
+      echo &quot;===============================&quot;
+      echo &quot;from logger handler&quot;
+      echo &quot;path: &quot; &amp; path
+      echo &quot;headers: &quot; &amp; $headers
+      echo &quot;===============================&quot;
+      return (newResponse(), true)
+
+</code></pre>
+<p>Let's create an alias for middleware function so we can use it easily in the rest of our code</p>
+<pre><code class="language-nim">type MiddlewareFunc = proc(req: var Request): (ref Response, bool) {.nimcall.}
+</code></pre>
+<a class="header" href="#route-specific-middlewares" id="route-specific-middlewares"><h4>Route specific middlewares</h4></a>
+<p>above we talked about global application middlewares, but maybe we want to apply some middleware or <code>filter</code> to a certain route</p>
+<pre><code class="language-nim">
+proc handleClient(s: ref Servy, client: AsyncSocket) {.async.} =
+  var req = await s.parseRequestFromConnection(client)
+  
+  
+  for  m in s.middlewares:
+    let (resp, usenextmiddleware) = m(req)
+    if not usenextmiddleware:
+      echo &quot;early return from middleware...&quot;
+      await client.send(resp.format())
+      return
+
+  echo &quot;received request from client: &quot; &amp; $req
+
+  let (routeHandler, params) = s.router.getByPath(req.path)
+  req.urlParams = params
+  let handler = routeHandler.handlerFunc
+  let middlewares = routeHandler.middlewares
+  
+  
+
+  for  m in middlewares:
+    let (resp, usenextmiddleware) = m(req)
+    if not usenextmiddleware:
+      echo &quot;early return from route middleware...&quot;
+      await client.send(resp.format())
+      return
+    
+  let resp = handler(req)
+  echo &quot;reached the handler safely.. and executing now.&quot;
+  await client.send(resp.format())
+  echo $req.formData
+
+
+</code></pre>
+<p>notice now we have a route specific middlewares to apply as well before calling <code>handler(req)</code> maybe to check for a header before allowing access on that route.</p>
+<a class="header" href="#router" id="router"><h3>Router</h3></a>
+<p>Router is one of the essential components in our code it's responsible to keep track of what the registered pattern and their handlers so we can actually do something with incoming request and the filters <code>middlewares</code> to apply on the request</p>
+<pre><code class="language-nim">
+type RouterValue = object
+  handlerFunc: HandlerFunc
+  middlewares:seq[MiddlewareFunc]
+
+type Router = object
+  table: TableRef[string, RouterValue]
+
+</code></pre>
+<p>Basic definition of the router as it's a map from a <code>url pattern</code> to <code>RouterValue</code> that basically has a reference to the handler proc and a sequence of middlewares/filters</p>
+<pre><code class="language-nim">proc newRouter(): ref Router =
+  result = new Router
+  result.table = newTable[string, RouterValue]()
+</code></pre>
+<p>Initializing the router</p>
+<pre><code class="language-nim">proc handle404(req: var Request): ref Response  = 
+  var resp = newResponse()
+  resp.code = Http404
+  resp.content = fmt&quot;nothing at {req.path}&quot;
+  return resp
+</code></pre>
+<p>Simple 404 handler in case that we don't find a handler for the requested path</p>
+<pre><code class="language-nim">proc getByPath(r: ref Router, path: string, notFoundHandler:HandlerFunc=handle404) : (RouterValue, TableRef[string, string]) =
+  var found = false
+  if path in r.table: # exact match
+    return (r.table[path], newTable[string, string]())
+
+  for handlerPath, routerValue in r.table.pairs:
+    echo fmt&quot;checking handler:  {handlerPath} if it matches {path}&quot; 
+    let pathParts = path.split({'/'})
+    let handlerPathParts = handlerPath.split({'/'})
+    echo fmt&quot;pathParts {pathParts} and handlerPathParts {handlerPathParts}&quot;
+
+    if len(pathParts) != len(handlerPathParts):
+      echo &quot;length isn't ok&quot;
+      continue
+    else:
+      var idx = 0
+      var capturedParams = newTable[string, string]()
+
+      while idx&lt;len(pathParts):
+        let pathPart = pathParts[idx]
+        let handlerPathPart = handlerPathParts[idx]
+        echo fmt&quot;current pathPart {pathPart} current handlerPathPart: {handlerPathPart}&quot;
+
+        if handlerPathPart.startsWith(&quot;:&quot;) or handlerPathPart.startsWith(&quot;@&quot;):
+          echo fmt&quot;found var in path {handlerPathPart} matches {pathPart}&quot;
+          capturedParams[handlerPathPart[1..^1]] = pathPart
+          inc idx
+        else:
+          if pathPart == handlerPathPart:
+            inc idx
+          else:
+            break
+
+        if idx == len(pathParts):
+          found = true
+          return (routerValue, capturedParams)
+
+  if not found:
+    return (RouterValue(handlerFunc:notFoundHandler, middlewares: @[]), newTable[string, string]())
+</code></pre>
+<p>Here we search for pattern registered in the router for exact match or if it has varialbes we and capture their values
+e.g: <code>/users/:name/:lang</code> pattern matches the request <code>/users/xmon/ar</code> and creates env <code>Table</code> with <code>{&quot;name&quot;:&quot;xmon&quot;, &quot;lang&quot;:&quot;ar&quot;}</code></p>
+<ul>
+<li><code>/mywebsite/homepage</code> pattern matches /mywebsite/homepage</li>
+<li><code>/blogs/:username</code> pattern<code>matches the path</code>/blogs/xmon<code>and</code>/blogs/ahmed<code>so it capture the env with variable name</code>username<code>and variable value</code>xmon<code>or</code>ahmed` and returns</li>
+<li>when we found the suitable handler and its env we set the env on the request on <code>urlParams</code> field and call the handler on the updated request.
+Remember our <code>handleClient</code> proc?</li>
+</ul>
+<pre><code class="language-nim">
+proc handleClient(s: ref Servy, client: AsyncSocket) {.async.} =
+  var req = await s.parseRequestFromConnection(client)
+  
+  ## Global middlewares
+  ## ..
+  ## ..
+
+  let (routeHandler, params) = s.router.getByPath(req.path)
+  req.urlParams = params
+  let handler = routeHandler.handlerFunc
+
+  ## Route middlewares.
+  ## ..
+  ## ..
+  let resp = handler(req)
+  await client.send(resp.format())
+
+</code></pre>
+<pre><code class="language-nim">proc addHandler(router: ref Router, route: string, handler: HandlerFunc, httpMethod:HttpMethod=HttpGet, middlewares:seq[MiddlewareFunc]= @[]) = 
+  router.table.add(route, RouterValue(handlerFunc:handler, middlewares:middlewares))
+
+</code></pre>
+<p>we provide a simple function to add a handler to a route setting the method type and the middlewares as well on a <code>Router</code> object.</p>
+<a class="header" href="#whats-next-1" id="whats-next-1"><h2>What's next?</h2></a>
+<p>We didn't talk about templates, cookies, sessions, dates, sending files and for sure that's not a complete <a href="https://www.w3.org/Protocols/rfc2616/rfc2616.html">HTTP ref</a> implementation by any means. <a href="https://github.com/dom96/jester">Jester</a> is a great option to check.
+Thank you for going through this day and please feel free to send PR or open issue on <a href="https://github.com/xmonader/nim-servy/">nim-servy</a> repository</p>
+<ul>
+<li></li>
+</ul>
 
                     </main>
 
