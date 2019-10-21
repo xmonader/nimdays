@@ -1,6 +1,8 @@
 # Day 18: From socket to a Webframework
 
-Today we will be focusing on building a webframework in nim
+Today we will be focusing on building a webframework starting from a socket :)
+
+
 
 ## What to expect
 
@@ -187,8 +189,49 @@ proc handleClient(s: ref Servy, client: AsyncSocket) {.async.} =
 
 ```
 
-handleClient reads the data from the wire in http protocol and finds the route or requested path handler and then formats a valid http response and write it on the wire.
+handleClient reads the data from the wire in [HTTP protocol](https://www.w3.org/Protocols/rfc2616/rfc2616.html) and finds the route or requested path handler and then formats a valid http response and write it on the wire.
 Cool? Awesome!
+
+### Example HTTP requests and responses
+
+when you execute `curl httpbin.org/get -v` the following (http formatted request) is sent to `httpbin.org` webserver    
+```
+GET /get HTTP/1.1
+Host: httpbin.org
+User-Agent: curl/7.62.0-DEV
+```
+That is called a `Request` that has a request line `METHOD PATH HTTPVERSION` e.g `GET /get HTTP/1.1`. Followed by a list of headers `lines with colon in it` representing key values 
+e.g 
+- `Host: httpbin.org` a header is a line of `Key: value`
+- `User-Agent: curl/7.62.0-DEV` a header indicating the client type 
+
+As soon as the server receives that request it'll handle it as it was told to
+```
+HTTP/1.1 200 OK
+Content-Type: application/json
+Date: Mon, 21 Oct 2019 18:28:13 GMT
+Server: nginx
+Content-Length: 206
+
+{
+  "args": {}, 
+  "headers": {
+    "Accept": "*/*", 
+    "Host": "httpbin.org", 
+    "User-Agent": "curl/7.62.0-DEV"
+  }, 
+  "origin": "197.52.178.58, 197.52.178.58", 
+  "url": "https://httpbin.org/get"
+}
+
+```
+This is called a Response, response consists of 
+- status line: `HTTPVER STATUS_CODE STATUS_MESSAGE` e.g `HTTP/1.1 200 OK`
+- list of headers
+  - `Content-Type`: `application/json` type of content 
+  - `Date`: `Mon, 21 Oct 2019 18:28:13 GMT` date of the response
+  - `Server`: nginx `server name`
+  - `Content-Length`: 206 length of the upcoming body
 
 Now let's go over the abstractions needed
 
@@ -649,6 +692,8 @@ Content-Disposition: form-data; name="age"
 ```
 [reference](https://stackoverflow.com/questions/3508338/what-is-the-boundary-in-multipart-form-data) of the above explanation
 
+
+
 ```nim
 
 type FormPart = object
@@ -1055,5 +1100,8 @@ we provide a simple function to add a handler to a route setting the method type
 
 
 ## What's next?
-We didn't talk about templates, cookies, sessions, dates, sending files and for sure that's not a complete http implementation by any means. [Jester](https://github.com/dom96/jester) is a great option to check.
+We didn't talk about templates, cookies, sessions, dates, sending files and for sure that's not a complete [HTTP ref](https://www.w3.org/Protocols/rfc2616/rfc2616.html) implementation by any means. [Jester](https://github.com/dom96/jester) is a great option to check.
 Thank you for going through this day and please feel free to send PR or open issue on [nim-servy](https://github.com/xmonader/nim-servy/) repository 
+
+
+- 
