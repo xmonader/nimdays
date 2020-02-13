@@ -114,7 +114,7 @@ BIOS Information
 So ourplan is to have an api like
 ```Nimrod
 dmifile = parseDMI(source)
-dmifile["section1"]["property1].value
+dmifile["section1"]["property1"].value
 ```
 
 Let's describe the document structure we have
