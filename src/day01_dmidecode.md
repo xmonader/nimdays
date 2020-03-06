@@ -43,6 +43,7 @@ a while ago at work (https://github.com/zero-os/0-core) we needed to parse some 
 ### nimble ready!
 ```bash
 mkdir dmidecode
+cd dmidecode
 nimble init
 ```
 
