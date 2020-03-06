@@ -1,0 +1,326 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 20: CacheTable - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="book_intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li><a href="day01_dmidecode.html"><strong aria-hidden="true">2.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">3.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">4.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">5.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">6.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">7.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">8.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">9.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">10.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">11.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">12.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">13.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">14.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">15.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">16.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">17.</strong> Day 16: AsciiTables</a></li><li><a href="day17_nimsonicclient.html"><strong aria-hidden="true">18.</strong> Day 17: Sonic-Client</a></li><li><a href="day18_webframework.html"><strong aria-hidden="true">19.</strong> Day 18: Webframework</a></li><li><a href="day19_witai.html"><strong aria-hidden="true">20.</strong> Day 19: Wit.AI Client</a></li><li><a href="day20_cachetable.html" class="active"><strong aria-hidden="true">21.</strong> Day 20: CacheTable</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#day-20-cachetable" id="day-20-cachetable"><h1>Day 20: CacheTable</h1></a>
+<p>Today we will implement an expiry feature on keys over nim tables</p>
+<a class="header" href="#what-to-expect" id="what-to-expect"><h2>What to expect</h2></a>
+<pre><code class="language-nim">  var c = newCacheTable[string, string](initDuration(seconds = 2))
+  c.setKey(&quot;name&quot;, &quot;ahmed&quot;, initDuration(seconds = 10))
+  c.setKey(&quot;color&quot;, &quot;blue&quot;, initDuration(seconds = 5))
+  c.setKey(&quot;akey&quot;, &quot;a value&quot;, DefaultExpiration)
+  c.setKey(&quot;akey2&quot;, &quot;a value2&quot;, DefaultExpiration)
+
+  c.setKey(&quot;lang&quot;, &quot;nim&quot;, NeverExpires)
+</code></pre>
+<ul>
+<li>Here will will create a new Table from <code>string</code> to <code>string</code></li>
+<li>we are allowed to set the default expiration to <code>2 seconds</code> using Duration object globally on the Table <code>newCacheTable[string, string](initDuration(seconds = 2))</code></li>
+<li>We are allowed to override the default expiration when <code>setKey</code> by passing a duration object</li>
+<li>We are allowed to set a key to <code>NeverExpires</code></li>
+</ul>
+<p>Here's a small example to see the internals of execution</p>
+<pre><code class="language-nim">
+  for i in countup(0, 20):
+    echo &quot;has key name? &quot; &amp; $c.hasKey(&quot;name&quot;)
+    echo $c.getCache
+    echo $c.get(&quot;name&quot;)
+    echo $c.get(&quot;color&quot;)
+    echo $c.get(&quot;lang&quot;)
+    echo $c.get(&quot;akey&quot;)
+    echo $c.get(&quot;akey2&quot;)
+    os.sleep(1*1000)
+
+</code></pre>
+<a class="header" href="#implementation" id="implementation"><h3>Implementation</h3></a>
+<a class="header" href="#imports" id="imports"><h4>Imports</h4></a>
+<pre><code class="language-nim">import tables, times, os, options, locks
+</code></pre>
+<pre><code class="language-nim">type Expiration* = enum NeverExpires, DefaultExpiration
+</code></pre>
+<p>We have to types of Expiration</p>
+<ul>
+<li><code>NeverExpires</code> basically the key stays there forever.</li>
+<li><code>DefaultExpiration</code> to use whatever global expiration value defined on the Table</li>
+</ul>
+<pre><code class="language-nim">type Entry*[V] = object
+  value*: V
+  ttl*: int64
+
+type CacheTable*[K, V] = ref object
+  cache: Table[K, Entry[V]]
+  lock*: locks.Lock
+  defaultExpiration*: Duration
+
+proc newCacheTable*[K, V](defaultExpiration = initDuration(
+    seconds = 5)): CacheTable[K, V] =
+  ## Create new CacheTable
+  result = CacheTable[K, V]()
+  result.cache = initTable[K, Entry[V]]()
+  result.defaultExpiration = defaultExpiration
+</code></pre>
+<p>The only difference between our <code>CacheTable</code> and Nim's Table is the entries are keeping track of <code>Time To Live TTL</code></p>
+<ul>
+<li>Entry is a Generic entry we store in the CacheTable that has a value of a type <code>V</code> and keeps track of its <code>ttl</code></li>
+<li>CacheTable is a Table from keys of type <code>K</code> to values of of type <code>Entry[V]</code> and keeps track of default expiration</li>
+<li>newCacheTable is a helper to create a new CacheTable.</li>
+</ul>
+<pre><code class="language-nim">proc getCache*[K, V](t: CacheTable[K, V]): Table[K, Entry[V]] =
+  result = t.cache
+</code></pre>
+<p>a helper to get the underlying Table</p>
+<pre><code class="language-nim">proc setKey*[K, V](t: CacheTable[K, V], key: K, value: V, d: Duration) =
+  ## Set ``Key`` of type ``K`` (needs to be hashable) to ``value`` of type ``V`` with duration ``d``
+  let rightnow = times.getTime()
+  let rightNowDur = times.initDuration(seconds = rightnow.toUnix(),
+      nanoseconds = rightnow.nanosecond)
+
+  let ttl = d.inNanoseconds + rightNowDur.inNanoseconds
+  let entry = Entry[V](value: value, ttl: ttl)
+  t.cache.add(key, entry)
+</code></pre>
+<p>a helper to set a new key in the CacheTable with a specific Duration</p>
+<pre><code class="language-nim">proc setKey*[K, V](t: CacheTable[K, V], key: K, value: V,
+    expiration: Expiration = NeverExpires) =
+  ## Sets key with `Expiration` strategy
+  var entry: Entry[V]
+  case expiration:
+  of NeverExpires:
+    entry = Entry[V](value: value, ttl: 0)
+    t.cache.add(key, entry)
+  of DefaultExpiration:
+    t.setKey(key, value, d = t.defaultExpiration)
+</code></pre>
+<p>a helper to set key based on an Expiration strategy</p>
+<ul>
+<li>if <code>NeverExpires</code> : ttl should be 0</li>
+<li>if <code>DefaultExpiration</code>: ttl will be the same as the Cachetable <code>defaultExpiration</code> duration</li>
+</ul>
+<pre><code class="language-nim">proc setKeyWithDefaultTtl*[K, V](t: CacheTable[K, V], key: K, value: V) =
+  ## Sets a key with default Ttl duration.
+  t.setKey(key, value, DefaultExpiration)
+</code></pre>
+<p>sets a key to value with default expiration</p>
+<pre><code class="language-nim">proc hasKey*[K, V](t: CacheTable[K, V], key: K): bool =
+  ## Checks if `key` exists in cache
+  result = t.cache.hasKey(key)
+</code></pre>
+<p>Check if the cache underneath has a specific key</p>
+<pre><code class="language-nim">proc isExpired(ttl: int64): bool =
+  if ttl == 0:
+    # echo &quot;duration 0 never expires.&quot;
+    result = false
+  else:
+    let rightnow = times.getTime()
+    let rightNowDur = times.initDuration(seconds = rightnow.toUnix(),
+        nanoseconds = rightnow.nanosecond)
+    # echo &quot;Now is : &quot; &amp; $rightnow
+    result = rightnowDur.inNanoseconds &gt; ttl
+</code></pre>
+<p>Helper to check if a <code>ttl</code> expired relative to the time right now.</p>
+<pre><code class="language-nim">proc get*[K, V](t: CacheTable[K, V], key: K): Option[V] =
+  ## Get value of `key` from cache
+  var entry: Entry[V]
+  try:
+      entry = t.cache[key]
+  except:
+    return none(V)
+
+  # echo &quot;getting entry for key: &quot; &amp; key  &amp; $entry
+  if not isExpired(entry.ttl):
+    # echo &quot;k: &quot; &amp; key &amp; &quot; didn't expire&quot;
+    return some(entry.value)
+  else:
+    # echo &quot;k: &quot; &amp; key &amp; &quot; expired&quot;
+    del(t.cache, key)
+    return none(V)
+</code></pre>
+<p>Getting a key from the cache to returns an <code>Option[V]</code> of the value of type <code>V</code> stored in the <code>Entry[V]</code>.</p>
+<p>Thank you for reading! and please feel free to open an issue or a PR to improve to content of Nim Days :)</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day19_witai.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day19_witai.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>
