@@ -242,7 +242,7 @@ BIOS Information
 <a class="header" href="#mapping-dmi-to-nim-structures" id="mapping-dmi-to-nim-structures"><h3>Mapping DMI to nim structures</h3></a>
 <p>So ourplan is to have an api like</p>
 <pre><code class="language-Nimrod">dmifile = parseDMI(source)
-dmifile[&quot;section1&quot;][&quot;property1].value
+dmifile[&quot;section1&quot;][&quot;property1&quot;].value
 </code></pre>
 <p>Let's describe the document structure we have</p>
 <pre><code class="language-Nimrod">import  sequtils, tables, strutils
