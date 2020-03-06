@@ -168,7 +168,7 @@ the entry point for our `Wit.AI` client. the client `Wit` keeps track of
 - `client`: http client to use underneath
 
 
-```
+```nim
 proc newRequest(this: Wit, meth = HttpGet, path: string, params: Table[string,
     string], body = "", headers: Table[string, string]): string =
   let fullUrl = WIT_API_HOST & path & encodeQueryStringTable(params)
@@ -269,7 +269,7 @@ Example response
   }
   ```
 
-```
+```nim
 proc message*(this: Wit, msg: string, context: ref Table[string, string] = nil,
     n = "", verbose = ""): string =
   var params = initTable[string, string]()
@@ -298,7 +298,8 @@ here we will allow `msg` as the expression we want to check in wit.ai, and addin
 - `context`: Context is key in natural language. For instance, at the same absolute instant, “today” will be resolved to a different value depending on the timezone of the user. (can contain `locale`, `timezone`, `coords` for coordinates)
 
 #### /speech endpoint
-```
+
+```nim
 proc speech*(this: Wit, audioFilePath: string, headers: Table[string, string],
     context: ref Table[string, string] = nil, n = "", verbose = ""): string =
   var params = initTable[string, string]()

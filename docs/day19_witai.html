@@ -268,7 +268,7 @@ proc newWit(accessToken: string): Wit =
 <li><code>accessToken</code>: to access the API</li>
 <li><code>client</code>: http client to use underneath</li>
 </ul>
-<pre><code>proc newRequest(this: Wit, meth = HttpGet, path: string, params: Table[string,
+<pre><code class="language-nim">proc newRequest(this: Wit, meth = HttpGet, path: string, params: Table[string,
     string], body = &quot;&quot;, headers: Table[string, string]): string =
   let fullUrl = WIT_API_HOST &amp; path &amp; encodeQueryStringTable(params)
   this.client.headers = getWitAIRequestHeaders(this.accessToken)
@@ -364,7 +364,7 @@ Example response
     }
   }
 </code></pre>
-<pre><code>proc message*(this: Wit, msg: string, context: ref Table[string, string] = nil,
+<pre><code class="language-nim">proc message*(this: Wit, msg: string, context: ref Table[string, string] = nil,
     n = &quot;&quot;, verbose = &quot;&quot;): string =
   var params = initTable[string, string]()
   if n != &quot;&quot;:
@@ -392,7 +392,7 @@ Example response
 <li><code>context</code>: Context is key in natural language. For instance, at the same absolute instant, “today” will be resolved to a different value depending on the timezone of the user. (can contain <code>locale</code>, <code>timezone</code>, <code>coords</code> for coordinates)</li>
 </ul>
 <a class="header" href="#speech-endpoint" id="speech-endpoint"><h4>/speech endpoint</h4></a>
-<pre><code>proc speech*(this: Wit, audioFilePath: string, headers: Table[string, string],
+<pre><code class="language-nim">proc speech*(this: Wit, audioFilePath: string, headers: Table[string, string],
     context: ref Table[string, string] = nil, n = &quot;&quot;, verbose = &quot;&quot;): string =
   var params = initTable[string, string]()
   if n != &quot;&quot;:
