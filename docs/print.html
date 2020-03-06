@@ -72,7 +72,7 @@
         </script>
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
-            <ol class="chapter"><li><a href="book_intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li><a href="day01_dmidecode.html"><strong aria-hidden="true">2.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">3.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">4.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">5.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">6.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">7.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">8.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">9.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">10.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">11.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">12.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">13.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">14.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">15.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">16.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">17.</strong> Day 16: AsciiTables</a></li><li><a href="day17_nimsonicclient.html"><strong aria-hidden="true">18.</strong> Day 17: Sonic-Client</a></li><li><a href="day18_webframework.html"><strong aria-hidden="true">19.</strong> Day 18: Webframework</a></li></ol>
+            <ol class="chapter"><li><a href="book_intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li><a href="day01_dmidecode.html"><strong aria-hidden="true">2.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">3.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">4.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">5.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">6.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">7.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">8.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">9.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">10.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">11.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">12.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">13.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">14.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">15.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">16.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">17.</strong> Day 16: AsciiTables</a></li><li><a href="day17_nimsonicclient.html"><strong aria-hidden="true">18.</strong> Day 17: Sonic-Client</a></li><li><a href="day18_webframework.html"><strong aria-hidden="true">19.</strong> Day 18: Webframework</a></li><li><a href="day19_witai.html"><strong aria-hidden="true">20.</strong> Day 19: Wit.AI Client</a></li></ol>
         </nav>
 
         <div id="page-wrapper" class="page-wrapper">
@@ -5511,6 +5511,284 @@ proc handleClient(s: ref Servy, client: AsyncSocket) {.async.} =
 <a class="header" href="#whats-next-1" id="whats-next-1"><h2>What's next?</h2></a>
 <p>We didn't talk about templates, cookies, sessions, dates, sending files and for sure that's not a complete <a href="https://www.w3.org/Protocols/rfc2616/rfc2616.html">HTTP ref</a> implementation by any means. <a href="https://github.com/dom96/jester">Jester</a> is a great option to check.
 Thank you for going through this day and please feel free to send PR or open issue on <a href="https://github.com/xmonader/nim-servy/">nim-servy</a> repository</p>
+<a class="header" href="#day-19-witai-client" id="day-19-witai-client"><h1>Day 19: Wit.AI client</h1></a>
+<p>Nim client for <a href="https://wit.ai">wit.ai</a> to Easily create text or voice based bots that humans can chat with on their preferred messaging platform. It helps to reduce expressions into <code>entity/trait</code></p>
+<p>e.g in your wit.ai project you define entity like <code>VM</code> (virtual machine) and trait to be something like <code>create</code>, <code>stop</code> and when you send an expression like <code>new virtual machine</code> or <code>fresh vm</code>, wit.ai helps to reduce it to entity <code>vm</code> and trait <code>create</code></p>
+<a class="header" href="#what-to-expect-7" id="what-to-expect-7"><h2>What to expect</h2></a>
+<pre><code class="language-nim">  let tok = getEnv(&quot;WIT_ACCESS_TOKEN&quot;, &quot;&quot;)
+  if tok == &quot;&quot;:
+    echo &quot;Make sure to set WIT_ACCESS_TOKEN variable&quot;
+    quit 1
+  var inp = &quot;&quot;
+  var w = newWit(tok)
+
+  while true:
+    echo &quot;Enter your query or q to quit &gt; &quot;
+    inp = stdin.readLine()
+    if inp == &quot;q&quot;:
+      quit 0
+    else:
+      echo w.message(inp)
+</code></pre>
+<pre><code>Enter your query or q to quit &gt;
+new vm
+{&quot;_text&quot;:&quot;new vm&quot;,&quot;entities&quot;:{&quot;vm&quot;:[{&quot;confidence&quot;:0.97072907352305,&quot;value&quot;:&quot;create&quot;}]},&quot;msg_id&quot;:&quot;1N6CURN7qaJaSKXSK&quot;}
+
+Enter your query or q to quit &gt;
+new machine
+{&quot;_text&quot;:&quot;new machine&quot;,&quot;entities&quot;:{&quot;vm&quot;:[{&quot;confidence&quot;:0.90071815565634,&quot;value&quot;:&quot;create&quot;}]},&quot;msg_id&quot;:&quot;1t8dOpkPbAP6SgW49&quot;}
+
+Enter your query or q to quit &gt;
+new docker
+{&quot;_text&quot;:&quot;new docker&quot;,&quot;entities&quot;:{&quot;container&quot;:[{&quot;confidence&quot;:0.98475238333984,&quot;value&quot;:&quot;create&quot;}]},&quot;msg_id&quot;:&quot;1l7ocY7MVWBfUijsm&quot;}
+Enter your query or q to quit &gt;
+
+stop machine
+{&quot;_text&quot;:&quot;stop machine&quot;,&quot;entities&quot;:{&quot;vm&quot;:[{&quot;confidence&quot;:0.66323929848545,&quot;value&quot;:&quot;stop&quot;}]},&quot;msg_id&quot;:&quot;1ygXLjnQbEt4lVMyS&quot;}
+Enter your query or q to quit &gt;
+
+show my coins
+{&quot;_text&quot;:&quot;show my coins&quot;,&quot;entities&quot;:{&quot;wallet&quot;:[{&quot;confidence&quot;:0.75480999601329,&quot;value&quot;:&quot;show&quot;}]},&quot;msg_id&quot;:&quot;1SdYOY60xXdMvUG7b&quot;}
+Enter your query or q to quit &gt;
+
+view coins
+{&quot;_text&quot;:&quot;view coins&quot;,&quot;entities&quot;:{&quot;wallet&quot;:[{&quot;confidence&quot;:0.5975926583378,&quot;value&quot;:&quot;show&quot;}]},&quot;msg_id&quot;:&quot;1HZ3YlfLlr31JlbKZ&quot;}
+Enter your query or q to quit &gt;
+
+</code></pre>
+<a class="header" href="#speech" id="speech"><h3>Speech</h3></a>
+<pre><code class="language-nim">  echo w.speech(&quot;/home/striky/startnewvm.wav&quot;, {&quot;Content-Type&quot;: &quot;audio/wav&quot;}.toTable)
+</code></pre>
+<pre><code>{
+  &quot;_text&quot; : &quot;start new the m is&quot;,
+  &quot;entities&quot; : {
+    &quot;vm&quot; : [ {
+      &quot;confidence&quot; : 0.54805678200202,
+      &quot;value&quot; : &quot;create&quot;
+    } ]
+  },
+  &quot;msg_id&quot; : &quot;1jHMTJGHEAFh8LHFS&quot;
+}
+</code></pre>
+<a class="header" href="#implementation-15" id="implementation-15"><h2>Implementation</h2></a>
+<a class="header" href="#imports-7" id="imports-7"><h3>imports</h3></a>
+<pre><code class="language-nim">import strformat, tables, json, strutils, sequtils, hashes, net, asyncdispatch,
+    asyncnet, os, strutils, parseutils, deques, options, net
+import json
+import logging
+import httpclient
+import uri
+
+var L = newConsoleLogger()
+addHandler(L)
+
+</code></pre>
+<p>Here we import utilities we are going to use like string formatters, tables, json, http client .. etc and prepare default logger.</p>
+<a class="header" href="#crafting-witai-api" id="crafting-witai-api"><h3>Crafting wit.ai API</h3></a>
+<pre><code class="language-nim">let WIT_API_HOST = getEnv(&quot;WIT_URL&quot;, &quot;https://api.wit.ai&quot;)
+let WIT_API_VERSION = getEnv(&quot;WIT_API_VERSION&quot;, &quot;20160516&quot;)
+let DEFAULT_MAX_STEPS = 5
+</code></pre>
+<p>To work with <code>wit.ai</code> API you will need to generate an API token.</p>
+<ul>
+<li><code>WIT_API_HOST</code>: base URL for wit.ai API <code>notice it's https</code> then we will need <code>-d:ssl</code> flag in compile phase.</li>
+<li><code>WIT_API_VERSION</code>: API version in wit.ai</li>
+</ul>
+<p>We will be interested in <code>/message</code> and <code>/speech</code> endpoints in <a href="https://wit.ai/docs/http/">wit.ai API</a></p>
+<a class="header" href="#adding-authorization-to-http-headers" id="adding-authorization-to-http-headers"><h4>Adding authorization to HTTP Headers</h4></a>
+<pre><code class="language-nim">proc getWitAIRequestHeaders*(accessToken: string): HttpHeaders =
+  result = newHttpHeaders({
+    &quot;authorization&quot;: &quot;Bearer &quot; &amp; accessToken,
+    &quot;accept&quot;: &quot;application/vnd.wit.&quot; &amp; WIT_API_VERSION &amp; &quot;+json&quot;
+  })
+
+</code></pre>
+<p>To authorize our requests against wit.ai we need to add <code>authorization</code> header.</p>
+<a class="header" href="#encoding-params-helper" id="encoding-params-helper"><h4>Encoding params helper</h4></a>
+<pre><code class="language-nim">proc encodeQueryStringTable(qsTable: Table[string, string]): string =
+  result = &quot;&quot;
+
+  if qsTable.len == 0:
+    return result
+
+  result = &quot;?&quot;
+  var first = true
+  for k, v in qsTable.pairs:
+    if not first:
+      result &amp;= &quot;&amp;&quot;
+    result &amp;= fmt&quot;{k}={encodeUrl(v)}&quot;
+    first = false
+  echo $result
+  return result
+
+</code></pre>
+<p>A helper to encode key, value pairs into a query string `?key=val</p>
+<a class="header" href="#lets-get-to-the-client" id="lets-get-to-the-client"><h3>Let's get to the client</h3></a>
+<p>Here we define the interesting parts to interact with wit.ai</p>
+<pre><code class="language-nim">type WitException* = object of Exception
+</code></pre>
+<p>Generic Exception to use</p>
+<pre><code class="language-nim">type Wit* = ref object of RootObj
+  accessToken*: string
+  client*: HttpClient
+
+proc newWit(accessToken: string): Wit =
+  var w = new Wit
+  w.accessToken = accessToken
+  w.client = newHttpClient()
+  result = w
+</code></pre>
+<p>the entry point for our <code>Wit.AI</code> client. the client <code>Wit</code> keeps track of</p>
+<ul>
+<li><code>accessToken</code>: to access the API</li>
+<li><code>client</code>: http client to use underneath</li>
+</ul>
+<pre><code>proc newRequest(this: Wit, meth = HttpGet, path: string, params: Table[string,
+    string], body = &quot;&quot;, headers: Table[string, string]): string =
+  let fullUrl = WIT_API_HOST &amp; path &amp; encodeQueryStringTable(params)
+  this.client.headers = getWitAIRequestHeaders(this.accessToken)
+  if headers.len &gt; 0:
+    for k, v in headers:
+      this.client.headers[k] = v
+
+  var resp: Response
+  if body == &quot;&quot;:
+    resp = this.client.request(fullUrl, httpMethod = meth)
+  else:
+    resp = this.client.request(fullUrl, httpMethod = meth, body = body)
+  if resp.code != 200.HttpCode:
+    raise newException(WitException, (fmt&quot;[-] {resp.code}: {resp.body} &quot;))
+
+  result = resp.body
+</code></pre>
+<p>Generic helper to format/build <code>wit.ai</code> requests. It does the following</p>
+<ul>
+<li>Prepares the headers with <code>authorization</code> using <code>getWitAIRequestHeaders</code></li>
+<li>Prepares the full URL using the <code>WIT_API_HOST</code> and the query <code>params</code> sent</li>
+<li>Based on the method <code>HttpGet</code> or <code>HttpPost</code> it'll issue the request and raises if response's status code is not <code>200</code></li>
+<li>Returns the response body</li>
+</ul>
+<a class="header" href="#message-endpoint" id="message-endpoint"><h4>/message endpoint</h4></a>
+<p>According to the docs of <a href="https://wit.ai/docs/http/20170307#get__message_link">wit.ai</a> only <code>q</code> param is required.</p>
+<pre><code>Definition
+  GET https://api.wit.ai/message
+Example request with single outcome
+
+  $ curl -XGET 'https://api.wit.ai/message?v=20170307&amp;q=how%20many%20people%20between%20Tuesday%20and%20Friday' \
+      -H 'Authorization: Bearer $TOKEN'
+
+Example response
+  {
+    &quot;msg_id&quot;: &quot;387b8515-0c1d-42a9-aa80-e68b66b66c27&quot;,
+    &quot;_text&quot;: &quot;how many people between Tuesday and Friday&quot;,
+    &quot;entities&quot;: {
+      &quot;metric&quot;: [ {
+        &quot;metadata&quot;: &quot;{'code': 324}&quot;,
+        &quot;value&quot;: &quot;metric_visitor&quot;,
+        &quot;confidence&quot;: 0.9231
+      } ],
+      &quot;datetime&quot;: [
+        {
+          &quot;confidence&quot;: 0.954105,
+          &quot;values&quot;: [
+            {
+              &quot;to&quot;: {
+                &quot;value&quot;: &quot;2018-12-22T00:00:00.000-08:00&quot;,
+                &quot;grain&quot;: &quot;day&quot;
+              },
+              &quot;from&quot;: {
+                &quot;value&quot;: &quot;2018-12-18T00:00:00.000-08:00&quot;,
+                &quot;grain&quot;: &quot;day&quot;
+              },
+              &quot;type&quot;: &quot;interval&quot;
+            },
+            {
+              &quot;to&quot;: {
+                &quot;value&quot;: &quot;2018-12-29T00:00:00.000-08:00&quot;,
+                &quot;grain&quot;: &quot;day&quot;
+              },
+              &quot;from&quot;: {
+                &quot;value&quot;: &quot;2018-12-25T00:00:00.000-08:00&quot;,
+                &quot;grain&quot;: &quot;day&quot;
+              },
+              &quot;type&quot;: &quot;interval&quot;
+            },
+            {
+              &quot;to&quot;: {
+                &quot;value&quot;: &quot;2019-01-05T00:00:00.000-08:00&quot;,
+                &quot;grain&quot;: &quot;day&quot;
+              },
+              &quot;from&quot;: {
+                &quot;value&quot;: &quot;2019-01-01T00:00:00.000-08:00&quot;,
+                &quot;grain&quot;: &quot;day&quot;
+              },
+              &quot;type&quot;: &quot;interval&quot;
+            }
+          ],
+          &quot;to&quot;: {
+            &quot;value&quot;: &quot;2018-12-22T00:00:00.000-08:00&quot;,
+            &quot;grain&quot;: &quot;day&quot;
+          },
+          &quot;from&quot;: {
+            &quot;value&quot;: &quot;2018-12-18T00:00:00.000-08:00&quot;,
+            &quot;grain&quot;: &quot;day&quot;
+          },
+          &quot;type&quot;: &quot;interval&quot;
+        }
+      ]
+    }
+  }
+</code></pre>
+<pre><code>proc message*(this: Wit, msg: string, context: ref Table[string, string] = nil,
+    n = &quot;&quot;, verbose = &quot;&quot;): string =
+  var params = initTable[string, string]()
+  if n != &quot;&quot;:
+    params[&quot;n&quot;] = n
+  if verbose != &quot;&quot;:
+    params[&quot;verbose&quot;] = verbose
+  if msg != &quot;&quot;:
+    params[&quot;q&quot;] = msg
+
+  if not context.isNil and context.len &gt; 0:
+    var ctxNode = %* {}
+    for k, v in context.pairs:
+      ctxNode[k] = %*v
+
+    params[&quot;context&quot;] = ( %* ctxNode).pretty()
+
+  return this.newRequest(HttpGet, path = &quot;/message&quot;, params, &quot;&quot;, initTable[
+      string, string]())
+</code></pre>
+<p>here we will allow <code>msg</code> as the expression we want to check in wit.ai, and adding some extra params for more close mapping to the official API like <code>context</code>, <code>verbose</code>, <code>n</code></p>
+<ul>
+<li><code>msg</code>: User’s query. Length must be &gt; 0 and &lt; 280</li>
+<li><code>verbose</code>: A flag to get auxiliary information about entities, like the location within the sentence.</li>
+<li><code>n</code>: The maximum number of n-best trait entities you want to get back. The default is 1, and the maximum is 8</li>
+<li><code>context</code>: Context is key in natural language. For instance, at the same absolute instant, “today” will be resolved to a different value depending on the timezone of the user. (can contain <code>locale</code>, <code>timezone</code>, <code>coords</code> for coordinates)</li>
+</ul>
+<a class="header" href="#speech-endpoint" id="speech-endpoint"><h4>/speech endpoint</h4></a>
+<pre><code>proc speech*(this: Wit, audioFilePath: string, headers: Table[string, string],
+    context: ref Table[string, string] = nil, n = &quot;&quot;, verbose = &quot;&quot;): string =
+  var params = initTable[string, string]()
+  if n != &quot;&quot;:
+    params[&quot;n&quot;] = n
+  if verbose != &quot;&quot;:
+    params[&quot;verbose&quot;] = verbose
+
+  if not context.isNil and context.len &gt; 0:
+    var ctxNode = %* {}
+    for k, v in context.pairs:
+      ctxNode[k] = %*v
+
+    params[&quot;context&quot;] = ( %* ctxNode).pretty()
+  let body = readFile(audioFilePath)
+
+  return this.newRequest(HttpPost, path = &quot;/speech&quot;, params, body, headers)
+</code></pre>
+<p>almost the same as <code>/message</code> endpoint except we send audioFile content in body</p>
+<p>same as <code>/message</code>, but we will send an audio file.</p>
+<a class="header" href="#thanks" id="thanks"><h2>Thanks</h2></a>
+<p>The complete sources can be found at <a href="https://github.com/xmonader/witai-nim">nim-witai</a>. Please feel free to contribute by opening PR or issue on the repo.</p>
 
                     </main>
 

@@ -21,3 +21,4 @@ Documenting my days with The Nim Programming language.
 - [Day 16: AsciiTables](day16_asciitables.md) 
 - [Day 17: Sonic-Client](day17_nimsonicclient.md)
 - [Day 18: Webframework](day18_webframework.md)
+- [Day 19: Wit.AI Client](day19_witai.md)
