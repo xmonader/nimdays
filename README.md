@@ -11,7 +11,9 @@ Check [TOC](src/SUMMARY.md) for complete summary
 
 
 ## Publishing flow
-To regenerate the HTML files `bash publish.sh`
+
+- To compile the sources please make sure to have [mdbook](https://github.com/rust-lang/mdBook) in your $PATH
+- To regenerate the HTML files `bash publish.sh`
 
 ## Contributions
 Please feel free to open an issue or send a PR 
