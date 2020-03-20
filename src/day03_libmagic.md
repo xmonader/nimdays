@@ -25,6 +25,10 @@ ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, inte
 ## Implementation
 [FFI Chapter](https://livebook.manning.com/#!/book/nim-in-action/chapter-8/1) of [Nim in Action](https://www.manning.com/books/nim-in-action) is freely available.
 
+### Step 0: Imports
+```Nimrod
+from os import fileExists, expandFilename
+```
 
 ### Step 1: Get the library info
 Well, libmagic has `libmagic.so` in your library path `/usr/lib/libmagic.so` and a header file `magic.h` in `/usr/include/magic.h`.
