@@ -107,7 +107,7 @@ proc hash*(obj: BencodeType): Hash =
     of btDict: 
         var h = 0
         for k, v in obj.d.pairs:
-            h = hash(k) !& hash(v)
+            h = h !& hash(k) !& hash(v)
         !$(h)
 ```
 
