@@ -124,7 +124,7 @@ e.g
 ### The remote has data
 ```nim
   proc remoteHasData() {.async.} =
-    while not remote.isClosed and not remote.isClosed:
+    while not remote.isClosed and not client.isClosed:
       echo " in remote has data loop"
       let data = await remote.recv(1024)
       echo "got data: " & data
@@ -176,7 +176,7 @@ proc processClient(this: ref Forwarder, client: AsyncSocket) {.async.} =
     remote.close()
 
   proc remoteHasData() {.async.} =
-    while not remote.isClosed and not remote.isClosed:
+    while not remote.isClosed and not client.isClosed:
       echo " in remote has data loop"
       let data = await remote.recv(1024)
       echo "got data: " & data
