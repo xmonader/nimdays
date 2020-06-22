@@ -582,7 +582,7 @@ proc optionally*(parser: Parser): Parser =
 ```
 What we basically do is we fake a success parser that we try to parse with the `parser` passed and if we can't we `succeed` with `noneparser`
 
-```
+
 #### many: zero or more
 
 Here we try to parse as many as we can of a specific parser, e.g parse as many `a`s as we can from a string.
