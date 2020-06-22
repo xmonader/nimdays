@@ -5929,7 +5929,7 @@ proc newCacheTable*[K, V](defaultExpiration = initDuration(
 <p>Getting a key from the cache to returns an <code>Option[V]</code> of the value of type <code>V</code> stored in the <code>Entry[V]</code>.</p>
 <p>Thank you for reading! and please feel free to open an issue or a PR to improve to content of Nim Days :)</p>
 <a class="header" href="#parser-combinators" id="parser-combinators"><h1>Parser combinators</h1></a>
-<p>Today, is one of the most interesting days in my Nim journey, we will learn about Parser Combinators and Nim. Parser is something accepts some text and creates a decent structure out of it (that's not formal definition by any means). First time I learned about Parser combinator when I was (still for sure) <a href="http://book.realworldhaskell.org/read/using-parsec.html">learning haskell</a>, I was amazed by the expressiveness and composebility. Lots of languages has libraries based on parser combinators e.g <a href="https://github.com/pyparsing/pyparsing">python pyparsing</a></p>
+<p>Today, we will learn about Parser Combinators and Nim. a parser is something (a function) accepts some text and creates a decent structure out of it (that's not formal definition by any means). First time I learned about Parser combinator when I was (still for sure) <a href="http://book.realworldhaskell.org/read/using-parsec.html">learning haskell</a>, I was amazed by the expressiveness and composebility. Lots of languages has libraries based on parser combinators e.g <a href="https://github.com/pyparsing/pyparsing">python pyparsing</a></p>
 <pre><code class="language-python">from pyparsing import Word, alphas
 greet = Word(alphas) + &quot;,&quot; + Word(alphas) + &quot;!&quot;
 hello = &quot;Hello, World!&quot;
@@ -6485,8 +6485,10 @@ proc sep_by*(sep: Parser, parser:Parser): Parser =
 
   listp = charp('[') &gt;&gt; sep_by(charp(',').suppress(), many(valref)) &gt;&gt; charp(']')
   var valp = valref()
-
-
+</code></pre>
+<p>Here's probably the tricky part, let's think about it for a second, we want to says</p>
+<p><code>lang = list | letter</code> and <code>list = list of lang</code>, we need to delay one  of them to be able to reference, and delaying usually means &quot;convert to a function&quot; or at least have it's info &quot;declared already&quot;, and that's what we do with <code>listp: Parser</code> just giving nim the info that there will be <code>listp</code> at some point and for the lang parser we create a function that returns <code>list | letter</code> (that's the reason you will find some of our parsec parsers accept <code>proc</code> in some of their overloads instead of just <code>parser</code> only) and once we are done with the declaration of <code>listp</code> now we can invoke <code>valref</code> function to get an actual usable parser to use.</p>
+<pre><code class="language-nim">
   var inps = @[&quot;a&quot;, &quot;[a,b]&quot;, &quot;[a,[b,c]]&quot;]
   for inp in inps:
       echo &amp;&quot;inp : {inp}&quot;
@@ -6551,6 +6553,12 @@ inp : [a,[b,c]]
 
 </code></pre>
 <a class="header" href="#thats-it" id="thats-it"><h2>That's it!</h2></a>
+<a class="header" href="#more-resources-on-the-topic" id="more-resources-on-the-topic"><h3>More resources on the topic</h3></a>
+<ul>
+<li><a href="https://github.com/pyparsing/pyparsing">pyparsing</a></li>
+<li><a href="http://book.realworldhaskell.org/read/using-parsec.html">real world Haskell parsec chapter</a></li>
+<li><a href="https://fsharpforfunandprofit.com/parser/">understanding parser combinators F#</a></li>
+</ul>
 <p>Thank you for reading! and please feel free to open an issue or a PR to improve to content of Nim Days or improving the very young <a href="github.com/xmonader/nim-parsec">nim-parsec</a> :)</p>
 
                     </main>
