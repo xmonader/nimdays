@@ -5929,7 +5929,7 @@ proc newCacheTable*[K, V](defaultExpiration = initDuration(
 <p>Getting a key from the cache to returns an <code>Option[V]</code> of the value of type <code>V</code> stored in the <code>Entry[V]</code>.</p>
 <p>Thank you for reading! and please feel free to open an issue or a PR to improve to content of Nim Days :)</p>
 <a class="header" href="#parser-combinators" id="parser-combinators"><h1>Parser combinators</h1></a>
-<p>Today, is one of the most interesting days in my Nim journey, we will learn about Parser Combinators and Nim. Parser is something accepts some text and creates a decent structure out of it (that's not formal definition by any means). First time I learned about Parser combinator when I was <a href="http://book.realworldhaskell.org/read/using-parsec.html">learning haskell</a>, I was amazed by the expressiveness and composebility. Lots of languages has libraries based on parser combinators e.g <a href="https://github.com/pyparsing/pyparsing">python pyparsing</a></p>
+<p>Today, is one of the most interesting days in my Nim journey, we will learn about Parser Combinators and Nim. Parser is something accepts some text and creates a decent structure out of it (that's not formal definition by any means). First time I learned about Parser combinator when I was (still for sure) <a href="http://book.realworldhaskell.org/read/using-parsec.html">learning haskell</a>, I was amazed by the expressiveness and composebility. Lots of languages has libraries based on parser combinators e.g <a href="https://github.com/pyparsing/pyparsing">python pyparsing</a></p>
 <pre><code class="language-python">from pyparsing import Word, alphas
 greet = Word(alphas) + &quot;,&quot; + Word(alphas) + &quot;!&quot;
 hello = &quot;Hello, World!&quot;

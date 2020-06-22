@@ -1,0 +1,815 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Day 21: Parser combinators - Nim Days</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+    </head>
+    <body class="light">
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">var path_to_root = "";</script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="book_intro.html"><strong aria-hidden="true">1.</strong> Intro</a></li><li><a href="day01_dmidecode.html"><strong aria-hidden="true">2.</strong> Day 1 DMIDecode</a></li><li><a href="day02_bencode.html"><strong aria-hidden="true">3.</strong> Day 2: Parsing Bencode</a></li><li><a href="day03_libmagic.html"><strong aria-hidden="true">4.</strong> Day 3: FFI and Libmagic</a></li><li><a href="day04_asynclinkschecker.html"><strong aria-hidden="true">5.</strong> Day 4: Async LinksChecker</a></li><li><a href="day05_iniparser.html"><strong aria-hidden="true">6.</strong> Day 5: INI Parser</a></li><li><a href="day06_nistow.html"><strong aria-hidden="true">7.</strong> Day 6: Nistow (Dotfiles Manager)</a></li><li><a href="day07_shorturl.html"><strong aria-hidden="true">8.</strong> Day 7: URL Shortening Service</a></li><li><a href="day08_minitest.html"><strong aria-hidden="true">9.</strong> Day 8: MiniTest framework</a></li><li><a href="day09_tictactoe_cli.html"><strong aria-hidden="true">10.</strong> Day 9: TicTacToe CLI</a></li><li><a href="day10_tictactoe_gui.html"><strong aria-hidden="true">11.</strong> Day 10: TicTacToe GUI</a></li><li><a href="day11_buildsystem.html"><strong aria-hidden="true">12.</strong> Day 11: Bake build system</a></li><li><a href="day12_resp.html"><strong aria-hidden="true">13.</strong> Day 12: Redis Protocol</a></li><li><a href="day13_redisclient.html"><strong aria-hidden="true">14.</strong> Day 13: Redis Client</a></li><li><a href="day14_nimassets.html"><strong aria-hidden="true">15.</strong> Day 14: Nim-Assets</a></li><li><a href="day15_tcprouter.html"><strong aria-hidden="true">16.</strong> Day 15: TCP Router</a></li><li><a href="day16_asciitables.html"><strong aria-hidden="true">17.</strong> Day 16: AsciiTables</a></li><li><a href="day17_nimsonicclient.html"><strong aria-hidden="true">18.</strong> Day 17: Sonic-Client</a></li><li><a href="day18_webframework.html"><strong aria-hidden="true">19.</strong> Day 18: Webframework</a></li><li><a href="day19_witai.html"><strong aria-hidden="true">20.</strong> Day 19: Wit.AI Client</a></li><li><a href="day20_cachetable.html"><strong aria-hidden="true">21.</strong> Day 20: CacheTable</a></li><li><a href="day21_parsec.html" class="active"><strong aria-hidden="true">22.</strong> Day 21: Parser combinators</a></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">Nim Days</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="#parser-combinators" id="parser-combinators"><h1>Parser combinators</h1></a>
+<p>Today, is one of the most interesting days in my Nim journey, we will learn about Parser Combinators and Nim. Parser is something accepts some text and creates a decent structure out of it (that's not formal definition by any means). First time I learned about Parser combinator when I was (still for sure) <a href="http://book.realworldhaskell.org/read/using-parsec.html">learning haskell</a>, I was amazed by the expressiveness and composebility. Lots of languages has libraries based on parser combinators e.g <a href="https://github.com/pyparsing/pyparsing">python pyparsing</a></p>
+<pre><code class="language-python">from pyparsing import Word, alphas
+greet = Word(alphas) + &quot;,&quot; + Word(alphas) + &quot;!&quot;
+hello = &quot;Hello, World!&quot;
+print(hello, &quot;-&gt;&quot;, greet.parseString(hello))
+
+
+</code></pre>
+<p>The program outputs the following:</p>
+<pre><code>Hello, World! -&gt; ['Hello', ',', 'World', '!']
+</code></pre>
+<p>Here in this program we literally said we want to create a <code>greet</code> parser that's the combination of a <code>Word of alphas</code> followed by a literal comma <code>,</code> then followed by another <code>Word of alphas</code> then followed by a literal exclamation point <code>!</code>. That greet parser is only capable of parsing a text that can be broken down to the small chunks (parsable parts) we mentioned.</p>
+<p>Imagine in python you could express that <a href="https://github.com/pyparsing/pyparsing/blob/master/examples/jsonParser.py">json grammar using pyparsing</a> in around 25 lines?</p>
+<pre><code class="language-python">import pyparsing as pp
+from pyparsing import pyparsing_common as ppc
+
+
+def make_keyword(kwd_str, kwd_value):
+    return pp.Keyword(kwd_str).setParseAction(pp.replaceWith(kwd_value))
+
+
+TRUE = make_keyword(&quot;true&quot;, True)
+FALSE = make_keyword(&quot;false&quot;, False)
+NULL = make_keyword(&quot;null&quot;, None)
+
+LBRACK, RBRACK, LBRACE, RBRACE, COLON = map(pp.Suppress, &quot;[]{}:&quot;)
+
+jsonString = pp.dblQuotedString().setParseAction(pp.removeQuotes)
+jsonNumber = ppc.number()
+
+jsonObject = pp.Forward()
+jsonValue = pp.Forward()
+jsonElements = pp.delimitedList(jsonValue)
+jsonArray = pp.Group(LBRACK + pp.Optional(jsonElements, []) + RBRACK)
+jsonValue &lt;&lt; (
+    jsonString | jsonNumber | pp.Group(jsonObject) | jsonArray | TRUE | FALSE | NULL
+)
+memberDef = pp.Group(jsonString + COLON + jsonValue)
+jsonMembers = pp.delimitedList(memberDef)
+jsonObject &lt;&lt; pp.Dict(LBRACE + pp.Optional(jsonMembers) + RBRACE)
+
+jsonComment = pp.cppStyleComment
+jsonObject.ignore(jsonComment)
+
+</code></pre>
+<p>A more formal definition According to wikipedia, In computer programming, a parser combinator is a higher-order function that accepts several parsers as input and returns a new parser as its output. In this context, a parser is a function accepting strings as input and returning some structure as output, typically a parse tree or a set of indices representing locations in the string where parsing stopped successfully. Parser combinators enable a recursive descent parsing strategy that facilitates modular piecewise construction and testing. This parsing technique is called combinatory parsing.</p>
+<p>So today, we will try to create a small parser combinators (parsec library) in nim with the following expectation</p>
+<a class="header" href="#what-to-expect" id="what-to-expect"><h2>What to expect</h2></a>
+<a class="header" href="#parsing-just-one-letter" id="parsing-just-one-letter"><h3>parsing just one letter</h3></a>
+<pre><code class="language-nim">
+  let aParser = charp('a')
+  let bParser = charp('b')
+  echo $aParser.parse(&quot;abc&quot;)
+  # &lt;Right parsed: @[&quot;a&quot;], remaining: bc &gt;
+  echo $bParser.parse(&quot;bca&quot;)
+  # &lt;Right parsed: @[&quot;b&quot;], remaining: ca &gt;
+
+</code></pre>
+<a class="header" href="#parsing-a-letter-followed-by-another-letter" id="parsing-a-letter-followed-by-another-letter"><h3>parsing a letter followed by another letter</h3></a>
+<pre><code class="language-nim">  let abParser = charp('a') &gt;&gt; charp('b')
+  echo $abParser.parse(&quot;abc&quot;)
+  # &lt;Right parsed: @[&quot;a&quot;, &quot;b&quot;], remaining: c &gt;
+
+</code></pre>
+<a class="header" href="#parsing-one-or-the-other" id="parsing-one-or-the-other"><h3>parsing one or the other</h3></a>
+<pre><code class="language-nim">  let aorbParser = charp('a') | charp('b')
+  echo $aorbParser.parse(&quot;acd&quot;)
+  # &lt;Right parsed: @[&quot;a&quot;], remaining: cd &gt;
+
+  echo $aorbParser.parse(&quot;bcd&quot;)
+  # &lt;Right parsed: @[&quot;b&quot;], remaining: cd &gt;
+
+</code></pre>
+<a class="header" href="#parsing-abc" id="parsing-abc"><h3>parsing abc</h3></a>
+<pre><code class="language-nim">  let abcParser = parseString(&quot;abc&quot;)
+  echo $abcParser.parse(&quot;abcdef&quot;)
+  # &lt;Right parsed: @[&quot;abc&quot;], remaining: def &gt;
+
+</code></pre>
+<a class="header" href="#parsing-many-as" id="parsing-many-as"><h3>parsing many a's</h3></a>
+<pre><code class="language-nim">  let manyA = many(charp('a'))
+  echo $manyA.parse(&quot;aaab&quot;)
+  # &lt;Right parsed: @[&quot;a&quot;, &quot;a&quot;, &quot;a&quot;], remaining: b &gt;
+
+  echo $manyA.parse(&quot;bbb&quot;)
+  # &lt;Right parsed: @[], remaining: bbb &gt;
+
+</code></pre>
+<a class="header" href="#parsing-at-least-1-a" id="parsing-at-least-1-a"><h3>parsing at least 1 a</h3></a>
+<pre><code class="language-nim">  let manyA1 = many1(charp('a'))
+  echo $manyA1.parse(&quot;aaab&quot;)
+  # &lt;Right parsed: @[&quot;a&quot;, &quot;a&quot;, &quot;a&quot;], remaining: b &gt;
+  echo $manyA1.parse(&quot;bbb&quot;)
+    Left Expecting '$a' and found 'b'
+  # 
+</code></pre>
+<a class="header" href="#parsing-many-digits" id="parsing-many-digits"><h3>parsing many digits</h3></a>
+<pre><code class="language-nim">  let manyDigits = many1(digit)
+  echo $manyDigits.parse(&quot;1234&quot;)
+  # &lt;Right parsed: @[&quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;], remaining:  &gt;
+
+</code></pre>
+<a class="header" href="#parsing-digits-separated-by-comma" id="parsing-digits-separated-by-comma"><h3>parsing digits separated by comma</h3></a>
+<pre><code class="language-nim">  let commaseparatednums = sep_by(charp(',').suppress(), digit)
+  echo $commaseparatednums.parse(&quot;1,2,4&quot;)
+  # &lt;Right parsed: @[&quot;1&quot;, &quot;2&quot;, &quot;4&quot;], remaining:  &gt;
+
+</code></pre>
+<a class="header" href="#creating-the-greet-parser-from-pyparsing" id="creating-the-greet-parser-from-pyparsing"><h3>Creating the greet parser from pyparsing</h3></a>
+<pre><code class="language-nim">  let greetparser = word &gt;&gt; charp(',').suppress() &gt;&gt; many(ws).suppress() &gt;&gt; word
+  echo $greetparser.parse(&quot;Hello,   World&quot;)
+  # &lt;Right parsed: @[&quot;Hello&quot;, &quot;World&quot;], remaining:  &gt;
+
+</code></pre>
+<a class="header" href="#multiply-parser" id="multiply-parser"><h3>Multiply parser</h3></a>
+<pre><code class="language-nim">  echo $(letter*3).parse(&quot;abc&quot;)
+  # &lt;Right parsed: @[&quot;a&quot;, &quot;b&quot;, &quot;c&quot;], remaining:  &gt;
+
+</code></pre>
+<a class="header" href="#parsing-uuids" id="parsing-uuids"><h3>parsing UUIDs</h3></a>
+<pre><code class="language-nim">  let uuidsample = &quot;db9674c4-72a9-4ab9-9ddd-1d641a37cde4&quot;
+  let uuidparser =(hexstr*8).map(smashtransformer) &gt;&gt; charp('-') &gt;&gt; (hexstr*4).map(smashtransformer) &gt;&gt; charp('-') &gt;&gt;  (hexstr*4).map(smashtransformer) &gt;&gt; charp('-') &gt;&gt; (hexstr*4).map(smashtransformer) &gt;&gt; charp('-') &gt;&gt; (hexstr*12).map(smashtransformer)
+  echo $uuidparser.parse(uuidsample)
+  # &lt;Right parsed: @[&quot;db9674c4&quot;, &quot;-&quot;, &quot;72a9&quot;, &quot;-&quot;, &quot;4ab9&quot;, &quot;-&quot;, &quot;9ddd&quot;, &quot;-&quot;, &quot;1d641a37cde4&quot;], remaining:  &gt;
+
+</code></pre>
+<a class="header" href="#parsing-recursive-nested-structures-ints-or-list-of--ints-or-lists" id="parsing-recursive-nested-structures-ints-or-list-of--ints-or-lists"><h3>parsing recursive nested structures (ints or list of  [ints or lists])</h3></a>
+<pre><code class="language-nim">  var listp: Parser
+  var valref = (proc():Parser =digits|listp)
+  listp = charp('[') &gt;&gt; sep_by(charp(',').suppress(), many(valref)) &gt;&gt; charp(']')
+  var valp = valref()
+
+  echo $valp.parse(&quot;1&quot;)
+  # &lt;Right parsed: @[&quot;1&quot;], remaining:  &gt;
+  echo $valp.parse(&quot;[1,2]&quot;)
+  # &lt;Right parsed: @[&quot;[&quot;, &quot;1&quot;, &quot;2&quot;, &quot;]&quot;], remaining:  &gt;
+  echo $valp.parse(&quot;[1,[1,2]]&quot;)
+  #&lt;Right parsed: @[&quot;[&quot;, &quot;1&quot;, &quot;[&quot;, &quot;1&quot;, &quot;2&quot;, &quot;]&quot;, &quot;]&quot;], remaining:  &gt;
+</code></pre>
+<a class="header" href="#implementation" id="implementation"><h2>Implementation</h2></a>
+<p>the idea of a parser is something that accepts a text and returns Either an success (with the info of what got consumed of the text and what is still remaining) or a failure with some error messages</p>
+<pre><code>                                        -&gt; success( parsed, remaining)
+stream of characters -&gt;  [  parser  ]
+                                        -&gt; failure (what went wrong message)
+</code></pre>
+<p>and</p>
+<ul>
+<li>if it was a failure we abort the parsing operation</li>
+<li>if it was a success we try to continue with the next parser</li>
+</ul>
+<p>that's the basic idea</p>
+<a class="header" href="#imports" id="imports"><h3>imports</h3></a>
+<pre><code class="language-nim">import strformat, strutils, sequtils
+</code></pre>
+<p>well, we will be dealing with lots of strings and lists, so probably we need <code>strformat</code>, <code>strutils</code>, and <code>sequtils</code></p>
+<a class="header" href="#either-and-its-friends" id="either-and-its-friends"><h3>Either and its friends</h3></a>
+<p>Either is one of my favorite types, bit more advanced than a <code>Maybe</code> or <a href="https://nim-lang.org/docs/options.html">Option</a>, because it allows returning specific error message instead of just none that gives us no idea what went wrong.</p>
+<pre><code class="language-haskell">data Either a b = Left a | Right b
+</code></pre>
+<p>Either a success <code>Right</code> with data of type <code>b</code> or failure <code>Left</code> with data of type <code>a</code></p>
+<p>we can try to describe it in Nim as variant as follows</p>
+<pre><code class="language-nim">type 
+  EitherKind = enum
+    ekLeft, ekRight
+  Either = ref object
+    case kind*: EitherKind 
+    of ekLeft: msg*: string
+    of ekRight: val*: tuple[parsed: seq[string], remaining:string]
+</code></pre>
+<p>Here we defined the kind <code>EitherKind</code> that can be <code>ekLeft</code> or <code>ekRight</code> and on the variant <code>Either</code> we define msg in case if <code>kind</code> was <code>ekLeft</code> for <code>error message msg</code> and in case of <code>ekRight</code> we define <code>val</code> which is the &quot;parsed and the remaining&quot; parts of the input string.</p>
+<pre><code class="language-nim">proc map*(this: Either, f: proc(l:seq[string]):seq[string]): Either =
+  case this.kind
+  of ekLeft: return this
+  of ekRight: 
+    return Either(kind:ekRight, val:(parsed:f(this.val.parsed), remaining:this.val.remaining))
+</code></pre>
+<p>Here we define the <code>map</code> function for the type either, basically what happens when we apply a function on the either type, it should unwrap the data in <code>Right</code>, pass it to the function and return a new Either (transformed either) and in case of <code>Left</code> we return the same Either</p>
+<pre><code class="language-nim">proc `$`*(this:Either): string =
+  case this.kind
+  of ekLeft: return fmt&quot;&lt;Left {this.msg}&gt;&quot;
+  of ekRight: return fmt(&quot;&lt;Right parsed: {this.val.parsed}, remaining: {this.val.remaining} &gt;&quot;)
+</code></pre>
+<p>converting the either to string by defining <code>$</code> function</p>
+<pre><code class="language-nim">proc `==`*(this: Either, other: Either): bool =
+  return this.kind == other.kind
+</code></pre>
+<p>here we define simple comparison for the either objects (basically checking if both are <code>ekRight</code> or both are <code>ekLeft</code>)</p>
+<a class="header" href="#now-to-the-parsers" id="now-to-the-parsers"><h3>Now to the parsers</h3></a>
+<p>We can exploit the feature of the objects to hold some more instructions for the parser, but typically parser combinators are about <code>composing</code> higher order functions together to parse a text, we can try to emulate that with objects and taking a short cut</p>
+<pre><code class="language-nim">type
+  Parser = ref object
+    f* : proc(s:string):Either
+    suppressed*: bool
+
+</code></pre>
+<p>Here we define a Parser type that</p>
+<ul>
+<li>holds a function <code>f</code> (real parser that consumes the input string and returns an Either)</li>
+<li><code>suppressed</code> a flag to indicate we want to ignore the parsed text</li>
+</ul>
+<p>suppressed can be very useful in ignoring/discarding dashes in a string (e.g uuid text) or commas in a CSV row.</p>
+<pre><code class="language-nim">proc newParser(f: proc(s:string):Either, suppressed:bool=false): Parser =
+  var p = Parser()
+  p.suppressed = suppressed
+  p.f = f 
+  return p
+
+</code></pre>
+<p>helper to create a new parser, from a real parsing function <code>function proc(s:string):Either</code> and suppressed flag,</p>
+<pre><code class="language-nim">proc `$`*(this:Parser): string =
+  return fmt(&quot;&lt;Parser:&gt;&quot;)
+</code></pre>
+<p>allowing our parser to convert to string by defining <code>$</code></p>
+<pre><code class="language-nim">proc parse*(this: Parser, s:string): Either =
+  return this.f(s)
+
+
+</code></pre>
+<ul>
+<li><code>parse</code> is a function that receives a string then executes the underlying parser in <code>f</code> from that input string to Either type.</li>
+</ul>
+<pre><code class="language-nim">proc map*(this:Parser, transformer:proc(l:seq[string]):seq[string]):Parser =
+  proc inner(s:string):Either = 
+    return this.f(s).map(transformer)
+  return newParser(f=inner)
+</code></pre>
+<p>Here we define a map function to transform the underlying parser result once executed
+the idea here is we return a new parser wrapping an <code>inner function</code> with all transformation knowledge (if bit tricky move to next)</p>
+<pre><code>proc suppress*(this: Parser): Parser = 
+    this.suppressed = true 
+    return this
+
+</code></pre>
+<p>here we change the suppressed flag to true, should be used as in the examples mentioned in what to expect section</p>
+<pre><code class="language-nim">  let commaseparatednums = sep_by(charp(',').suppress(), digit)
+  echo $commaseparatednums.parse(&quot;1,2,4&quot;)
+</code></pre>
+<p>Here we will be interested in the digits 1 and 2 and 4 and want to ignore the <code>commas</code> in the input string, so that's what suppress helps us with.</p>
+<a class="header" href="#parsing-a-single-character" id="parsing-a-single-character"><h4>Parsing a single character</h4></a>
+<p>now we would like to be able to parse a single character and get parsed value and the remaining characters</p>
+<pre><code class="language-nim">  let aParser = charp('a')
+  echo $aParser.parse(&quot;abc&quot;)
+  # (parsed a, remaining bc)
+</code></pre>
+<pre><code class="language-nim">
+proc charp*(c: char): Parser =
+  proc curried(s:string):Either =
+      if s == &quot;&quot;:
+          let msg = &quot;S is empty&quot;
+          return Either(kind:ekLeft, msg:msg)
+      else:
+          if s[0] == c:
+            let rem = s[1..&lt;s.len]
+            let parsed_string = @[$c]
+            return Either(kind:ekRight, val:(parsed:parsed_string, remaining:rem))
+          else:
+              return Either(kind:ekLeft, msg:fmt&quot;Expecting '${c}' and found '{s[0]}'&quot;)
+  return newParser(curried)
+
+</code></pre>
+<p>here we defined a <code>charp</code> function that takes a character to parse and returns a Parser only capable of parsing that character</p>
+<ul>
+<li>we check if empty string, we return Left <code>Either with ekLeft kind</code></li>
+<li>we check if the string starts with the character we want to parse, if so we return a an Either with a Right of that characater and the rest of the string or we return a Left if the string doesn't start with the character we plan to parse</li>
+<li>all of the parsing logic we define in a function <code>curried</code> that we pass to <code>newParser</code></li>
+</ul>
+<a class="header" href="#sequential-parsers" id="sequential-parsers"><h4>Sequential parsers</h4></a>
+<p>now we would like to parse <code>a</code> then <code>b</code> sequentially. possible if we create parser for <code>a</code> and a parser for <code>b</code> and try to (parse <code>a</code> <code>andThen</code> parse <code>b</code>).
+the statement can be converted to proc `andThen(parserForA, parserForB). let's define that function</p>
+<pre><code class="language-nim">
+  let abParser = charp('a') &gt;&gt; charp('b')
+  echo $abParser.parse(&quot;abc&quot;)
+  # parse: [a, b] and remaining c
+
+</code></pre>
+<pre><code class="language-nim">proc andThen*(p1: Parser, p2: Parser): Parser =
+    proc curried(s: string) : Either= 
+        let res1 = p1.parse(s)
+        case res1.kind
+        of ekLeft:
+          return res1
+        of ekRight:
+            let res2 = p2.parse(res1.val.remaining) # parse remaining chars.
+            case res2.kind
+            of ekLeft:
+              return res2
+            of ekRight:
+                let v1 = res1.val.parsed
+                let v2 = res2.val.parsed
+                var vs: seq[string] = @[]
+                if not p1.suppressed: #and _isokval(v1):
+                    vs.add(v1) 
+                if not p2.suppressed: #and _isokval(v2):
+                    vs.add(v2)
+                return Either(kind:ekRight, val:(parsed:vs, remaining:res2.val.remaining)) 
+            return res2
+
+    return newParser(f=curried)
+
+
+proc `&gt;&gt;`*(this: Parser, rparser:Parser): Parser =
+  return andThen(this, rparser)
+</code></pre>
+<p>Straight forward</p>
+<ul>
+<li>if parsing with <code>p1</code> fails, we fail with Left</li>
+<li>if parsing with <code>p1</code> succeed, we try to parse with <code>p2</code>
+<ul>
+<li>if parsing <code>p2</code> works the whole thing returns <code>Right</code></li>
+<li>if it doesn't we return <code>Left</code></li>
+</ul>
+</li>
+<li>we create <code>&gt;&gt;</code> function to a more pleasing api</li>
+</ul>
+<a class="header" href="#alternate-parsing" id="alternate-parsing"><h4>alternate parsing</h4></a>
+<p>Now we want to try parsing with one parse or the other and only fail if both can't parse</p>
+<pre><code class="language-nim">  let aorbParser = charp('a') | charp('b')
+  echo $aorbParser.parse(&quot;acd&quot;)
+  echo $aorbParser.parse(&quot;bcd&quot;)
+</code></pre>
+<p>Here we want to be able to parse <code>a</code> or <code>b</code></p>
+<pre><code class="language-nim">
+proc orElse*(p1, p2: Parser): Parser =
+    proc curried(s: string):Either=
+        let res = p1.parse(s)
+        case res.kind
+        of ekRight:
+          return res
+        of ekLeft:
+          let res = p2.parse(s)
+          case res.kind
+          of ekLeft:
+            return Either(kind:ekLeft, msg:&quot;Failed at both&quot;)
+          of ekRight:
+            return res
+
+    return newParser(curried)
+
+proc `|`*(this: Parser, rparser: Parser): Parser =
+  return orElse(this, rparser)
+
+
+</code></pre>
+<ul>
+<li>
+<p>if we are able to parse with <code>p1</code> we return with Right</p>
+</li>
+<li>
+<p>if we can't parse with <code>p1</code> we try to parse with <code>p2</code></p>
+<ul>
+<li>if we succeed we return a Right</li>
+<li>if we can't we return failure with Left</li>
+</ul>
+</li>
+<li>
+<p>we define more pleasing syntax <code>|</code></p>
+</li>
+</ul>
+<a class="header" href="#parsing-n-times" id="parsing-n-times"><h4>Parsing <code>n</code> times</h4></a>
+<p>we want to parse with a parsers <code>n</code> times so instead of doing this</p>
+<pre><code class="language-nim">threetimesp1 = p1 &gt;&gt; p1 &gt;&gt; p1
+</code></pre>
+<p>we want to write</p>
+<pre><code class="language-nim">threetimesp1 = p1*3
+
+</code></pre>
+<pre><code class="language-nim">proc n*(parser:Parser, count:int): Parser = 
+    proc curried(s: string): Either =
+        var mys = s
+        var fullparsed: seq[string] = @[]
+        for i in countup(1, count):
+            let res = parser.parse(mys)
+            case res.kind
+            of ekLeft:
+                return res
+            of ekRight:
+                let parsed = res.val.parsed
+                mys = res.val.remaining
+                fullparsed.add(parsed) 
+
+        return Either(kind:ekRight, val:(parsed:fullparsed, remaining:mys))
+    return newParser(f=curried)
+    
+
+proc `*`*(this:Parser, times:int):Parser =
+       return n(this, times) 
+</code></pre>
+<ul>
+<li>here we try to apply the parser <code>count</code> times</li>
+<li>we create <code>*</code> function for more pleasing api</li>
+</ul>
+<a class="header" href="#parsing-letters-upper-lower-digits" id="parsing-letters-upper-lower-digits"><h4>parsing letters, upper, lower, digits</h4></a>
+<p>now we want to be able to parse any alphabet letter and digits with something like</p>
+<pre><code class="language-nim">let letter = anyOf(strutils.Letters)
+let lletter = anyOf({'a'..'z'})
+let uletter = anyOf({'A'..'Z'})
+let digit = anyOf(strutils.Digits)
+</code></pre>
+<p>for digit we can do</p>
+<pre><code class="language-nim">digit = charp(&quot;1&quot;) | charp(&quot;2&quot;) | charp(&quot;3&quot;) | charp(&quot;4&quot;) ...
+</code></pre>
+<p>but definitely it looks much nicer with <code>anyOf</code> syntax, so the idea is we create parsers for the elements in the set and try to <code>orElse</code> between them</p>
+<p>Here we define choice</p>
+<pre><code class="language-nim">
+proc choice*(parsers: seq[Parser]): Parser = 
+    return foldl(parsers, a | b)
+
+proc anyOf*(chars: set[char]): Parser =
+    return choice(mapIt(chars, charp(it)))
+
+</code></pre>
+<ul>
+<li>choice is generic function over any <code>Parser</code>s seq that tries them in order</li>
+<li>anyOf takes in <code>characters</code> that then gets converted to parser using <code>mapIt</code> and <code>charp</code> parser generator (from character to a Parser)</li>
+</ul>
+<a class="header" href="#parsing-a-complete-string" id="parsing-a-complete-string"><h4>Parsing a complete string</h4></a>
+<p>Now we would like to parse complete string &quot;abc&quot; from &quot;abcdef&quot; instead of doing</p>
+<pre><code class="language-nim">abcParser = charp('a') &gt;&gt; charp('b') &gt;&gt; charp('c')
+</code></pre>
+<p>we want an easier syntax that gets expanded to that have</p>
+<pre><code class="language-nim">abcParser = parseString(&quot;abc)
+</code></pre>
+<a class="header" href="#parsestring-parser" id="parsestring-parser"><h5>parseString parser</h5></a>
+<pre><code class="language-nim">
+proc parseString*(s:string): Parser =
+  var parsers: seq[Parser] = newSeq[Parser]()
+  for c in s:
+    parsers.add(charp(c))
+  var p = foldl(parsers, a &gt;&gt; b)
+  return p.map(proc(l:seq[string]):seq[string] = @[join(l, &quot;&quot;)])
+</code></pre>
+<a class="header" href="#optionally" id="optionally"><h4>Optionally</h4></a>
+<p>What if we want to mark a parser as optional to exist? for example if we are parsing a <code>greet</code> statement and it's valid to not to have <code>!</code> for instance (&quot;Hello World&quot; and &quot;Hello World !&quot;) both should be parsable without greet parser.</p>
+<p>We probably want to define it like that</p>
+<pre><code class="language-nim">  let greetparser = word &gt;&gt; charp(',').suppress() &gt;&gt; many(ws).suppress() &gt;&gt; word &gt;&gt; optionally(charp('!'))
+  echo $greetparser.parse(&quot;Hello,   World&quot;)
+  #&lt;Right parsed: @[&quot;Hello&quot;, &quot;World&quot;, &quot;&quot;], remaining:  &gt;
+  echo $greetparser.parse(&quot;Hello,   World!&quot;)
+  # &lt;Right parsed: @[&quot;Hello&quot;, &quot;World&quot;, &quot;!&quot;], remaining:  &gt;
+</code></pre>
+<p>Notice the <code>optionally(charp('!'))</code> it marks a parser as an option.</p>
+<pre><code class="language-nim">
+proc optionally*(parser: Parser): Parser =
+    let myparsed = @[&quot;&quot;]
+    let nonproc = proc(s:string):Either = Either(kind:ekRight, val:(parsed:myparsed, remaining:&quot;&quot;))
+    let noneparser = newParser(f=nonproc)
+    return parser | noneparser
+</code></pre>
+<p>What we basically do is we fake a success parser that we try to parse with the <code>parser</code> passed and if we can't we <code>succeed</code> with <code>noneparser</code></p>
+<pre><code>#### many: zero or more
+
+Here we try to parse as many as we can of a specific parser, e.g parse as many `a`s as we can from a string.
+
+
+```nim
+proc parseZeroOrMore(parser: Parser, inp:string): Either = #zero or more
+    let res = parser.parse(inp)
+    case res.kind
+    of ekLeft:
+      let myparsed: seq[string] = @[]
+      return Either(kind:ekRight, val:(parsed:myparsed, remaining:inp))
+    of ekRight:
+      let firstval = res.val.parsed
+      let restinpafterfirst = res.val.remaining
+      # echo &quot;REST INP AFTER FIRST &quot; &amp; restinpafterfirst
+      let res = parseZeroOrMore(parser, restinpafterfirst)
+      case res.kind
+      of ekRight:
+        let subseqvals = res.val.parsed
+        let remaining = res.val.remaining
+        var values:seq[string] = newSeq[string]()
+        # echo &quot;FIRST VAL: &quot; &amp; firstval
+        # echo &quot;SUBSEQ: &quot; &amp; $subseqvals
+        values.add(firstval)
+        values.add(subseqvals)
+        return Either(kind:ekRight, val:(parsed:values, remaining:remaining))
+      of ekLeft:
+        let myparsed: seq[string] = @[]
+        return Either(kind:ekRight, val:(parsed:myparsed, remaining:inp))
+
+proc many*(parser:Parser):Parser =
+    proc curried(s: string): Either =
+        return parse_zero_or_more(parser,s)
+</code></pre>
+<a class="header" href="#many1-one-or-more" id="many1-one-or-more"><h4>many1: one or more</h4></a>
+<pre><code class="language-nim">proc many1*(parser:Parser): Parser =
+    proc curried(s: string): Either =
+        let res = parser.parse(s)
+        case res.kind
+        of ekLeft:
+          return res
+        of ekRight:
+          return many(parser).parse(s)
+    return newParser(f=curried)
+</code></pre>
+<ul>
+<li>Here we try to parse once manually
+<ul>
+<li>if parsing succeed we invoke the <code>many</code> parser</li>
+<li>if parsing fails we return a left</li>
+</ul>
+</li>
+</ul>
+<a class="header" href="#separated-by-parser" id="separated-by-parser"><h4>Separated by parser</h4></a>
+<p>Most of the times the data we parse are <code>separated</code> by something a comma, space, a dash.. etc and we would like to have a simple way to parse data without hassling with commas, .. etc To make something like that possible</p>
+<pre><code class="language-nim">  let commaseparatednums = sep_by(charp(',').suppress(), digit)
+  echo $commaseparatednums.parse(&quot;1,2,4&quot;)
+</code></pre>
+<pre><code class="language-nim">proc sep_by1*(sep: Parser, parser:Parser): Parser =
+    let sep_then_parser = sep &gt;&gt; parser
+    return (parser &gt;&gt; many(sep_then_parser))
+
+proc sep_by*(sep: Parser, parser:Parser): Parser =
+  let myparsed = @[&quot;&quot;]
+  let nonproc = proc(s:string):Either = Either(kind:ekRight, val:(parsed:myparsed, remaining:&quot;&quot;))
+  return (sep_by1(sep, parser) | newParser(f=nonproc))
+
+
+</code></pre>
+<p>How does that work? Lets assume the example <code>a,b,c</code> we want to describe it as <code>sepBy commaParser letterParser</code>. perfect. then how do we mentally reason about parts? well we start with parsing a <code>letter</code> then <code>comma</code> then <code>letter</code> then <code>comma</code> then <code>letter</code></p>
+<p>so <code>letter</code> then <code>(separator &gt;&gt; letter) many times</code>, that's exactly this line in sep_by1</p>
+<pre><code class="language-nim">    return (parser &gt;&gt; many(sep_then_parser))
+</code></pre>
+<a class="header" href="#surrounded-by" id="surrounded-by"><h4>Surrounded By</h4></a>
+<p>if we want to make sure something is surrounded by something e.g single quotes or <code>|</code>  we can use surroundedBy helper</p>
+<pre><code class="language-nim">  let sur3pipe = surroundedBy(charp('|'), charp('3'))
+  echo $sur3pipe.parse(&quot;|3|&quot;)
+  #&lt;Right parsed: @[&quot;|&quot;, &quot;3&quot;, &quot;|&quot;], remaining:  &gt;
+</code></pre>
+<p>Implementation should be as easy as</p>
+<pre><code class="language-nim">let surroundedBy = proc(surparser, contentparser: Parser): Parser =
+    return surparser &gt;&gt; contentparser &gt;&gt; surparser
+
+</code></pre>
+<a class="header" href="#between" id="between"><h4>Between</h4></a>
+<p>between is more generic that surroundedBy because the opening and closing can be different e.g <code>(3)</code></p>
+<pre><code class="language-nim">  let paren3 = between(charp('('), charp('3'), charp(')') )
+  echo paren3.parse(&quot;(3)&quot;)
+  # &lt;Right parsed: @[&quot;(&quot;, &quot;3&quot;, &quot;)&quot;], remaining:  &gt;
+</code></pre>
+<p>Implementation should be as easy as</p>
+<pre><code class="language-nim">let between = proc(p1, p2, p3: Parser): Parser =
+    return p1 &gt;&gt; p2 &gt;&gt; p3
+</code></pre>
+<a class="header" href="#parsing-recursive-nested-structures" id="parsing-recursive-nested-structures"><h4>Parsing recursive nested structures</h4></a>
+<p>Next, we have a very simple language where you can have</p>
+<ul>
+<li>chars</li>
+<li>list of chars or list</li>
+</ul>
+<p>It's going to be very easy to express</p>
+<pre><code class="language-nim">  var listp: Parser
+  var valref = (proc():Parser =letters|listp)
+
+  listp = charp('[') &gt;&gt; sep_by(charp(',').suppress(), many(valref)) &gt;&gt; charp(']')
+  var valp = valref()
+
+
+  var inps = @[&quot;a&quot;, &quot;[a,b]&quot;, &quot;[a,[b,c]]&quot;]
+  for inp in inps:
+      echo &amp;&quot;inp : {inp}&quot;
+      let parsed = valp.parse(inp)
+      if parsed.kind == ekRight:
+          let data = parsed.val.parsed
+          echo inp, &quot; =&gt; &quot;, $parseToNimData(data)
+
+</code></pre>
+<p>we only need a function <code>parseToNimData</code> to convert, typically we should be able to use enhance the usage of maps to actually convert the data to the desired type &quot;in the same time of the parsing&quot;</p>
+<p>Before defining <code>parseToNimData</code>, let's define the language elements first</p>
+<pre><code class="language-nim">  # recursive lang ints and list of ints or lists
+  type 
+    LangElemKind = enum
+        leChr, leList
+    LangElem = ref object
+        case kind*: LangElemKind 
+        of leChr: c*: char
+        of leList: l*: seq[LangElem]
+  
+
+  proc `$`*(this:LangElem): string =
+    case this.kind
+    of leChr: return fmt&quot;&lt;Char {this.c}&gt;&quot;
+    of leList: return fmt(&quot;&lt;List: {this.l}&gt;&quot;)
+
+  proc `==`*(this: LangElem, other: LangElem): bool =
+    return this.kind == other.kind
+</code></pre>
+<p>We state that our language can have two kind of LangElemKind</p>
+<ul>
+<li>leChr: for chracters</li>
+<li>leList: for lists of any langauge element.</li>
+</ul>
+<pre><code class="language-nim">
+  proc parseToNimData(data: seq[string]) : LangElem =
+    result = LangElem(kind:leList, l: @[])
+    let dataIsList = data[0][0] == '['
+    for el in data:
+      var firstchr = el[0]
+      if firstchr.isAlphaAscii():
+        var elem = LangElem(kind:leChr, c:firstchr)
+        if dataIsList == false:
+            return elem
+        else:
+             result.l[result.l.len-1].l.add(LangElem(kind:leChr, c:firstchr))
+
+      elif firstchr == '[':
+          result.l.add(LangElem(kind:leList, l: @[]))
+</code></pre>
+<p><code>parseToNimData</code> is a simple transformer that builds the tree of the suceessfully parsed strings converting them into <code>LangElem</code>s
+This is how the final result looks like</p>
+<pre><code>inp : a
+@[&quot;parsed data: &quot;, &quot;a&quot;]
+a =&gt; &lt;Char a&gt;
+inp : [a,b]
+@[&quot;parsed data: &quot;, &quot;[&quot;, &quot;a&quot;, &quot;b&quot;, &quot;]&quot;]
+[a,b] =&gt; &lt;List: @[&lt;List: @[&lt;Char a&gt;, &lt;Char b&gt;]&gt;]&gt;
+inp : [a,[b,c]]
+@[&quot;parsed data: &quot;, &quot;[&quot;, &quot;a&quot;, &quot;[&quot;, &quot;b&quot;, &quot;c&quot;, &quot;]&quot;, &quot;]&quot;]
+[a,[b,c]] =&gt; &lt;List: @[&lt;List: @[&lt;Char a&gt;]&gt;, &lt;List: @[&lt;Char b&gt;, &lt;Char c&gt;]&gt;]&gt;
+
+</code></pre>
+<a class="header" href="#thats-it" id="thats-it"><h2>That's it!</h2></a>
+<p>Thank you for reading! and please feel free to open an issue or a PR to improve to content of Nim Days or improving the very young <a href="github.com/xmonader/nim-parsec">nim-parsec</a> :)</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="day20_cachetable.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="day20_cachetable.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+        
+
+    </body>
+</html>

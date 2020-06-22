@@ -1,7 +1,7 @@
 # Parser combinators
 
 
-Today, is one of the most interesting days in my Nim journey, we will learn about Parser Combinators and Nim. Parser is something accepts some text and creates a decent structure out of it (that's not formal definition by any means). First time I learned about Parser combinator when I was [learning haskell](http://book.realworldhaskell.org/read/using-parsec.html), I was amazed by the expressiveness and composebility. Lots of languages has libraries based on parser combinators e.g [python pyparsing](https://github.com/pyparsing/pyparsing)
+Today, is one of the most interesting days in my Nim journey, we will learn about Parser Combinators and Nim. Parser is something accepts some text and creates a decent structure out of it (that's not formal definition by any means). First time I learned about Parser combinator when I was (still for sure) [learning haskell](http://book.realworldhaskell.org/read/using-parsec.html), I was amazed by the expressiveness and composebility. Lots of languages has libraries based on parser combinators e.g [python pyparsing](https://github.com/pyparsing/pyparsing)
 
 
 ```python
