@@ -586,13 +586,9 @@ proc optionally*(parser: Parser): Parser =
     return parser | noneparser
 </code></pre>
 <p>What we basically do is we fake a success parser that we try to parse with the <code>parser</code> passed and if we can't we <code>succeed</code> with <code>noneparser</code></p>
-<pre><code>#### many: zero or more
-
-Here we try to parse as many as we can of a specific parser, e.g parse as many `a`s as we can from a string.
-
-
-```nim
-proc parseZeroOrMore(parser: Parser, inp:string): Either = #zero or more
+<a class="header" href="#many-zero-or-more" id="many-zero-or-more"><h4>many: zero or more</h4></a>
+<p>Here we try to parse as many as we can of a specific parser, e.g parse as many <code>a</code>s as we can from a string.</p>
+<pre><code class="language-nim">proc parseZeroOrMore(parser: Parser, inp:string): Either = #zero or more
     let res = parser.parse(inp)
     case res.kind
     of ekLeft:
