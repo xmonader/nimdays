@@ -1,7 +1,7 @@
 # Parser combinators
 
 
-Today, is one of the most interesting days in my Nim journey, we will learn about Parser Combinators and Nim. Parser is something accepts some text and creates a decent structure out of it (that's not formal definition by any means). First time I learned about Parser combinator when I was (still for sure) [learning haskell](http://book.realworldhaskell.org/read/using-parsec.html), I was amazed by the expressiveness and composebility. Lots of languages has libraries based on parser combinators e.g [python pyparsing](https://github.com/pyparsing/pyparsing)
+Today, we will learn about Parser Combinators and Nim. a parser is something (a function) accepts some text and creates a decent structure out of it (that's not formal definition by any means). First time I learned about Parser combinator when I was (still for sure) [learning haskell](http://book.realworldhaskell.org/read/using-parsec.html), I was amazed by the expressiveness and composebility. Lots of languages has libraries based on parser combinators e.g [python pyparsing](https://github.com/pyparsing/pyparsing)
 
 
 ```python
@@ -718,7 +718,12 @@ It's going to be very easy to express
 
   listp = charp('[') >> sep_by(charp(',').suppress(), many(valref)) >> charp(']')
   var valp = valref()
+```
+Here's probably the tricky part, let's think about it for a second, we want to says
 
+`lang = list | letter` and `list = list of lang`, we need to delay one  of them to be able to reference, and delaying usually means "convert to a function" or at least have it's info "declared already", and that's what we do with `listp: Parser` just giving nim the info that there will be `listp` at some point and for the lang parser we create a function that returns `list | letter` (that's the reason you will find some of our parsec parsers accept `proc` in some of their overloads instead of just `parser` only) and once we are done with the declaration of `listp` now we can invoke `valref` function to get an actual usable parser to use.
+
+```nim
 
   var inps = @["a", "[a,b]", "[a,[b,c]]"]
   for inp in inps:
@@ -729,6 +734,8 @@ It's going to be very easy to express
           echo inp, " => ", $parseToNimData(data)
 
 ```
+
+
 
 we only need a function `parseToNimData` to convert, typically we should be able to use enhance the usage of maps to actually convert the data to the desired type "in the same time of the parsing"
 
@@ -792,5 +799,12 @@ inp : [a,[b,c]]
 ```
 
 ## That's it!
+
+
+### More resources on the topic
+
+- [pyparsing](https://github.com/pyparsing/pyparsing)
+- [real world Haskell parsec chapter](http://book.realworldhaskell.org/read/using-parsec.html)
+- [understanding parser combinators F#](https://fsharpforfunandprofit.com/parser/)
 
 Thank you for reading! and please feel free to open an issue or a PR to improve to content of Nim Days or improving the very young [nim-parsec](github.com/xmonader/nim-parsec) :)
