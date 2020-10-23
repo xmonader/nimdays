@@ -38,7 +38,7 @@ Please check [Beej's guide to network programming](https://beej.us/guide/bgnet/h
 ## Imports
 
 ```nim
-import  strformat, tables, json, strutils, sequtils, hashes, net, asyncdispatch, asyncnet, os, strutils, parseutils, deques, options, net
+import strformat, net, asyncdispatch, asyncnet
 ```
 
 ## Types
