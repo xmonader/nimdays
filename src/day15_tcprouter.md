@@ -38,7 +38,7 @@ Please check [Beej's guide to network programming](https://beej.us/guide/bgnet/h
 ## Imports
 
 ```nim
-import  strformat, tables, json, strutils, sequtils, hashes, net, asyncdispatch, asyncnet, os, strutils, parseutils, deques, options, net
+import strformat, net, asyncdispatch, asyncnet
 ```
 
 ## Types
@@ -210,7 +210,7 @@ our full code
 # This is just an example to get you started. A typical binary package
 # uses this file as the main entry point of the application.
 
-import  strformat, tables, json, strutils, sequtils, hashes, net, asyncdispatch, asyncnet, os, strutils, parseutils, deques, options, net
+import strformat, net, asyncdispatch, asyncnet
 
 type ForwardOptions = object
   listenAddr*: string
