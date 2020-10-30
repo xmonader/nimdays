@@ -654,7 +654,7 @@ proc sep_by1*(sep: Parser, parser:Parser): Parser =
 
 proc sep_by*(sep: Parser, parser:Parser): Parser =
   let myparsed = @[""]
-  let nonproc = proc(s:string):Either = Either(kind:ekRight, val:(parsed:myparsed, remaining:""))
+  let nonproc = proc(s:string):Either = Either(kind:ekRight, val:(parsed:myparsed, remaining:s))
   return (sep_by1(sep, parser) | newParser(f=nonproc))
 
 
