@@ -576,7 +576,7 @@ Notice the `optionally(charp('!'))` it marks a parser as an option.
 
 proc optionally*(parser: Parser): Parser =
     let myparsed = @[""]
-    let nonproc = proc(s:string):Either = Either(kind:ekRight, val:(parsed:myparsed, remaining:""))
+    let nonproc = proc(s:string):Either = Either(kind:ekRight, val:(parsed:myparsed, remaining:))
     let noneparser = newParser(f=nonproc)
     return parser | noneparser
 ```
