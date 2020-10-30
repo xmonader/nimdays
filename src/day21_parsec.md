@@ -576,7 +576,7 @@ Notice the `optionally(charp('!'))` it marks a parser as an option.
 
 proc optionally*(parser: Parser): Parser =
     let myparsed = @[""]
-    let nonproc = proc(s:string):Either = Either(kind:ekRight, val:(parsed:myparsed, remaining:))
+    let nonproc = proc(s:string):Either = Either(kind:ekRight, val:(parsed:myparsed, remaining:s))
     let noneparser = newParser(f=nonproc)
     return parser | noneparser
 ```
@@ -612,7 +612,7 @@ proc parseZeroOrMore(parser: Parser, inp:string): Either = #zero or more
         return Either(kind:ekRight, val:(parsed:values, remaining:remaining))
       of ekLeft:
         let myparsed: seq[string] = @[]
-        return Either(kind:ekRight, val:(parsed:myparsed, remaining:inp))
+        return Either(kind:ekRight, val:(parsed:myparsed, remaining:restinpafterfirst))
 
 proc many*(parser:Parser):Parser =
     proc curried(s: string): Either =
