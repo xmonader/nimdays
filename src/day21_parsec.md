@@ -807,4 +807,4 @@ inp : [a,[b,c]]
 - [real world Haskell parsec chapter](http://book.realworldhaskell.org/read/using-parsec.html)
 - [understanding parser combinators F#](https://fsharpforfunandprofit.com/parser/)
 
-Thank you for reading! and please feel free to open an issue or a PR to improve to content of Nim Days or improving the very young [nim-parsec](github.com/xmonader/nim-parsec) :)
+Thank you for reading! and please feel free to open an issue or a PR to improve to content of Nim Days or improving the very young [nim-parsec](https://github.com/xmonader/nim-parsec) :)
