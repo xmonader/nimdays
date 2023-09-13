@@ -22,7 +22,7 @@ So from a very highlevel
 
 ```
 [ Resource1 ]                                
-[ Resource2 ]   -> converter (nimassets) ->  [Nim file Represneting the resources list]
+[ Resource2 ]   -> converter (nimassets) ->  [Nim file Representing the resources list]
 [ Resource3 ]                                
 
 ```
