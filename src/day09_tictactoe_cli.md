@@ -1,52 +1,51 @@
 # Day 9: Tic tac toe
 
-Who didn't play [Tic tac toe](https://en.wikipedia.org/wiki/Tic-tac-toe) with his friends? :) 
+Who didn't play [Tic tac toe](https://en.wikipedia.org/wiki/Tic-tac-toe) with his friends? :)
 
 ## What to expect
-Today we will implement tic tac toe game in Nim, with 2 modes
+Today we will implement the Tic tac toe game in Nim, with two modes:
 - Human vs Human
 - Human vs AI
 
 ## Implementation
-So, let's get it. The winner in the game is the first one who manages to get 3 cells on the board to be the same in the same column or row or diagonally first.
+So, let's get it. The winner in the game is the first player to get three same cells on the board in the same column, row or diagonal.
 
 
 ### imports
 ```Nimrod
-import sequtils, tables, strutils, strformat, random, os, parseopt2
+import std/[sequtils, tables, strutils, strformat, random, os, parseopt2]
 
 randomize()
 ```
 
 ### Constraints and objects
 
-As the game allow turns we should have a way to keep track of the next player
+We should keep track of the current or the next player.
 
 ```
 let NEXT_PLAYER = {"X":"O", "O":"X"}.toTable
 ```
 
-Here we use a table to tell us the next player
+Here we use a table to tell us who is the next player.
 
 #### Board
 
 ```Nimrod
-type 
+type
   Board = ref object of RootObj
-    list: seq[string]
+    cells: seq[string]
 ```
 
 Here we define a simple class representing the board
-- list is a sequence representing the cells `maybe cells is a better name`
-- please note list is just a sequenece of elements `0 1 2 3 4 5 6 7 8` but we visualize it as
+- we use a sequence to represent the cells of the board
+- please note cells is just a sequence of elements `0 1 2 3 4 5 6 7 8` but we may visualize it instead as:
 
 ```
 0 1 2
 3 4 5
 6 7 9
 ```
-
-instead of using a 2d array for the sake of simplicity
+a 2d array for the sake of simplicity.
 
 
 ```Nimrod
@@ -58,44 +57,44 @@ We talked `WIN` patterns cells in the same row or the same column or in same dia
 ```Nimrod
 proc newBoard(): Board =
   var b = Board()
-  b.list = @["0", "1", "2", "3", "4", "5", "6", "7", "8"]
+  b.cells = @["0", "1", "2", "3", "4", "5", "6", "7", "8"]
   return b
 ```
 
-this is the initializer of the board and sets the cell value to the string represention  of its index
+The board's initializer sets the values of each cell to the string representation of the cell's index.
 
 ##### Winning
 
 ```Nimrod
 proc done(this: Board): (bool, string) =
     for w in WINS:
-        if this.list[w[0]] == this.list[w[1]] and this.list[w[1]]  == this.list[w[2]]:
-          if this.list[w[0]] == "X":
+        if this.cells[w[0]] == this.cells[w[1]] and this.cells[w[1]]  == this.cells[w[2]]:
+          if this.cells[w[0]] == "X":
             return (true, "X")
-          elif this.list[w[0]] == "O":
+          elif this.cells[w[0]] == "O":
             return (true, "O")
-    if all(this.list, proc(x:string):bool = x in @["O", "X"]) == true:
+    if all(this.cells, proc(x:string):bool = x in @["O", "X"]) == true:
         return (true, "tie")
     else:
         return (false, "going")
 ```
 
-Here we check for the state of the game and the winner if all of the item in `WIN` patterns are the same 
+Here we check for the state of the game and the winner is declared if all of the items in one `WIN` patterns are the same. We wait the board to be filled before declaring a draw.
 
 ```Nimrod
 proc `$`(this:Board): string =
-  let rows: seq[seq[string]] = @[this.list[0..2], this.list[3..5], this.list[6..8]]
+  let rows: seq[seq[string]] = @[this.cells[0..2], this.cells[3..5], this.cells[6..8]]
   for row  in rows:
     for cell in row:
       stdout.write(cell & " | ")
     echo("\n--------------")
 ```
-Here we have the string representation of the board so we can show it as 3x3 grid in a lovely way
+Since we have the string representation of the board, we can show it as 3x3 grid in a lovely way!
 
 ```Nimrod
 proc emptySpots(this:Board):seq[int] =
     var emptyindices = newSeq[int]()
-    for i in this.list:
+    for i in this.cells:
       if i.isDigit():
         emptyindices.add(parseInt(i))
     return emptyindices
@@ -122,22 +121,22 @@ proc newGame(aiPlayer:string="", difficulty:int=9): Game =
   game.currentPlayer = "X"
   game.aiPlayer = aiPlayer
   game.difficulty = difficulty
-  
+
   return game
         # 0 1 2
         # 3 4 5
-        # 6 7 8 
+        # 6 7 8
 ```
 
-Here we have another object representing the game and the players and the difficulty and wether it has an AI player or not and who is the current player 
+Here we have another object representing the game, the players, the difficulty and whether an AI is playing. It also tracks the current player.
 
-- difficulty is only logical in case of AI, it means when does the AI start calculating moves and considering scenarios, 9 is the hardest, 0 is the easiest.
+- difficulty is only logical in case of AI, it means when does the AI start calculating moves and considering scenarios, 9 being the hardest while 0 is the easiest.
 
 ```Nimrod
 proc changePlayer(this:Game) : void =
-  this.currentPlayer = NEXT_PLAYER[this.currentPlayer]   
+  this.currentPlayer = NEXT_PLAYER[this.currentPlayer]
 ```
-Simple procedure to switch turns between players
+Simple procedure to switch turns between players.
 
 #### Start the game
 ```Nimrod
@@ -148,7 +147,7 @@ proc startGame*(this:Game): void=
         if this.aiPlayer != this.currentPlayer:
           stdout.write("Enter move: ")
           let move = stdin.readLine()
-          this.board.list[parseInt($move)] = this.currentPlayer
+          this.board.cells[parseInt($move)] = this.currentPlayer
         this.change_player()
         let (done, winner) = this.board.done()
 
@@ -158,11 +157,11 @@ proc startGame*(this:Game): void=
               echo("TIE")
           else:
               echo("WINNER IS :", winner )
-          break           
+          break
 
 ```
 
-Here if we don't have `aiPlayer` if not set it's just a game with 2 humans switching turns and checking for the winner after each move
+Here, either we have an `aiPlayer` or a game with two humans switching turns and checking for the winner after each move.
 
 ### Minmax and AI support
 [Minmax](https://en.wikipedia.org/wiki/Minimax) is an algorithm mainly used to predict the possible moves in the future and how to minimize the losses and maximize the chances of winning
@@ -173,38 +172,38 @@ Here if we don't have `aiPlayer` if not set it's just a game with 2 humans switc
 
 ```Nimrod
 
-type 
+type
   Move = tuple[score:int, idx:int]
 ```
 
-We need a type Move on a certain idx to represent if it's a good/bad move `depending on the score` 
+We need a type Move on a certain idx to represent if it's a good/bad move `depending on the score`
 
 - good means minimizing chances of the human to win or making AI win => high score +10
 - bad  means maximizing chances of the human to win or making AI lose => low score -10
 
-So let's say we are in this situation
+So let's say we are in this situation:
 ```
 O X X
-X 4 5 
+X 4 5
 X O O
 ```
 And it's `AI turn` we have two possible moves (4 or 5)
 
 ```
 O X X
-X 4 O 
+X 4 O
 X O O
 ```
 
 this move (to 5) is clearly wrong because the next move to human will allow him to complete the diagonal (2, 4, 6) So this is a bad move we give it score -10
-or 
+or
 
 ```
 O X X
-X O 5 
+X O 5
 X O O
 ```
-this move (to 4) minimizes the losses (leads to a TIE instead of making human wins) so we give it a higher score 
+this move (to 4) minimizes the losses (leads to a TIE instead of making human wins) so we give it a higher score
 
 ```Nimrod
 proc getBestMove(this: Game, board: Board, player:string): Move =
@@ -217,33 +216,33 @@ proc getBestMove(this: Game, board: Board, player:string): Move =
                 return (score:(-10), idx:0)
             else:
                 return (score:0, idx:0)
-            
+
         let empty_spots = board.empty_spots()
-        var moves = newSeq[Move]() 
+        var moves = newSeq[Move]()
         for idx in empty_spots:
             # we calculate more new trees depending on the current situation and see where the upcoming moves lead
             var newboard = newBoard()
 
-            newboard.list = map(board.list, proc(x:string):string=x)
-            newboard.list[idx] = player
+            newboard.cells = map(board.cells, proc(x:string):string=x)
+            newboard.cells[idx] = player
             let score = this.getBestMove(newboard, NEXT_PLAYER[player]).score
             let idx = idx
             let move = (score:score, idx:idx)
             moves.add(move)
-        
+
         if player == this.aiPlayer:
-          return max(moves)          
+          return max(moves)
           # var bestScore = -1000
-          # var bestMove: Move 
+          # var bestMove: Move
           # for m in moves:
           #   if m.score > bestScore:
           #     bestMove = m
           #     bestScore = m.score
           # return bestMove
         else:
-          return min(moves)          
+          return min(moves)
           # var bestScore = 1000
-          # var bestMove: Move 
+          # var bestMove: Move
           # for m in moves:
           #   if m.score < bestScore:
           #     bestMove = m
@@ -267,19 +266,19 @@ proc startGame*(this:Game): void=
               if len(emptyspots) <= this.difficulty:
                   echo("AI MOVE..")
                   let move = this.getbestmove(this.board, this.aiPlayer)
-                  this.board.list[move.idx] = this.aiPlayer
+                  this.board.cells[move.idx] = this.aiPlayer
               else:
                   echo("RANDOM GUESS")
-                  this.board.list[emptyspots.rand()] = this.aiPlayer
-  
-        ## oldcode    
+                  this.board.cells[emptyspots.rand()] = this.aiPlayer
+
+        ## oldcode
 
 ```
 Here we allow the game to use difficulty which means when does the AI starts calculating the moves and making the tree? from the beginning 9 cells left or when there're 4 cells left? you can set it the way you want it, and until u reach the starting difficulty situation AI will use random guesses (from the available `emptyspots`) instead of calculating
 
 ### CLI entry
 ```Nimrod
-proc writeHelp() = 
+proc writeHelp() =
   echo """
 TicTacToe 0.1.0 (MinMax version)
 Allowed arguments:
@@ -289,7 +288,7 @@ Allowed arguments:
   """
 
 proc cli*() =
-  var 
+  var
     aiplayer = ""
     difficulty = 9
 
@@ -297,7 +296,7 @@ proc cli*() =
     case kind
     of cmdLongOption, cmdShortOption:
         case key
-        of "help", "h": 
+        of "help", "h":
             writeHelp()
             # quit()
         of "aiplayer", "a":
@@ -307,7 +306,7 @@ proc cli*() =
         else:
           discard
     else:
-      discard 
+      discard
 
   let g = newGame(aiPlayer=aiplayer, difficulty=difficulty)
   g.startGame()
